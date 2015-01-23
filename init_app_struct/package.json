@@ -1,0 +1,29 @@
+{
+	"name"           : "",
+	"version"        : "0.0.0",
+	"description"    : "your application description",
+	"author"         : "Your Name <you@email.com>",
+	"scripts"        : {},
+	"bin"            : {
+		"leang": "./leancloud.js"
+	},
+	"main"           : "./main.js",
+	"repository"     : {
+		"type": "git",
+		"url" : "https://github.com/GongT/LEAN-G.git"
+	},
+	"keywords"       : [
+		"lean", "leancloud", "avos", "avoscloud", "framework"
+	],
+	"dependencies"   : {
+		"lean-g": "git://github.com/GongT/LEAN-G.git"
+	},
+	"preferGlobal"   : true,
+	"devDependencies": {},
+	"private"        : true,
+	"analyze"        : true,
+	"license"        : "",
+	"leancloud"      : {
+		"deploy": []
+	}
+}

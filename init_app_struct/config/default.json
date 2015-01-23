@@ -1,0 +1,11 @@
+{
+	"isDebugEnv"    : true,
+	"BASE_URL"      : "/",
+	"STATIC_URL"    : "/",
+	"CookieDomain"  : "",
+	"CookiePath"    : "",
+	"SessionKey"    : "NODESESSID",
+	"styleConstant" : {},
+	"scriptConstant": {},
+	"STATIC_VERSION": 0
+}
