@@ -1,6 +1,7 @@
 /**
  * @title 开启本地调试服务器，可以在本地浏览器里调试所有代码逻辑。
  */
+var path = require('path');
 
 if(!APP_CONFIG.isDebugEnv){
 	APP_CONFIG.isDebugEnv = true;
@@ -37,7 +38,7 @@ function real_restart_server(){
 	if(child === null){
 		process.stdout.write('Starting server process...\r');
 	}
-	child = require('child_process').spawn(ROOT + 'node_modules/avoscloud-code/bin/run.js', [],
+	child = require('child_process').spawn(path.resolve(ROOT, '../avoscloud-code/bin/run.js'), [],
 			{
 				stdio: [process.stdin, 'pipe', 'pipe'],
 				env  : process.env
