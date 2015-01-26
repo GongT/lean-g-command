@@ -1,10 +1,12 @@
 module.exports = init;
 function init(app){
-	if(process.env.DEBUG){
+	if(!process.env.DEBUG){
 		return;
 	}
 	global.AV = Object.AV;
 	process.stdout.isTTY = true;
+	process.stdin.removeAllListeners('data');
+	process.stdout.removeAllListeners('data');
 	var repl = global.repl = require('repl').start({
 		prompt         : 'AVOS> ',
 		input          : process.stdin,
@@ -20,7 +22,7 @@ function init(app){
 		rli.clearLine();
 		if(!(repl.bufferedCommand && repl.bufferedCommand.length > 0) && empty){
 			if(sawSIGINT){
-				console.error('\ueeee\rexit with code ctrl+c');
+				console.error('\ueeee\rchild: will exit with double ctrl+c');
 				process.stdin.resume();
 				process.stdout.pause();
 				process.stderr.pause();

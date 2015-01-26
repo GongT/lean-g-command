@@ -1,11 +1,12 @@
 var Promise = require('promise');
+
 module.exports = function (){
-	var args = arguments;
+	var args = Array.prototype.slice.call(arguments);
 	return new Promise(function (resolve, reject){
-		console.log('call lean-cloud script `%s`...', args[0]);
-		console.log(ROOT + '/node_modules/avoscloud-code/bin/avoscloud');
-		var p = require('child_process').spawn(ROOT + '/node_modules/avoscloud-code/bin/avoscloud',
-				Array.prototype.slice.call(args),
+		console.log('call lean-cloud script - %s', args[0]);
+		console.log(args)
+		var p = require('child_process').spawn(exports.runner,
+				args,
 				{
 					stdio: 'inherit',
 					env  : process.env
@@ -20,14 +21,9 @@ module.exports = function (){
 		});
 	});
 };
-module.exports.external = function (cmd, args){
+module.exports.external = function (cmd){
 	return new Promise(function (resolve, reject){
-		var p = require('child_process').spawn(cmd,
-				args || [],
-				{
-					stdio: 'inherit',
-					env  : process.env
-				});
+		var p = require('child_process').exec(cmd);
 		p.on("exit", function (code){
 			if(code == 0){
 				resolve();
@@ -38,3 +34,5 @@ module.exports.external = function (cmd, args){
 		});
 	});
 };
+
+module.exports.runner = require('path').resolve(ROOT, '../avoscloud-code/bin/run.js')

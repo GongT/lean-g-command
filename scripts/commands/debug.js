@@ -46,7 +46,7 @@ function real_restart_server(){
 	child.on("exit", function (code){
 		process.stdin.setRawMode(false);
 		process.stdin.resume();
-		if(code == 0 && ctrlCpress){
+		if(code == 9 || (code == 0 && ctrlCpress)){
 			console.log('\n\x1B[38;5;14m结束调试（因为按下了 ^C）\x1B[0m');
 			process.exit();
 		}
@@ -126,8 +126,10 @@ var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/
 function collect_output(data){
 	// process.stdout.write(this + ': ' + data);
 	if(/\ueeee/.test(data)){
-		ctrlCpress = true;
-		child.kill('SIGINT');
+		setTimeout(function (){ // handle some time ctrl+c not affect
+			ctrlCpress = true;
+			child.kill('SIGINT');
+		}, 1000);
 		return;
 	}
 	var pos;
