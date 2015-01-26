@@ -23,10 +23,10 @@ function init(app){
 		if(!(repl.bufferedCommand && repl.bufferedCommand.length > 0) && empty){
 			if(sawSIGINT){
 				console.error('\ueeee\rchild: will exit with double ctrl+c');
+				process.exit(9);
 				process.stdin.resume();
 				process.stdout.pause();
 				process.stderr.pause();
-				process.exit();
 				return;
 			}
 			rli.output.write('(^C again to quit)\n');

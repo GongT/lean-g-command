@@ -53,6 +53,10 @@ function real_restart_server(){
 		if(code == 10){
 			console.log('\n\x1B[38;5;9m服务器没有正确启动\x1B[0m\n===============================');
 		}
+		if(code == 100){
+			real_restart_server();
+			return;
+		}
 		if(code != 0){
 			console.log('\x1B[38;5;9mlean-cloud server failed with code ' + code + '\x1B[0m');
 			if(!child.ispassthru && child.datacache){
@@ -127,8 +131,10 @@ function collect_output(data){
 	// process.stdout.write(this + ': ' + data);
 	if(/\ueeee/.test(data)){
 		setTimeout(function (){ // handle some time ctrl+c not affect
-			ctrlCpress = true;
-			child.kill('SIGINT');
+			if(child){
+				ctrlCpress = true;
+				child.kill('SIGINT');
+			}
 		}, 1000);
 		return;
 	}
