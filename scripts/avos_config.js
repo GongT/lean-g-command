@@ -8,7 +8,8 @@ var APP_TYPE = global.APP_TYPE;
 var GENPATH = APPPATH + 'cloud/__gen/';
 var extend = require('util')._extend;
 
-var avosInternalDataBase = ['user', 'file', 'followee', 'follower', 'installation', 'notification', 'role'];
+var avosInternalDataBase = ['user', 'cloudlog', 'file', 'followee', 'follower', 'installation', 'notification', 'role'];
+var avosInternalDataBaseMap = {'cloudlog': 'cloud_log'};
 
 function ucfirst(s){
 	return s.replace(/^[a-z]/, function (a){
@@ -32,6 +33,9 @@ function isJsFile(f){
 
 function class_name(name){
 	if(avosInternalDataBase.indexOf(name.toLowerCase()) == -1){
+		if(avosInternalDataBaseMap[name.toLowerCase()]){
+			name = avosInternalDataBaseMap[name.toLowerCase()];
+		}
 		return ucfirst(windows_style(name));
 	} else{
 		return '_' + ucfirst(name);

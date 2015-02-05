@@ -1,3 +1,4 @@
+var AV = Object.AV;
 module.exports = CloudClodeWrapper;
 module.exports.CallbackList = CallbackList;
 module.exports.Arguments = ArgumentsWrapper;
@@ -7,7 +8,7 @@ AV.Cloud.define = function (name, fn){
 	if(fn.setTitle){
 		fn.setTitle(name);
 	} else{
-		AV.log('云代码%s没有用CloudClodeWrapper', name);
+		console.error('云代码' + name + '没有用CloudClodeWrapper');
 	}
 	return define_fn(name, fn);
 };

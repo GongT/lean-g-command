@@ -31,6 +31,7 @@ function real_restart_server(){
 		process.stdout.write('   Server process now restarting...\r');
 		child.unref();
 		child.removeAllListeners('exit');
+		process.stdin.setRawMode(false);
 		child.kill('SIGINT');
 	}
 	
@@ -45,7 +46,7 @@ function real_restart_server(){
 			});
 	child.on("exit", function (code){
 		process.stdin.setRawMode(false);
-		process.stdin.resume();
+		process.stdin.pause();
 		if(code == 9 || (code == 0 && ctrlCpress)){
 			console.log('\n\x1B[38;5;14m结束调试（因为按下了 ^C）\x1B[0m');
 			process.exit();
@@ -133,6 +134,7 @@ function collect_output(data){
 		setTimeout(function (){ // handle some time ctrl+c not affect
 			if(child){
 				ctrlCpress = true;
+				process.stdin.setRawMode(false);
 				child.kill('SIGINT');
 			}
 		}, 1000);
@@ -146,6 +148,7 @@ function collect_output(data){
 			process.stdout.write(colorful_error(child.datacache));
 			child.datacache = '';
 			process.stdout.write('\x1B[38;5;9m\nServer start FAILED!\x1B[0m\n');
+			process.stdin.setRawMode(false);
 			child.kill('SIGINT');
 			return;
 		}
@@ -180,6 +183,7 @@ function colorful_error(s){
 function cleanup(){
 	watch.close();
 	if(child){
+		process.stdin.setRawMode(false);
 		child.kill('SIGINT');
 	}
 }

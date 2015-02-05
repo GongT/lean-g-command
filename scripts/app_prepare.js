@@ -6,8 +6,10 @@ function W(AV, _require){
 	try{
 		process.env.TZ = 'UTC';
 		local = AV.localhost = true;
+		AV.CloudCodeRoot = require('path').resolve(__dirname + '../..') + '/cloud/';
 	} catch(e){
 		local = AV.localhost = false;
+		AV.CloudCodeRoot = __dirname + '/';
 	}
 	AV.require = _require;
 	var e = console.error;
