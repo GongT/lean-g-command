@@ -39,12 +39,12 @@ function main(AV){
 	var express = AV.express = AV.require('express');
 	var app = express();
 	
-	var CONFIG = AV.CONFIG = require('cloud/__gen/config.js');
+	var CONFIG = AV.CONFIG = require(AV.CloudCodeRoot + '__gen/config.js');
 	AV.isDebugEnv = CONFIG.isDebugEnv;
 	
 	AV.lib = AV.library = require('../include/library_loader.js');
 	AV.ApiError = require('../include/ApiError.js');
-	require('cloud/__gen/error.js');
+	require(AV.CloudCodeRoot + '__gen/error.js');
 	AV.CLS = require('../include/module.prototype.js');
 	
 	AV.InputChecker = require('../include/InputChecker.js');
@@ -56,15 +56,15 @@ function main(AV){
 	AV.Logger = require('../include/Logger.js');
 	AV.ExpressController = require('../include/ExpressController.js');
 	AV.ServerCloud = require('../include/ServerCloud.js');
-	AV.CONSTANTS = require('cloud/__gen/import.jsconst.js');
+	AV.CONSTANTS = require(AV.CloudCodeRoot + '__gen/import.jsconst.js');
 	
 	require('../include/global-functions.js');
 	
 	// 开始启动
-	require('cloud/__gen/import.librarys.js');
-	require('cloud/__gen/import.modules.js');
-	require('cloud/__gen/import.functions.js');
-	require('cloud/__gen/import.triggers.js');
+	require(AV.CloudCodeRoot + '__gen/import.librarys.js');
+	require(AV.CloudCodeRoot + '__gen/import.modules.js');
+	require(AV.CloudCodeRoot + '__gen/import.functions.js');
+	require(AV.CloudCodeRoot + '__gen/import.triggers.js');
 	
 	var avosExpressCookieSession = require('avos-express-cookie-session');
 	
@@ -94,11 +94,11 @@ function main(AV){
 	
 	AV.server = app;
 	AV.templatePlugin = require('../include/express-nsmarty-shim.js');
-	require('cloud/__gen/import.nsmarty.js').forEach(function (f){
+	require(AV.CloudCodeRoot+'__gen/import.nsmarty.js').forEach(function (f){
 		AV.templatePlugin.parseFile(f);
 	});
 	
-	require('cloud/__gen/import.express.js');
+	require(AV.CloudCodeRoot+'__gen/import.express.js');
 	
 	return app;
 }

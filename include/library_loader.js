@@ -1,10 +1,12 @@
+var AV = Object.AV;
+
 function Library(){
 }
 
 function assign_object_path(object, path, value){
 	path = path.split(/\//);
 	var name = path.pop();
-
+	
 	var itr = object;
 	path.forEach(function (name){
 		if(!itr[name]){
@@ -34,7 +36,7 @@ function define_prototype(prototype, name, file){
 			enumerable  : true,
 			configurable: true
 		});
-
+		
 		for(name in data){
 			if(self[name]){
 				continue;
@@ -47,7 +49,7 @@ function define_prototype(prototype, name, file){
 }
 
 Library.prototype.load = function (name){
-	assign_object_path(this, name, require("cloud/library/" + name + ".js"));
+	assign_object_path(this, name, require(AV.CloudCodeRoot + "library/" + name + ".js"));
 };
 Library.prototype.autoload = function (data){
 	this.autoload = function (){
