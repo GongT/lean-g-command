@@ -49,7 +49,7 @@ function define_prototype(prototype, name, file){
 }
 
 Library.prototype.load = function (name){
-	assign_object_path(this, name, require(AV.CloudCodeRoot + "library/" + name + ".js"));
+	assign_object_path(this, name, require("cloud/library/" + name + ".js"));
 };
 Library.prototype.autoload = function (data){
 	this.autoload = function (){

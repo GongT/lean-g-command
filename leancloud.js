@@ -5,6 +5,17 @@ var path = require('path'),
 		extend = require('util')._extend;
 var ROOT = global.ROOT = __dirname + '/';
 var APPPATH = global.APPPATH = process.cwd() + '/';
+console.log('LEAN-G: set ROOT = %s', ROOT);
+console.log('LEAN-G: set APPPATH = %s', APPPATH);
+
+var pkg = fs.readFileSync(APPPATH + 'package.proto.json', 'utf-8');
+try{
+	eval('pkg=' + pkg);
+} catch(e){
+	console.error('无法解析package.proto.json:\n\n' + e.stack);
+	process.exit(-1);
+}
+fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg), 'utf-8');
 
 var config_exists = fs.existsSync(APPPATH + 'config');
 
@@ -49,7 +60,8 @@ fs.write(flock, process.pid.toString(), process.pid.toString().length);
 function exitHandler(options, err){
 	if(options.cleanup){
 		fs.close(flock);
-		fs.unlinkSync(APPPATH + '.runlock', 'w')
+		fs.unlinkSync(APPPATH + '.runlock');
+		fs.unlinkSync(APPPATH + 'package.json');
 	}
 	if(err){
 		console.log(err.stack);

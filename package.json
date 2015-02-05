@@ -18,15 +18,15 @@
 	"dependencies"   : {
 		"less-middleware": "1.0.x",
 		"serve-favicon"  : "~2.2.0",
-		"chokidar"       : "~0.12.0",
 		"nsmarty"        : "git://coding.net/GongT/nsmarty.git",
 		"phpjs"          : "~1.3.0",
-		"promise"        : "~6.1.0",
-		"request"        : "*"
+		"request"        : "~2.0.0"
 	},
 	"preferGlobal"   : true,
 	"devDependencies": {
-		"avoscloud-code": "*"
+		"chokidar"       : "~0.12.0",
+		"promise"       : "~6.1.0",
+		"avoscloud-code": "git+https://github.com/GongT/avoscloud-code-command.git"
 	},
 	"analyze"        : true,
 	"license"        : "MIT"

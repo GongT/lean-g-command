@@ -5,7 +5,7 @@
 	"author"         : "Your Name <you@email.com>",
 	"scripts"        : {},
 	"bin"            : {
-		"leang": "./leancloud.js"
+		"debug": "./node_module/.bin/leang development debug"
 	},
 	"main"           : "./main.js",
 	"repository"     : {
@@ -16,14 +16,22 @@
 		"lean", "leancloud", "avos", "avoscloud", "framework"
 	],
 	"dependencies"   : {
-		"lean-g": "git://github.com/GongT/LEAN-G.git"
+		/* "LEAN-G": "git://coding.net/GongT/lean-g.git", */
+		"less-middleware": "1.0.x",
+		"serve-favicon"  : "~2.2.0",
+		"nsmarty"        : "git://coding.net/GongT/nsmarty.git",
+		"phpjs"          : "~1.3.0",
+		"request"        : "~2.0.0"
 	},
 	"preferGlobal"   : true,
-	"devDependencies": {},
+	"devDependencies": {
+		"chokidar": "~0.12.0",
+		"promise" : "~6.1.0"
+	},
 	"private"        : true,
 	"analyze"        : true,
 	"license"        : "",
 	"leancloud"      : {
-		"deploy": []
+		"deploy": ["node_modules/!(avoscloud-code)/**", "views"]
 	}
 }
