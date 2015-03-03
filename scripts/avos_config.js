@@ -54,6 +54,8 @@ function update_avos_config(){
 	// 配置文件
 	console.log('\t复制配置文件...');
 	fs.writeFileSync(APPPATH + 'config/global.json', JSON.stringify(APP_CONFIG));
+	APP_CONFIG.package = global.PackageJson || {};
+	APP_CONFIG.lean = global.LeanParams || {};
 	fs.writeFileSync(GENPATH + 'config.js', 'module.exports = ' + JSON.stringify(APP_CONFIG));
 	
 	// 应用列表
@@ -184,7 +186,11 @@ function update_avos_library(){
 
 function read_tree(dir){
 	var ret = {};
+	var hidden = /^\./;
 	fs.readdirSync(APPPATH + dir).forEach(function (f){
+		if(hidden.test(f)){
+			return;
+		}
 		if(!fs.existsSync(dir + f) || fs.lstatSync(dir + f).isDirectory()){
 			ret[basename(f, '.js')] = read_tree(dir + f + '/');
 		} else if(isJsFile(f)){

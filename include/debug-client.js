@@ -64,11 +64,12 @@ function init(app){
 	
 	// console.log('\r\x1B[38;5;14mhttp.OutgoingMessage has been replaced!\x1B[0m');
 	
-	var nsm = require('nsmarty');
-	app.use(function (_1, _2, next){
-		nsm.clearCache();
-		next();
-	});
+	if(AV.CONFIG.lean.template && AV.CONFIG.lean.template == 'smarty'){
+		app.use(function (_1, _2, next){
+			AV.nsmarty.clearCache();
+			next();
+		});
+	}
 	
 	Object.defineProperty(global, 'rs', {
 		get: function (){

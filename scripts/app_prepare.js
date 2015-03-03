@@ -110,7 +110,7 @@ function main(AV){
 	app.use(express.cookieParser('gfx'));
 	app.use(avosExpressCookieSession({
 		cookie: {maxAge: 1000*60*60*24*360},
-		key   : CONFIG.sessionKey
+		key   : CONFIG.sessionKey || 'NODESESSID'
 	}));
 	
 	if(local){
@@ -119,11 +119,19 @@ function main(AV){
 	}
 	
 	AV.server = app;
-	append_log('load express smarty template...');
-	AV.templatePlugin = require(GROOT + 'include/express-nsmarty-shim.js');
-	require(GENPATH + 'import.nsmarty.js').forEach(function (f){
-		AV.templatePlugin.parseFile(f);
-	});
+	console.log(CONFIG);
+	if(!CONFIG.lean.template || CONFIG.lean.template == 'ejs'){
+		app.set('views', 'views');
+		app.set('view engine', 'ejs');
+	} else if(CONFIG.lean.template == 'smarty'){
+		append_log('load express smarty template...');
+		AV.templatePlugin = require(GROOT + 'include/express-nsmarty-shim.js');
+		require(GENPATH + 'import.nsmarty.js').forEach(function (f){
+			AV.templatePlugin.parseFile(f);
+		});
+	} else{
+		throw new Error("未知模板引擎：" + CONFIG.lean.template);
+	}
 	
 	append_log('load express routers...');
 	require(GENPATH + 'import.express.js');

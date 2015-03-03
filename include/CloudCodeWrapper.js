@@ -8,7 +8,7 @@ AV.Cloud.define = function (name, fn){
 	if(fn.setTitle){
 		fn.setTitle(name);
 	} else{
-		AV.log('云代码%s没有用CloudClodeWrapper', name);
+		console.error('云代码%s没有用CloudClodeWrapper', name);
 	}
 	return define_fn(name, fn);
 };

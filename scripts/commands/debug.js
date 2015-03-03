@@ -70,12 +70,32 @@ function real_restart_server(){
 	child.stdout.on('data', collect_output.bind('stdout'));
 	child.stderr.on('data', collect_output.bind('stderr'));
 	child.datacache = '';
+	start_timeout();
 }
 function restart_server(){
 	if(killtime){
 		clearTimeout(killtime);
 	}
 	killtime = setTimeout(real_restart_server, child? 2000 : 0);
+}
+
+function start_timeout(){
+	if(child.starting){
+		clearTimeout(child.starting);
+	}
+	child.starting = setTimeout(function (){
+		var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
+		process.stdout.write("\n" + msg + "\n\n");
+		process.stdout.write(child.datacache);
+		child.datacache = '';
+		process.stdout.write("\n(-- 下面可能还会有 --)\n");
+	}, 5000);
+}
+function remove_start_timeout(){
+	if(child.starting){
+		clearTimeout(child.starting);
+		child.starting = 0;
+	}
 }
 
 function on_file_change(path){
@@ -130,7 +150,7 @@ var SIG_SUCCESS = 'Press CTRL-C to stop server.\n';
 var SIG_ERROR = 'Error: ';
 var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/../..')), 'g');
 function collect_output(data){
-	// process.stdout.write(this + ': ' + data);
+	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
 	if(/\ueeee/.test(data)){
 		setTimeout(function (){ // handle some time ctrl+c not affect
 			if(child){
@@ -143,9 +163,11 @@ function collect_output(data){
 	}
 	var pos;
 	if(!child.ispassthru){
+		start_timeout();
 		child.datacache += data.toString();
 		pos = child.datacache.indexOf(SIG_ERROR);
 		if(pos != -1){
+			remove_start_timeout();
 			process.stdout.write(colorful_error(child.datacache));
 			child.datacache = '';
 			process.stdout.write('\x1B[38;5;9m\nServer start FAILED!\x1B[0m\n');
@@ -156,7 +178,11 @@ function collect_output(data){
 		
 		pos = child.datacache.indexOf(SIG_SUCCESS);
 		if(pos != -1){
+			remove_start_timeout();
 			process.stdout.write('\x1B[38;5;10m\nServer restart OK!\x1B[0m\n');
+			process.stdout.write('\n打开 http://localhost:' + (LeanParams.port || 3000) + '/ 调试网站\n' +
+			                     '打开 http://localhost:' + (LeanParams.port || 3000) + '/avos 调试云代码\n\n' +
+			                     '进入命令行交互界面...\n');
 			process.stdout.write(child.datacache.substr(pos + SIG_SUCCESS.length));
 			child.stdout.pipe(process.stderr);
 			child.stderr.on('data', function (data){
