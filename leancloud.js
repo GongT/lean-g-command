@@ -33,6 +33,14 @@ if(fs.existsSync(APPPATH + 'package.proto.json')){
 	}
 	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg, null, 8).replace(/^        /mg, '\t'));
 }
+global.LeanParams = fs.readFileSync(APPPATH + 'package.json', 'utf-8');
+try{
+	eval('LeanParams=' + LeanParams);
+	LeanParams = LeanParams.leancloud || {};
+} catch(e){
+	console.error('无法解析package.json:\n\n' + e.stack);
+	process.exit(-1);
+}
 
 // 防止多进程同时启动
 if(fs.existsSync(APPPATH + '.runlock')){

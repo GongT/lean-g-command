@@ -8,7 +8,7 @@ AV.Cloud.define = function (name, fn){
 	if(fn.setTitle){
 		fn.setTitle(name);
 	} else{
-		console.error('云代码' + name + '没有用CloudClodeWrapper');
+		AV.log('云代码%s没有用CloudClodeWrapper', name);
 	}
 	return define_fn(name, fn);
 };
@@ -25,6 +25,7 @@ function CallbackList(){
 	this.fnList = [];
 }
 CallbackList.prototype.process = function (fn){
+	assert(fn);
 	this.fnList.push(function (data){
 		try{
 			if(data instanceof ArgumentsWrapper){
@@ -46,6 +47,7 @@ CallbackList.prototype.process = function (fn){
 	return this;
 };
 CallbackList.prototype.next = function (fn){
+	assert(fn);
 	this.fnList.push(function (data){
 		var ret;
 		try{
@@ -95,6 +97,7 @@ CallbackList.prototype.fail_trigger_error = function (e){
 };
 
 CallbackList.prototype.check = function (fn){
+	assert(fn);
 	this.fnList.push(function (data){
 		var ret;
 		if(data instanceof ArgumentsWrapper){
@@ -121,6 +124,7 @@ CallbackList.prototype.check = function (fn){
 	return this;
 };
 CallbackList.prototype.fork = function (testFn){
+	assert(testFn);
 	this.fnList.push(function (data){
 		var args;
 		if(data instanceof ArgumentsWrapper){
@@ -152,24 +156,28 @@ CallbackList.prototype.fork = function (testFn){
 };
 CallbackList.create_instance = function (clist, args, runtime){
 	if(!clist.fnList){
-		console.error(clist);
 		console.log('CallbackList.create_instance 错误', clist);
 	}
 	var p = new AV.Promise;
 	p.resolve.apply(p, args);
-
+	
 	if(!runtime){
 		runtime = {};
 	}
-
+	
 	clist.fnList.forEach(function (cb){
 		p = p.then(cb.bind(runtime));
 	});
-
+	
 	return p;
 };
 CallbackList.prototype.create_instance = function (args, runtime){
-	CallbackList.create_instance(this, args, runtime);
+	return CallbackList.create_instance(this, args, runtime);
+};
+CallbackList.prototype.getFunction = function (){
+	return function (){
+		return CallbackList.create_instance(this, arguments, this);
+	}.bind(this);
 };
 
 function CloudClodeWrapper(module){
@@ -197,7 +205,7 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 	var chk = new AV.InputChecker(req);
 	var runtime = new CloudCodeRuntime;
 	var p = CallbackList.create_instance(this._call_list, [chk], runtime);
-
+	
 	p.then(function (data){
 		if(data instanceof ArgumentsWrapper || arguments.length > 1){
 			rsp.error('[' + title + '] 处理链没有正确结束');
@@ -229,7 +237,7 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 			console.log('CloudCode [' + title + '] return error: ' + e.stringify());
 			e.response(rsp);
 		} else{
-			rsp.error('编程错误：[' + title + ']处理链的某一个回调返回了不符合标准的错误对象。');
+			rsp.error('编程错误：[' + title + ']处理链的某一个回调返回了不符合标准的错误对象: ' + e);
 			throw e;
 		}
 	});
@@ -261,3 +269,9 @@ CloudCodeRuntime.prototype.standard_return_data_array = function (data){
 		}
 	}
 };
+
+function assert(bool){
+	if(typeof bool != 'function'){
+		throw new TypeError('CallbackList 参数不是函数');
+	}
+}

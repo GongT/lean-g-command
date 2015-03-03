@@ -33,7 +33,8 @@
 	"analyze"        : true,
 	"license"        : "",
 	"leancloud"      : {
-		"deploy": ["lean-g/!(node_modules)/**", "lean-g/package.json", "views"]
+		"deploy": ["views"],
+		"debug" : 3000
 		/*"deploy": ["node_modules/!(avoscloud-code)/**", "views"]*/
 	}
 }

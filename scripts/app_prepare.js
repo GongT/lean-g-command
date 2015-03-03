@@ -9,7 +9,7 @@ function DEPLOY(AV, _require){
 	try{
 		process.env.TZ = 'UTC';
 		local = AV.localhost = true;
-		GROOT = AV.GROOT = '../';
+		GROOT = AV.GROOT = 'cloud/lean-g/';
 		CLOUDROOT = AV.CLOUDROOT = 'cloud/';
 		GENPATH = AV.GENPATH = CLOUDROOT + '__gen/';
 		APPPATH = AV.APPPATH = '';
@@ -24,8 +24,7 @@ function DEPLOY(AV, _require){
 	}
 	
 	AV.require = _require;
-	var e = console.error;
-	AV.fatal = console.error = function (errormessage){
+	AV.fatal = function (errormessage){
 		errormessage = errormessage || '';
 		try{
 			process.stderr.write('部署失败:\n' + errormessage.trim() + '\n');
@@ -37,7 +36,6 @@ function DEPLOY(AV, _require){
 	try{
 		var app = main(AV);
 		delete AV.fatal;
-		console.error = e;
 		return app;
 	} catch(e){
 		AV.fatal(e.stack);
@@ -87,6 +85,10 @@ function main(AV){
 	require(GENPATH + 'import.modules.js');
 	require(GENPATH + 'import.functions.js');
 	require(GENPATH + 'import.triggers.js');
+	
+	if(local){
+		AV.Cloud.define("__create_inspect", require(GROOT + 'include/InspectCC.js'));
+	}
 	
 	append_log('load express app...');
 	var avosExpressCookieSession = require('avos-express-cookie-session');

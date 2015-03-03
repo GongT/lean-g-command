@@ -40,7 +40,7 @@ function real_restart_server(){
 	if(child === null){
 		process.stdout.write('Starting server process...\r');
 	}
-	child = require('child_process').spawn(avosrun.runner, [],
+	child = require('child_process').spawn(avosrun.runner, ['-P', LeanParams.debug || 3000],
 			{
 				stdio: [process.stdin, 'pipe', 'pipe'],
 				env  : process.env

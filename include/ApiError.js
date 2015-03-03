@@ -52,6 +52,7 @@ ApiError.prototype.attach = function (data){
 	return ne;
 };
 
+module.exports = ApiError;
 module.exports.create = function (code, name, message){
 	var ne = new ApiError;
 	ne.name = name;
