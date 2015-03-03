@@ -1,5 +1,5 @@
 var _ = require('util');
-var AV = Object.AV;
+// var AV = Object.AV;
 var nsmarty = AV.nsmarty = require('nsmarty');
 var basename = require('path').basename;
 
@@ -11,7 +11,7 @@ AV.server.engine('.tpl', parse);
 module.exports.parse = register;
 module.exports.parseFile = function (file){
 	var name = basename(file, '.js');
-	var fn = require(file);
+	var fn = require(AV.GROOT + file);
 	if(typeof fn === 'function'){
 		var type = fn.type || 'function';
 		register(type, name, fn);

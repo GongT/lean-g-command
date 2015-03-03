@@ -34,7 +34,7 @@ module.exports.external = function (cmd){
 	});
 };
 
-module.exports.runner = require('path').resolve(ROOT, 'node_modules/avoscloud-code/bin/run.js');
+module.exports.runner = require('path').resolve(APPPATH, 'node_modules/avoscloud-code/bin/run.js');
 if(!module.exports.runner){
 	console.error("Cannot find avoscloud-code.");
 	process.exit(-1);

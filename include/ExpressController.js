@@ -1,5 +1,5 @@
 var _ = require('util');
-var AV = Object.AV;
+// var AV = Object.AV;
 var express = AV.express;
 
 module.exports = ExpressController;

@@ -1,4 +1,4 @@
-var AV = Object.AV;
+// var AV = Object.AV;
 var config = AV.CONFIG.dataApplication;
 var request = require('request');
 

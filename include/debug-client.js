@@ -1,9 +1,11 @@
+// var AV = Object.AV;
+
 module.exports = init;
 function init(app){
 	if(!process.env.DEBUG){
 		return;
 	}
-	global.AV = Object.AV;
+	global.AV = AV;
 	process.stdout.isTTY = true;
 	process.stdin.removeAllListeners('data');
 	process.stdout.removeAllListeners('data');

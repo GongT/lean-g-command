@@ -1,5 +1,6 @@
-module.exports.modifier = Object.AV.site_url;
+// var AV = Object.AV;
+module.exports.modifier = AV.site_url;
 module.exports['function'] = function (params){
-	return Object.AV.site_url(params.__get(null, null, 0));
+	return AV.site_url(params.__get(null, null, 0));
 };
 module.exports.type = 'modifier';

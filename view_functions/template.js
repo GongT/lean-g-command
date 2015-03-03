@@ -1,5 +1,6 @@
 var nsmarty = require('nsmarty');
-var CONSTANTS = Object.AV.CONSTANTS;
+// var AV = Object.AV;
+var CONSTANTS = AV.CONSTANTS;
 
 module.exports = function (params, data){
 	var $ua = data.runtime.__req.headers['user-agent'].toLowerCase();

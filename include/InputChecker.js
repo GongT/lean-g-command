@@ -1,4 +1,4 @@
-var AV = Object.AV;
+// var AV = Object.AV;
 
 module.exports = Checker;
 var checker_types = {};

@@ -1,4 +1,5 @@
-var CONSTANTS = Object.AV.CONSTANTS;
+// var AV = Object.AV;
+var CONSTANTS = AV.CONSTANTS;
 
 var librarys = {
 	'jquery': ['jquery' + (CONSTANTS.isDebugEnv? '.min' : '') + '.js', 'jquery.cookie.js']

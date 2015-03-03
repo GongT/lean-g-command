@@ -3,19 +3,17 @@
 var path = require('path'),
 		fs = require('fs'),
 		extend = require('util')._extend;
-var ROOT = global.ROOT = __dirname + '/';
-var APPPATH = global.APPPATH = process.cwd() + '/';
-console.log('LEAN-G: set ROOT = %s', ROOT);
-console.log('LEAN-G: set APPPATH = %s', APPPATH);
 
-var pkg = fs.readFileSync(APPPATH + 'package.proto.json', 'utf-8');
-try{
-	eval('pkg=' + pkg);
-} catch(e){
-	console.error('无法解析package.proto.json:\n\n' + e.stack);
-	process.exit(-1);
-}
-fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg), 'utf-8');
+var CAPPPATH = global.CAPPPATH = ''; // 项目路径
+
+var APPPATH = global.APPPATH = process.cwd() + '/'; // 项目路径 - 运行时
+var CLOUDROOT = global.CLOUDROOT = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
+
+var CGROOT = global.CGROOT = __dirname + '/'; // 框架存放路径
+var GROOT = global.GROOT = 'cloud/lean-g/'; // 框架存放路径 - 运行时
+
+console.log('LEAN-G: set CGROOT = %s', CGROOT);
+console.log('LEAN-G: set APPPATH = %s', APPPATH);
 
 var config_exists = fs.existsSync(APPPATH + 'config');
 
@@ -24,9 +22,65 @@ if(!initfunc){
 	usage("no command spec.");
 }
 
+// 解析package.json
+if(fs.existsSync(APPPATH + 'package.proto.json')){
+	var pkg = fs.readFileSync(APPPATH + 'package.proto.json', 'utf-8');
+	try{
+		eval('pkg=' + pkg);
+	} catch(e){
+		console.error('无法解析package.proto.json:\n\n' + e.stack);
+		process.exit(-1);
+	}
+	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg, null, 8).replace(/^        /mg, '\t'));
+}
+
+// 防止多进程同时启动
+if(fs.existsSync(APPPATH + '.runlock')){
+	console.error('另一个进程正在运行，这样做可能导致数据不同步（尤其上传代码时）。\n如果上次崩溃退出，那么删除 .runlock 文件重试。');
+	process.exit(-1);
+}
+var flock = fs.openSync(APPPATH + '.runlock', 'w');
+fs.write(flock, process.pid.toString(), process.pid.toString().length);
+function exitHandler(options, err){
+	if(options.cleanup){
+		if(flock){
+			fs.close(flock);
+		}
+		if(fs.existsSync(APPPATH + '.runlock')){
+			fs.unlinkSync(APPPATH + '.runlock');
+		}
+		if(pkg && fs.existsSync(APPPATH + 'package.json')){
+			fs.unlinkSync(APPPATH + 'package.json');
+		}
+	}
+	if(options.error){
+		console.log(err.stack);
+		process.exit();
+	}
+	if(options.exit){
+		process.exit();
+	}
+}
+exitHandler.exit = exitHandler.bind(null, {exit: true});
+exitHandler.clean_exit = exitHandler.bind(null, {cleanup: true});
+
+process.on('uncaughtException', exitHandler.bind(null, {error: true}));
+process.on('exit', exitHandler.clean_exit);
+process.on('SIGINT', exitHandler.exit);
+setImmediate(function (){ // 初始化过程结束后，把清理环境监听器放到最后
+	process.removeListener('exit', exitHandler.clean_exit);
+	process.removeListener('SIGINT', exitHandler.exit);
+	process.on('exit', exitHandler.clean_exit);
+	process.on('SIGINT', exitHandler.exit);
+});
+
 // 处理特殊命令（这些命令没有环境）
 if(initfunc == 'init'){
 	require('./scripts/copy_init_app_struct.js');
+	return;
+}
+if(initfunc == 'dependence'){
+	require('./scripts/resolve_dependence.js');
 	return;
 }
 if(initfunc == 'config'){
@@ -45,43 +99,10 @@ if(!config_exists){
 }
 
 // 检查要运行的命令文件
-var command_file = ROOT + 'scripts/commands/' + command + '.js';
+var command_file = CGROOT + 'scripts/commands/' + command + '.js';
 if(!fs.existsSync(command_file)){
 	usage("command file not exists: " + command_file + ".");
 }
-
-// 防止多进程同时启动
-if(fs.existsSync(APPPATH + '.runlock')){
-	console.error('另一个进程正在运行，这样做可能导致数据不同步（尤其上传代码时）。\n如果上次崩溃退出，那么删除 .runlock 文件重试。');
-	process.exit(-1);
-}
-var flock = fs.openSync(APPPATH + '.runlock', 'w');
-fs.write(flock, process.pid.toString(), process.pid.toString().length);
-function exitHandler(options, err){
-	if(options.cleanup){
-		fs.close(flock);
-		fs.unlinkSync(APPPATH + '.runlock');
-		fs.unlinkSync(APPPATH + 'package.json');
-	}
-	if(err){
-		console.log(err.stack);
-	}
-	if(options.exit){
-		process.exit();
-	}
-}
-exitHandler.exit = exitHandler.bind(null, {exit: true});
-exitHandler.clean_exit = exitHandler.bind(null, {cleanup: true});
-
-process.on('uncaughtException', exitHandler.exit);
-process.on('exit', exitHandler.clean_exit);
-process.on('SIGINT', exitHandler.exit);
-setImmediate(function (){
-	process.removeListener('exit', exitHandler.clean_exit);
-	process.removeListener('SIGINT', exitHandler.exit);
-	process.on('exit', exitHandler.clean_exit);
-	process.on('SIGINT', exitHandler.exit);
-});
 
 // 预备运行文件夹和环境
 process.env.HOME = global.HOME = APPPATH + '.avoscloud';
@@ -108,7 +129,7 @@ if(fs.existsSync(dcfile)){
 extend(APP_CONFIG, require(cfile));
 global.APP_CONFIG = APP_CONFIG;
 
-global.update = require(ROOT + 'scripts/avos_config');
+global.update = require(CGROOT + 'scripts/avos_config');
 
 /* real run !! */
 global.update.everything();
@@ -149,10 +170,10 @@ function usage(text){
 	console.error('');
 	
 	console.error('Available Command:');
-	require('fs').readdirSync(ROOT + 'scripts/commands').filter(function (n){
+	require('fs').readdirSync(CGROOT + 'scripts/commands').filter(function (n){
 		return n.substr(0, 1) != '.';
 	}).map(function (f){
-		var content = fs.readFileSync(ROOT + 'scripts/commands/' + f);
+		var content = fs.readFileSync(CGROOT + 'scripts/commands/' + f);
 		var title = /@title: (.*)/.exec(content);
 		title = title? title[1] : '???';
 		console.error('\t\x1B[38;5;10m' + path.basename(f, '.js') + '\x1B[0m - ' + title);

@@ -25,8 +25,7 @@
 	"preferGlobal"   : true,
 	"devDependencies": {
 		"chokidar"       : "~0.12.0",
-		"promise"       : "~6.1.0",
-		"avoscloud-code": "git+https://github.com/GongT/avoscloud-code-command.git"
+		"promise"       : "~6.1.0"
 	},
 	"analyze"        : true,
 	"license"        : "MIT"

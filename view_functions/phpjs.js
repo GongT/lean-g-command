@@ -1,5 +1,6 @@
 var nsmarty = require('nsmarty');
-var phpjs = Object.AV.phpjs = nsmarty.Parser._phpjs = require('phpjs');
+// var AV = Object.AV;
+var phpjs = AV.phpjs = nsmarty.Parser._phpjs = require('phpjs');
 
 module.exports = function (params){
 	var fn = params.__get(false, null, 0);

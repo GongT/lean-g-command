@@ -1,7 +1,11 @@
 var fs = require('fs');
 var basename = require('path').basename;
-var ROOT = global.ROOT;
+
 var APPPATH = global.APPPATH;
+var CGROOT = global.CGROOT;
+var GROOT = global.GROOT;
+
+var CLOUDROOT = global.CLOUDROOT;
 var APP_CONFIG = global.APP_CONFIG;
 var APP_NAME = global.APP_NAME;
 var APP_TYPE = global.APP_TYPE;
@@ -87,14 +91,14 @@ function update_avos_config(){
 function read_proto_folder(){
 	var data = {};
 	['static', 'property'].forEach(function (type){
-		var path = ROOT + 'database_proto/' + type;
+		var path = APPPATH + 'database_proto/' + type;
 		if(!fs.existsSync(path)){
 			return;
 		}
 		data[type] = {};
 		fs.readdirSync(path).filter(isJsFile).forEach(function (f){
 			var n = basename(f, '.js');
-			data[type][n] = '../database_proto/' + type + '/' + f;
+			data[type][n] = GROOT + 'database_proto/' + type + '/' + f;
 		});
 	});
 	return data;
@@ -154,8 +158,8 @@ function update_avos_express(){
 	fs.writeFileSync(GENPATH + 'import.express.js', source.join("\n"));
 	
 	var vflist = {};
-	fs.readdirSync(ROOT + 'view_functions').filter(isJsFile).forEach(function (f){
-		vflist[basename(f, '.js')] = '../view_functions/' + f;
+	fs.readdirSync(CGROOT + 'view_functions').filter(isJsFile).forEach(function (f){
+		vflist[basename(f, '.js')] = 'view_functions/' + f;
 	});
 	if(fs.existsSync(APPPATH + 'cloud/view_functions')){
 		fs.readdirSync(APPPATH + 'cloud/view_functions').filter(isJsFile).forEach(function (f){
@@ -267,17 +271,7 @@ function update_avos_trigger(){
 }
 
 function update_debug(){
-	var types = require(ROOT + 'include/InputChecker.types');
-	var scripts = 'function Checker(){}\n';
-	for(var name in types){
-		var uctype = name.replace(/^./, function (m){
-			return m.toUpperCase();
-		});
-		scripts += 'Checker.prototype.require' + uctype + ' = function(name){return name;};\n';
-		scripts += 'Checker.prototype.require' + uctype + 'Array = function(name){return name;};\n';
-		scripts += 'Checker.prototype.optional' + uctype + ' = function(name,def){return def;};\n';
-		scripts += 'Checker.prototype.optional' + uctype + 'Array = function(name,def){return def;};\n';
-	}
+	var scripts = '';
 	scripts += 'global.APP_CONFIG = ' + JSON.stringify(APP_CONFIG, null, 8);
 	scripts += 'global.APP_NAME = ' + JSON.stringify(APP_NAME, null, 8);
 	
@@ -287,7 +281,7 @@ function update_debug(){
 function update_error_number(){
 	var em = require(APPPATH + 'errormessage.json');
 	var last_code = -1;
-	var script = ['AV = Object.AV;', 'AV.E = {};'];
+	var script = [];
 	em.forEach(function (item){
 		var code, name, message;
 		if(typeof item[0] == 'number'){
@@ -301,7 +295,7 @@ function update_error_number(){
 		name = item[0];
 		message = item[1];
 		
-		script.push('AV.E.' + name + ' = AV.ApiError.create(' + code + ',' + JSON.stringify(name) +
+		script.push('module.exports.' + name + ' = AV.ApiError.create(' + code + ',' + JSON.stringify(name) +
 		            ',' + JSON.stringify(message) + ');');
 	});
 	

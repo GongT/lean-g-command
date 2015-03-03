@@ -1,4 +1,4 @@
-var AV = Object.AV;
+// var AV = Object.AV;
 module.exports = CloudClodeWrapper;
 module.exports.CallbackList = CallbackList;
 module.exports.Arguments = ArgumentsWrapper;

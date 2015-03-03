@@ -1,3 +1,5 @@
+// var AV = Object.AV;
+
 module.exports = function (params, template, data, repeat){
 	if(repeat.value){
 		return;
@@ -290,7 +292,7 @@ var replacer = function (template, data){
 	}
 }.toString();
 
-if(!Object.AV.isDebugEnv){
+if(!AV.isDebugEnv){
 	request_init = uglify(request_init);
 	replacer = uglify(replacer);
 }

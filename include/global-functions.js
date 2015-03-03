@@ -1,4 +1,4 @@
-var AV = Object.AV;
+// var AV = Object.AV;
 var slash_start = /^\//;
 var CONSTANT = AV.CONSTANTS;
 

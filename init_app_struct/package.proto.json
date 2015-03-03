@@ -25,13 +25,15 @@
 	},
 	"preferGlobal"   : true,
 	"devDependencies": {
-		"chokidar": "~0.12.0",
-		"promise" : "~6.1.0"
+		"avoscloud-code": "git+https://github.com/GongT/avoscloud-code-command.git",
+		"chokidar"      : "~0.12.0",
+		"promise"       : "~6.1.0"
 	},
 	"private"        : true,
 	"analyze"        : true,
 	"license"        : "",
 	"leancloud"      : {
-		"deploy": ["node_modules/!(avoscloud-code)/**", "views"]
+		"deploy": ["lean-g/!(node_modules)/**", "lean-g/package.json", "views"]
+		/*"deploy": ["node_modules/!(avoscloud-code)/**", "views"]*/
 	}
 }

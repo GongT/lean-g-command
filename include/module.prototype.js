@@ -1,9 +1,9 @@
 var extend = require('util')._extend;
-var AV = Object.AV;
+// var AV = Object.AV;
 
 function DatabaseModel(name, basepath, config){
-	var cls = bindAll(name, config['static'], DatabaseModel._prototype.static);
-	var prop = bindAll(name, config['property'], DatabaseModel._prototype.property);
+	var cls = bindAll(name, config['static'] || {}, DatabaseModel._prototype.static);
+	var prop = bindAll(name, config['property'] || {}, DatabaseModel._prototype.property);
 	
 	if(config.constants){
 		extend(cls, require(config.constants));
