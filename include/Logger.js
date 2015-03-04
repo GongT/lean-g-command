@@ -65,6 +65,8 @@ if(AV.localhost){
 	}
 } else{
 	disabled.push('print');
+	delete levels['debug'];
+	disabled.push('debug');
 }
 Logger.prototype.debug_database = (disabled.indexOf('debug') == -1)? function (p, text){
 	var self = this;
