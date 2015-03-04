@@ -268,13 +268,15 @@ function update_avos_trigger(){
 		}
 	});
 	
-	/* 定时器 */
-	source.push('AV.Timer = {};');
-	fs.readdirSync(APPPATH + 'cloud/timers').filter(isJsFile).forEach(function (f){
-		console.log('\t定时器：' + basename(f, '.js'));
-		source.push('AV.Cloud.define("' + basename(f, '.js') + '", AV.Timer.' + basename(f, '.js') +
-		            ' = require("cloud/timers/' + f + '"));');
-	});
+	if(fs.existsSync(APPPATH + 'cloud/timers')){
+		/* 定时器 */
+		source.push('AV.Timer = {};');
+		fs.readdirSync(APPPATH + 'cloud/timers').filter(isJsFile).forEach(function (f){
+			console.log('\t定时器：' + basename(f, '.js'));
+			source.push('AV.Cloud.define("' + basename(f, '.js') + '", AV.Timer.' + basename(f, '.js') +
+			            ' = require("cloud/timers/' + f + '"));');
+		});
+	}
 	
 	fs.writeFileSync(GENPATH + 'import.triggers.js', source.join("\n"));
 }

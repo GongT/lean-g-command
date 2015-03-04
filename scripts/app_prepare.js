@@ -23,6 +23,10 @@ function DEPLOY(AV, _require){
 		console.log('start deploy on leancloud server.');
 	}
 	
+	if(!fs.existsSync(GENPATH)){
+		fs.mkdirSync(GENPATH);
+	}
+	
 	AV.require = _require;
 	AV.fatal = function (errormessage){
 		errormessage = errormessage || '';
@@ -119,16 +123,18 @@ function main(AV){
 	}
 	
 	AV.server = app;
-	console.log(CONFIG);
+	
+	append_log('load express smarty template...');
+	AV.templatePlugin = require(GROOT + 'include/express-nsmarty-shim.js');
+	require(GENPATH + 'import.nsmarty.js').forEach(function (f){
+		AV.templatePlugin.parseFile(f);
+	});
+	
+	app.set('views', 'views');
 	if(!CONFIG.lean.template || CONFIG.lean.template == 'ejs'){
-		app.set('views', 'views');
 		app.set('view engine', 'ejs');
 	} else if(CONFIG.lean.template == 'smarty'){
-		append_log('load express smarty template...');
-		AV.templatePlugin = require(GROOT + 'include/express-nsmarty-shim.js');
-		require(GENPATH + 'import.nsmarty.js').forEach(function (f){
-			AV.templatePlugin.parseFile(f);
-		});
+		app.set('view engine', '.tpl');
 	} else{
 		throw new Error("未知模板引擎：" + CONFIG.lean.template);
 	}

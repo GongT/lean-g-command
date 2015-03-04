@@ -5,7 +5,6 @@ var basename = require('path').basename;
 
 delete nsmarty.tpl_path;
 nsmarty.tpl_path = AV.server.get('views') + '/';
-AV.server.set('view engine', '.tpl');
 AV.server.engine('.tpl', parse);
 
 module.exports.parse = register;
