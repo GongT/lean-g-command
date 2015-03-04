@@ -1,3 +1,5 @@
+var port = LeanParams.debug || 3000;
+
 /**
  * @title: 开启本地调试服务器，可以在本地浏览器里调试所有代码逻辑。
  */
@@ -40,7 +42,7 @@ function real_restart_server(){
 	if(child === null){
 		process.stdout.write('Starting server process...\r');
 	}
-	child = require('child_process').spawn(avosrun.runner, ['-P', LeanParams.debug || 3000],
+	child = require('child_process').spawn(avosrun.runner, ['-P', port],
 			{
 				stdio: [process.stdin, 'pipe', 'pipe'],
 				env  : process.env
@@ -180,8 +182,8 @@ function collect_output(data){
 		if(pos != -1){
 			remove_start_timeout();
 			process.stdout.write('\x1B[38;5;10m\nServer restart OK!\x1B[0m\n');
-			process.stdout.write('\n打开 http://localhost:' + (LeanParams.port || 3000) + '/ 调试网站\n' +
-			                     '打开 http://localhost:' + (LeanParams.port || 3000) + '/avos 调试云代码\n\n' +
+			process.stdout.write('\n打开 http://localhost:' + port + '/ 调试网站\n' +
+			                     '打开 http://localhost:' + port + '/avos 调试云代码\n\n' +
 			                     '进入命令行交互界面...\n');
 			process.stdout.write(child.datacache.substr(pos + SIG_SUCCESS.length));
 			child.stdout.pipe(process.stderr);
