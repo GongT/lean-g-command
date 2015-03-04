@@ -23,10 +23,6 @@ function DEPLOY(AV, _require){
 		console.log('start deploy on leancloud server.');
 	}
 	
-	if(!fs.existsSync(GENPATH)){
-		fs.mkdirSync(GENPATH);
-	}
-	
 	AV.require = _require;
 	AV.fatal = function (errormessage){
 		errormessage = errormessage || '';

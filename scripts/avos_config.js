@@ -15,6 +15,11 @@ var extend = require('util')._extend;
 var avosInternalDataBase = ['user', 'cloudlog', 'file', 'followee', 'follower', 'installation', 'notification', 'role'];
 var avosInternalDataBaseMap = {'cloudlog': 'cloud_log'};
 
+
+if(!fs.existsSync(GENPATH)){
+	fs.mkdirSync(GENPATH);
+}
+
 function ucfirst(s){
 	return s.replace(/^[a-z]/, function (a){
 		return a.toUpperCase();
