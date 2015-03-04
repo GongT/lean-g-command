@@ -187,6 +187,9 @@ function update_avos_library(){
 function read_tree(dir){
 	var ret = {};
 	var hidden = /^\./;
+	if(!fs.existsSync(APPPATH + dir)){
+		return {};
+	}
 	fs.readdirSync(APPPATH + dir).forEach(function (f){
 		if(hidden.test(f)){
 			return;
