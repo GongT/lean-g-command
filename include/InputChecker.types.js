@@ -99,7 +99,7 @@ module.exports = {
 	},
 	"dataObject"        : function (v){
 		if(typeof v === 'object' && !Array.isArray(v)){
-			return new AV.lib.inputChecker({params: v});
+			return new AV.InputChecker(v);
 		}
 	},
 	'geoObject'         : function (v){

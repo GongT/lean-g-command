@@ -107,6 +107,10 @@ if(!config_exists){
 	usage("config folder not exists");
 }
 
+if(!require('./scripts/check_version.js')){
+	return;
+}
+
 // 检查要运行的命令文件
 var command_file = CGROOT + 'scripts/commands/' + command + '.js';
 if(!fs.existsSync(command_file)){

@@ -202,7 +202,7 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 	var self = this;
 	var title = self.__title__;
 	// console.log('getTitle(%s)', title);
-	var chk = new AV.InputChecker(req);
+	var chk = new AV.InputChecker(req.params);
 	var runtime = new CloudCodeRuntime;
 	var p = CallbackList.create_instance(this._call_list, [chk], runtime);
 	

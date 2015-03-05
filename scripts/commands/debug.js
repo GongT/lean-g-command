@@ -1,4 +1,5 @@
 var port = LeanParams.debug || 3000;
+var fs = require('fs');
 
 /**
  * @title: 开启本地调试服务器，可以在本地浏览器里调试所有代码逻辑。
@@ -52,7 +53,7 @@ function real_restart_server(){
 		process.stdin.pause();
 		if(code == 9 || (code == 0 && ctrlCpress)){
 			console.log(colors.red('\n结束调试（因为按下了 ^C）'));
-			process.exit();
+			reset_input_and_exit();
 		}
 		if(code == 10){
 			console.log(colors.red('\n服务器没有正确启动\x1B[0m\n==============================='));
@@ -92,7 +93,7 @@ function start_timeout(){
 			process.stdout.write(child.datacache);
 			child.datacache = '';
 			process.stdout.write("\n(-- 下面可能还会有 --)\n");
-		}else{
+		} else{
 			var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
 			process.stdout.write("\n" + msg + "\n\n");
 			process.stdout.write(child.datacache);
@@ -220,7 +221,7 @@ function colorful_error(s){
 function cleanup(){
 	watch.close();
 	if(child){
-		process.stdin.setRawMode(false);
+		reset_input();
 		child.kill('SIGINT');
 	}
 }
@@ -249,3 +250,26 @@ function RegExpEscape(s){
 
 process.stdout.write('starting lean-cloud server... ');
 real_restart_server();
+
+function reset_input(){
+	process.stdin.setRawMode(false);
+	process.stdin.pause();
+	process.stdout.pause();
+	process.stderr.pause();
+}
+function reset_input_and_exit(){
+	reset_input();
+	if(fs.existsSync('/usr/bin/stty')){
+		require('child_process').spawnSync('/usr/bin/stty', ['echo'], {
+			"stdio": [process.stdin, process.stdout, process.stderr]
+		});
+	} else if(fs.existsSync('/bin/stty')){
+		require('child_process').spawnSync('/bin/stty', ['echo'], {
+			"stdio": [process.stdin, process.stdout, process.stderr]
+		});
+	}
+	require('child_process').spawnSync('/bin/stty', [], {
+		"stdio": [process.stdin, process.stdout, process.stderr]
+	});
+	process.exit(0);
+}
