@@ -17,8 +17,12 @@ ApiError.prototype.toStrongJSON = function (){
 	return JSON.parse(this.stringify());
 };
 ApiError.prototype.response = function (resp){ // 主动调用，和throw的区别是 这个HTTP 200
-	resp.send(this.toStrongJSON());
-	resp.end();
+	try{
+		resp.send(this.toStrongJSON());
+		resp.end();
+	}catch(e){
+		console.debug(resp);
+	}
 };
 ApiError.prototype.toString = function (){ // 在被throw的时候会被调用
 	return '[ApiError ' + this.name + ']'; // 返回给客户端（不能避免HTTP 500）
