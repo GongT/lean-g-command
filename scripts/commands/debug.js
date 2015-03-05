@@ -51,18 +51,18 @@ function real_restart_server(){
 		process.stdin.setRawMode(false);
 		process.stdin.pause();
 		if(code == 9 || (code == 0 && ctrlCpress)){
-			console.log('\n\x1B[38;5;14m结束调试（因为按下了 ^C）\x1B[0m');
+			console.log(colors.red('\n结束调试（因为按下了 ^C）'));
 			process.exit();
 		}
 		if(code == 10){
-			console.log('\n\x1B[38;5;9m服务器没有正确启动\x1B[0m\n===============================');
+			console.log(colors.red('\n服务器没有正确启动\x1B[0m\n==============================='));
 		}
 		if(code == 100){
 			real_restart_server();
 			return;
 		}
 		if(code != 0){
-			console.log('\x1B[38;5;9mlean-cloud server failed with code ' + code + '\x1B[0m');
+			console.log(colors.red('lean-cloud server failed with code ' + code));
 			if(!child.ispassthru && child.datacache){
 				process.stdout.write('\x1B[38;5;9m' + child.datacache + '\x1B[0m');
 			}
@@ -86,11 +86,19 @@ function start_timeout(){
 		clearTimeout(child.starting);
 	}
 	child.starting = setTimeout(function (){
-		var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
-		process.stdout.write("\n" + msg + "\n\n");
-		process.stdout.write(child.datacache);
-		child.datacache = '';
-		process.stdout.write("\n(-- 下面可能还会有 --)\n");
+		if(child.datacache){
+			var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
+			process.stdout.write("\n" + colors.fmsg + "\n\n");
+			process.stdout.write(child.datacache);
+			child.datacache = '';
+			process.stdout.write("\n(-- 下面可能还会有 --)\n");
+		}else{
+			var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
+			process.stdout.write("\n" + msg + "\n\n");
+			process.stdout.write(child.datacache);
+			child.datacache = '';
+			process.stdout.write("\n(-- 下面可能还会有 --)\n");
+		}
 	}, 5000);
 }
 function remove_start_timeout(){
@@ -172,7 +180,7 @@ function collect_output(data){
 			remove_start_timeout();
 			process.stdout.write(colorful_error(child.datacache));
 			child.datacache = '';
-			process.stdout.write('\x1B[38;5;9m\nServer start FAILED!\x1B[0m\n');
+			process.stdout.write('\n' + colors.red('Server start FAILED!') + '\n');
 			process.stdin.setRawMode(false);
 			child.kill('SIGINT');
 			return;

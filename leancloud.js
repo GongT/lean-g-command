@@ -3,6 +3,7 @@
 var path = require('path'),
 		fs = require('fs'),
 		extend = require('util')._extend;
+global.colors = require('colors/safe');
 
 var CAPPPATH = global.CAPPPATH = ''; // 项目路径
 
@@ -145,15 +146,7 @@ require(command_file);
 
 /* support functions */
 function usage(text){
-	var s = 'The G Framework - LeanCloud -';
-	for(var i = 0; i < s.length; i++){
-		var c = (i%13 + 1);
-		if(c == 4){
-			c = 255;
-		}
-		process.stderr.write('\x1B[38;5;' + c + 'm' + s[i]);
-	}
-	process.stderr.write('\x1B[0m\n\t');
+	console.error(colors.rainbow('The G Framework - LeanCloud -\n'));
 	console.error('' + text + ' ');
 	
 	if(!config_exists){
@@ -173,7 +166,7 @@ function usage(text){
 		} catch(e){
 			appname = '配置文件无法解析!!';
 		}
-		console.error('\t\x1B[38;5;10m' + path.basename(f, '.json') + '\x1B[0m - ' + appname);
+		console.error('\t' + colors.green(path.basename(f, '.json')) + ' - ' + appname);
 	});
 	console.error('');
 	
@@ -184,7 +177,7 @@ function usage(text){
 		var content = fs.readFileSync(CGROOT + 'scripts/commands/' + f);
 		var title = /@title: (.*)/.exec(content);
 		title = title? title[1] : '???';
-		console.error('\t\x1B[38;5;10m' + path.basename(f, '.js') + '\x1B[0m - ' + title);
+		console.error('\t' + colors.green(path.basename(f, '.js')) + ' - ' + title);
 	});
 	
 	process.exit(1);
