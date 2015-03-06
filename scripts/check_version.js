@@ -1,11 +1,12 @@
 var fs = require('fs');
 var isWin = /^win/.test(process.platform);
-var SAVE_PATH = process.cwd() + '/node/';
+var SAVE_PATH = process.cwd() + '/.avoscloud/node/';
 var SAVE_FILE = SAVE_PATH + 'node' + (isWin? '.exe' : '.tar.gz');
 var PATH_TO_NODE = isWin? SAVE_FILE : SAVE_PATH + 'bin/node';
 
 module.exports = (function (){
 	var get_sub = /v\d+\.(\d+)\.\d+/;
+	console.error('nodejs version = '+process.version);
 	
 	var maths = get_sub.exec(process.version);
 	if(!maths){
@@ -15,7 +16,7 @@ module.exports = (function (){
 	var current = parseInt(maths[1]);
 	if(current < 12){
 		if(fs.existsSync(PATH_TO_NODE)){
-			restart();
+			return restart();
 		}
 		console.error('nodejs版本太老: ' + process.version + '，需要: v0.12.0 以上');
 		determine();
@@ -142,28 +143,18 @@ function untar(){
 }
 
 function install_tar(){
-	var cmd, args;
-	if(isWin){
-		cmd = 'cmd';
-		args = ['/C', 'npm', 'install', 'tar'];
-	} else{
-		cmd = 'npm';
-		args = ['install', 'tar'];
-	}
 	stopAnimation();
-	console.log('npm install tar...');
 	animation();
-	require('child_process').spawn(cmd, args, {
-		stdio: "inherit"
-	}).on('exit', function (e){
+	
+	require('./pure_install.js')(function (e){
 		stopAnimation();
-		console.log('\ntar installed...');
 		if(e === 0){
+			console.log('tar installed...');
 			untar();
 		} else{
 			error('缺少npm依赖：tar');
 		}
-	}).unref();
+	}, "tar");
 }
 
 function error(msg){
@@ -186,7 +177,6 @@ function restart(){
 	var p = require('child_process').spawn(PATH_TO_NODE, args, {
 		stdio: "inherit"
 	});
-	p.unref();
 	p.on('exit', function (e){
 		process.exit(e);
 	})

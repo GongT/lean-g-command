@@ -89,16 +89,13 @@ function start_timeout(){
 	child.starting = setTimeout(function (){
 		if(child.datacache){
 			var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
-			process.stdout.write("\n" + colors.fmsg + "\n\n");
+			process.stdout.write("\n" + colors.red(msg) + "\n\n");
 			process.stdout.write(child.datacache);
 			child.datacache = '';
 			process.stdout.write("\n(-- 下面可能还会有 --)\n");
 		} else{
-			var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
-			process.stdout.write("\n" + msg + "\n\n");
-			process.stdout.write(child.datacache);
-			child.datacache = '';
-			process.stdout.write("\n(-- 下面可能还会有 --)\n");
+			msg = '服务器没有在规定时间内启动，可能出现错误，而且没有输出。';
+			process.stdout.write("\n" + colors.red(msg) + "\n\n");
 		}
 	}, 5000);
 }
@@ -163,11 +160,14 @@ var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/
 function collect_output(data){
 	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
 	if(/\ueeee/.test(data)){
+		console.log('children ctrl+c');
 		setTimeout(function (){ // handle some time ctrl+c not affect
 			if(child){
 				ctrlCpress = true;
-				process.stdin.setRawMode(false);
+				child.unref();
 				child.kill('SIGINT');
+				process.stdin.setRawMode(false);
+				process.stdin.resume();
 			}
 		}, 1000);
 		return;
@@ -259,7 +259,7 @@ function reset_input(){
 }
 function reset_input_and_exit(){
 	reset_input();
-	if(fs.existsSync('/usr/bin/stty')){
+	/*if(fs.existsSync('/usr/bin/stty')){
 		require('child_process').spawnSync('/usr/bin/stty', ['echo'], {
 			"stdio": [process.stdin, process.stdout, process.stderr]
 		});
@@ -270,6 +270,6 @@ function reset_input_and_exit(){
 	}
 	require('child_process').spawnSync('/bin/stty', [], {
 		"stdio": [process.stdin, process.stdout, process.stderr]
-	});
+	});*/
 	process.exit(0);
 }

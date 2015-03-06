@@ -15,7 +15,6 @@ var extend = require('util')._extend;
 var avosInternalDataBase = ['user', 'cloudlog', 'file', 'followee', 'follower', 'installation', 'notification', 'role'];
 var avosInternalDataBaseMap = {'cloudlog': 'cloud_log'};
 
-
 if(!fs.existsSync(GENPATH)){
 	fs.mkdirSync(GENPATH);
 }
@@ -42,14 +41,19 @@ function isJsFile(f){
 
 function class_name(name){
 	if(avosInternalDataBase.indexOf(name.toLowerCase()) == -1){
+		return ucfirst(windows_style(name));
+	} else{
 		if(avosInternalDataBaseMap[name.toLowerCase()]){
 			name = avosInternalDataBaseMap[name.toLowerCase()];
 		}
-		return ucfirst(windows_style(name));
-	} else{
 		return '_' + ucfirst(name);
 	}
 }
+
+function map_back(name){
+	return name.replace(/^_/, '');
+}
+
 /**/
 function update_avos_config(){
 	// CurrentApp
@@ -98,10 +102,7 @@ function update_avos_config(){
 function read_proto_folder(){
 	var data = {};
 	['static', 'property'].forEach(function (type){
-		var path = APPPATH + 'database_proto/' + type;
-		if(!fs.existsSync(path)){
-			return;
-		}
+		var path = GROOT + 'database_proto/' + type;
 		data[type] = {};
 		fs.readdirSync(path).filter(isJsFile).forEach(function (f){
 			var n = basename(f, '.js');
@@ -129,13 +130,18 @@ function read_module_folder(basepath, types){
 function update_avos_module(){
 	var source = [];
 	
-	source.push('AV.CLS._prototype.extend(' + JSON.stringify(read_proto_folder(), null, 8) + ');');
+	var prototype = read_proto_folder();
+	if(Object.keys(prototype).length){
+		source.push('AV.CLS._prototype.extend(' + JSON.stringify(prototype, null, 8) + ');');
+	}
 	
 	/* 数据模型、基本组件 */
 	if(fs.existsSync(APPPATH + 'cloud/database/_proto_') &&
 	   fs.lstatSync(APPPATH + 'cloud/database/_proto_').isDirectory()){
-		var prototype = read_module_folder('cloud/database/_proto_/', ['static', 'property']);
-		source.push('AV.CLS._prototype.extend(' + JSON.stringify(prototype, null, 8) + ');');
+		prototype = read_module_folder('cloud/database/_proto_/', ['static', 'property']);
+		if(Object.keys(prototype).length){
+			source.push('AV.CLS._prototype.extend(' + JSON.stringify(prototype, null, 8) + ');');
+		}
 	}
 	
 	fs.readdirSync(APPPATH + 'cloud/database').forEach(function (f){
@@ -150,7 +156,7 @@ function update_avos_module(){
 		if(fs.existsSync(base + f + '.js') && fs.lstatSync(base + f + '.js').size > 3){
 			datadef.constants = basepath + f + '.js';
 		}
-		source.push('AV.CLS.' + database + ' = AV.CLS("' + database + '", "' + basepath +
+		source.push('AV.CLS.' + map_back(database) + ' = AV.CLS("' + database + '", "' + basepath +
 		            '", ' + JSON.stringify(datadef, null, 8) + ');');
 	});
 	
@@ -223,7 +229,7 @@ function update_avos_function(){
 		if(fs.existsSync((APPPATH + 'cloud/functions-debug'))){
 			fs.readdirSync(APPPATH + 'cloud/functions-debug').filter(isJsFile).forEach(function (f){
 				console.log('\t测试函数：' + f);
-				source.push('AV.Cloud.define("' + basename(f, '.js') + '", AV.Cloud.' + basename(f, '.js') +
+				source.push('AV.Cloud.define("__' + basename(f, '.js') + '", AV.Cloud.__' + basename(f, '.js') +
 				            ' = require("cloud/functions-debug/' + f + '"));');
 			});
 		}
@@ -269,7 +275,7 @@ function update_avos_trigger(){
 		
 		if(Object.keys(result).join('')){
 			console.log('\t触发器：%s -- %s', database, Object.keys(result).join(','));
-			source.push('AV.CLS.' + database + '.registerTrigger(' + JSON.stringify(result, null, 8) + ');');
+			source.push('AV.CLS.' + map_back(database) + '.registerTrigger(' + JSON.stringify(result, null, 8) + ');');
 		}
 	});
 	

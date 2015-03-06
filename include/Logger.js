@@ -25,13 +25,15 @@ function Logger(msg){
 	for(var name in levels){
 		var text = levels[name];
 		if(disabled.indexOf(name) >= 0){
-			if(remoteLogger){
+			if(name == 'debug'){
+				this[name] = noop;
+			} else if(remoteLogger){
 				this[name] = prepend('[' + msg + '][' + text + '] ', remote());
 			} else{
 				this[name] = noop;
 			}
 		} else{
-			var fn = null;
+			var fn = console.log;
 			if(name == 'warn' || name == 'error'){
 				fn = console.error;
 			}
@@ -164,7 +166,7 @@ function create_client(){
 	});
 	loggerSocket.on('connect', function (){
 		retryTimeout = 0;
-		console.log('[RemoteLogger]socket created...');
+		console.log('[RemoteLogger]socket created ... 级别 [' + disabled.join(',') + '] 将不会出现在leancloud后台');
 		connected = true;
 		if(loggerSocket.cache){
 			loggerSocket.write(loggerSocket.cache);

@@ -1,4 +1,5 @@
 // var AV = Object.AV;
+var vm = require('vm');
 
 module.exports = init;
 function init(app){
@@ -14,7 +15,9 @@ function init(app){
 		input          : process.stdin,
 		output         : process.stdout,
 		useGlobal      : true,
-		ignoreUndefined: true
+		terminal       : true,
+		ignoreUndefined: true,
+		eval           : notDefaultEval
 	});
 	var rli = repl.rli;
 	rli.removeAllListeners('SIGINT');
@@ -25,10 +28,12 @@ function init(app){
 		if(!(repl.bufferedCommand && repl.bufferedCommand.length > 0) && empty){
 			if(sawSIGINT){
 				console.error('\ueeee\rchild: will exit with double ctrl+c');
-				process.exit(9);
-				process.stdin.resume();
+				process.stdin.setRawMode(false);
+				process.stdout.isTTY = false;
+				process.stdin.pause();
 				process.stdout.pause();
 				process.stderr.pause();
+				process.exit(9);
 				return;
 			}
 			rli.output.write('(^C again to quit)\n');
@@ -77,6 +82,8 @@ function init(app){
 			process.exit(100);
 		}
 	});
+	
+	define_global_helpers();
 }
 
 var JsOrCss = /\.(js|css)$/;
@@ -103,4 +110,62 @@ function shimResponse(data, encoding){
 		process.stderr.write('\x1B[0m');
 	}
 	return this.__end();
+}
+
+function define_global_helpers(){
+}
+
+function notDefaultEval(code, context, file, cb){
+	var err, result;
+	// first, create the Script object to check the syntax
+	if(code.length < 4){ // (\n)
+		return cb(null, undefined);
+	}
+	try{
+		var script = vm.createScript(code, {
+			filename     : file,
+			displayErrors: false
+		});
+	} catch(e){
+		console.error('parse error %j', code, e);
+		if(isRecoverableError(e)){
+			err = new Recoverable(e);
+		} else{
+			err = e;
+		}
+	}
+	
+	if(err){
+		if(err && err.stack){
+			console.error(err.stack.replace(/at REPLServer\.eval_handler[\S\s]+/, '').trim());
+		}
+	} else{
+		try{
+			if(true){
+				result = script.runInThisContext({displayErrors: false});
+			} else{
+				result = script.runInContext(context, {displayErrors: false});
+			}
+		} catch(e){
+			err = e;
+			if(err && err.stack){
+				console.error(err.stack.replace(/at REPLServer\.eval_handler[\S\s]+/, '').trim());
+			}
+			if(err && process.domain){
+				process.domain.emit('error', err);
+				process.domain.exit();
+				return;
+			}
+		}
+	}
+	
+	if(AV.Promise.is(result)){
+		result.done(function (data){
+			cb(undefined, data);
+		}, function (err){
+			cb(err, undefined);
+		});
+	} else{
+		cb(err, result);
+	}
 }

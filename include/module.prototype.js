@@ -22,6 +22,7 @@ function DatabaseModel(name, basepath, config){
 	}
 	
 	mdl.prototype.class = mdl;
+	mdl.prototype.className = name;
 	return mdl;
 }
 

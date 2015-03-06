@@ -3,7 +3,24 @@
 var path = require('path'),
 		fs = require('fs'),
 		extend = require('util')._extend;
-global.colors = require('colors/safe');
+
+if(!require('./scripts/check_version.js')){
+	return;
+}
+
+try{
+	global.colors = require('colors/safe');
+} catch(e){
+	require('./scripts/pure_install.js')(function (e){
+		if(e === 0){
+			console.log('colors installed...');
+			console.log('请重试！');
+		} else{
+			error('缺少npm依赖：colors');
+		}
+	}, "colors");
+	return;
+}
 
 var CAPPPATH = global.CAPPPATH = ''; // 项目路径
 
@@ -105,10 +122,6 @@ if(!command){
 // 确定运行过init
 if(!config_exists){
 	usage("config folder not exists");
-}
-
-if(!require('./scripts/check_version.js')){
-	return;
 }
 
 // 检查要运行的命令文件

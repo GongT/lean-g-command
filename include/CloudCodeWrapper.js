@@ -236,9 +236,11 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 		if(e instanceof AV.ApiError){
 			console.log('CloudCode [' + title + '] return error: ' + e.stringify());
 			e.response(rsp);
-		} else{
-			rsp.error('编程错误：[' + title + ']处理链的某一个回调返回了不符合标准的错误对象: ' + e);
-			throw e;
+		} else if(e instanceof Error){
+			rsp.error('编程错误：[' + title + ']处理链的某一个回调返回了不符合标准的错误对象: ' + e.stack);
+		}else{
+			console.log('CloudCode [' + title + '] return standard error: ' + e.message);
+			rsp.error(e);
 		}
 	});
 };
