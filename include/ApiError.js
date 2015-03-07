@@ -18,7 +18,9 @@ ApiError.prototype.toStrongJSON = function (){
 };
 ApiError.prototype.response = function (resp){ // 主动调用，和throw的区别是 这个HTTP 200
 	try{
-		if(resp.send){
+		if(resp.success){
+			resp.success(this.toStrongJSON());
+		} else if(resp.send){
 			resp.send(this.toStrongJSON());
 			resp.end();
 		} else{
