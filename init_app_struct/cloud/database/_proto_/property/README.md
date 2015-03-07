@@ -4,7 +4,7 @@ module.exports = function (x){
 };
 
 javascript:
-var x = new AV.CLS._User;
+var x = new AV.CLS.User;
 x.say_hello("");
 
 
