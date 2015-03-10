@@ -19,11 +19,14 @@ module.exports = function (){
 	});
 };
 
-var platformExec;
-module.exports.external = function (cmd){
+var platformExternalSpawn;
+module.exports.external = function (cmd, args){
 	return new Promise(function (resolve, reject){
 		console.log('start external program - %s', cmd);
-		var p = platformExec(cmd);
+		var p = platformExternalSpawn(cmd, args, {
+			stdio: 'inherit',
+			env  : process.env
+		});
 		p.on("exit", function (code){
 			if(code == 0){
 				resolve();
@@ -43,10 +46,10 @@ if(!module.exports.runner){
 
 if(process.env.comspec){
 	module.exports.spawn = spawn_windows;
-	platformExec = exec_windows;
+	platformExternalSpawn = exec_windows;
 } else{
 	module.exports.spawn = spawn_linux;
-	platformExec = exec_linux;
+	platformExternalSpawn = exec_linux;
 }
 
 function spawn_windows(args, options){
@@ -68,13 +71,13 @@ function exec_windows(command, args, options){
 	if(!args){
 		args = [];
 	}
-	args = ['/C', 'node', command].concat(args);
+	args = ['/C', command].concat(args);
 	
 	console.log('exec external file - %s %s.', process.env.comspec, args.join(' '));
-	return childProcess.exec(process.env.comspec, args, options);
+	return childProcess.spawn(process.env.comspec, args, options);
 }
 
 function exec_linux(command, args, options){
 	console.log('exec external file - %s %s.', command, args.join(' '));
-	return childProcess.exec(command, args, options);
+	return childProcess.spawn(command, args, options);
 }
