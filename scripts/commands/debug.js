@@ -166,7 +166,7 @@ var SIG_SUCCESS = 'Press CTRL-C to stop server.\n';
 var SIG_ERROR = 'Error: ';
 var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/../..')), 'g');
 function collect_output(data){
-	 process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
+	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
 	var pos;
 	if(/\ueeee/.test(data)){
 		setTimeout(function (){ // handle some time ctrl+c not affect
