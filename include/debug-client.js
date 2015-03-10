@@ -6,6 +6,7 @@ function init(app){
 	if(!process.env.DEBUG){
 		return;
 	}
+	console.log('starting server with debug console...');
 	global.AV = AV;
 	process.stdout.isTTY = true;
 	process.stdin.removeAllListeners('data');
@@ -27,12 +28,7 @@ function init(app){
 		rli.clearLine();
 		if(!(repl.bufferedCommand && repl.bufferedCommand.length > 0) && empty){
 			if(sawSIGINT){
-				console.error('\ueeee\rchild: will exit with double ctrl+c');
-				process.stdin.setRawMode(false);
-				process.stdout.isTTY = false;
-				process.stdin.pause();
-				process.stdout.pause();
-				process.stderr.pause();
+				// console.error('\ueeee\rchild: will exit with double ctrl+c');
 				process.exit(9);
 				return;
 			}
@@ -48,13 +44,7 @@ function init(app){
 	rli.on('line', function (){
 		sawSIGINT = false;
 	});
-	// console.log('\r\x1B[38;5;14mrepl started\x1B[0m');
-	
-	process.stdin.resume();
-	
-	setTimeout(function (){
-		repl.displayPrompt();
-	}, 0);
+	console.log('\r\x1B[38;5;14mrepl started\x1B[0m');
 	
 	var http = require('http');
 	var realResponse = http.ServerResponse.prototype.end;
@@ -67,7 +57,7 @@ function init(app){
 	http.OutgoingMessage.prototype.__end =
 	http.ServerResponse.prototype.__end = realResponse;
 	
-	// console.log('\r\x1B[38;5;14mhttp.OutgoingMessage has been replaced!\x1B[0m');
+	console.log('\r\x1B[38;5;14mhttp.OutgoingMessage has been replaced!\x1B[0m');
 	
 	if(AV.CONFIG.lean.template && AV.CONFIG.lean.template == 'smarty'){
 		app.use(function (_1, _2, next){
@@ -84,6 +74,10 @@ function init(app){
 	});
 	
 	define_global_helpers();
+	
+	setTimeout(function (){
+		repl.displayPrompt();
+	},1000);
 }
 
 var JsOrCss = /\.(js|css)$/;

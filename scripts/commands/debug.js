@@ -35,7 +35,6 @@ function real_restart_server(){
 		process.stdout.write('   Server process now restarting...\r');
 		child.unref();
 		child.removeAllListeners('exit');
-		process.stdin.setRawMode(false);
 		child.kill('SIGINT');
 	}
 	
@@ -49,11 +48,9 @@ function real_restart_server(){
 				env  : process.env
 			});
 	child.on("exit", function (code){
-		process.stdin.setRawMode(false);
-		process.stdin.pause();
 		if(code == 9 || (code == 0 && ctrlCpress)){
 			console.log(colors.red('\n结束调试（因为按下了 ^C）'));
-			reset_input_and_exit();
+			process.exit(0);
 		}
 		if(code == 10){
 			console.log(colors.red('\n服务器没有正确启动\x1B[0m\n==============================='));
@@ -159,19 +156,6 @@ var SIG_ERROR = 'Error: ';
 var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/../..')), 'g');
 function collect_output(data){
 	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
-	if(/\ueeee/.test(data)){
-		console.log('children ctrl+c');
-		setTimeout(function (){ // handle some time ctrl+c not affect
-			if(child){
-				ctrlCpress = true;
-				child.unref();
-				child.kill('SIGINT');
-				process.stdin.setRawMode(false);
-				process.stdin.resume();
-			}
-		}, 1000);
-		return;
-	}
 	var pos;
 	if(!child.ispassthru){
 		start_timeout();
@@ -182,7 +166,6 @@ function collect_output(data){
 			process.stdout.write(colorful_error(child.datacache));
 			child.datacache = '';
 			process.stdout.write('\n' + colors.red('Server start FAILED!') + '\n');
-			process.stdin.setRawMode(false);
 			child.kill('SIGINT');
 			return;
 		}
@@ -192,9 +175,9 @@ function collect_output(data){
 			remove_start_timeout();
 			process.stdout.write('\x1B[38;5;10m\nServer restart OK!\x1B[0m\n');
 			process.stdout.write('\n打开 http://localhost:' + port + '/ 调试网站\n' +
-			                     '打开 http://localhost:' + port + '/avos 调试云代码\n\n' +
-			                     '进入命令行交互界面...\n');
-			process.stdout.write(child.datacache.substr(pos + SIG_SUCCESS.length));
+			                     '打开 http://localhost:' + port + '/avos 调试云代码\n');
+			process.stdout.write(child.datacache.substr(pos + SIG_SUCCESS.length) + '\n');
+			process.stdin.write('进入命令行交互界面...\n\n\n');
 			child.stdout.pipe(process.stderr);
 			child.stderr.on('data', function (data){
 				data = colorful_error(data.toString());
@@ -202,9 +185,6 @@ function collect_output(data){
 			});
 			delete child.datacache;
 			child.ispassthru = true;
-			
-			process.stdin.setRawMode(true);
-			process.stdin.pause();
 		}
 	}
 }
@@ -221,7 +201,6 @@ function colorful_error(s){
 function cleanup(){
 	watch.close();
 	if(child){
-		reset_input();
 		child.kill('SIGINT');
 	}
 }
@@ -250,26 +229,3 @@ function RegExpEscape(s){
 
 process.stdout.write('starting lean-cloud server... ');
 real_restart_server();
-
-function reset_input(){
-	process.stdin.setRawMode(false);
-	process.stdin.pause();
-	process.stdout.pause();
-	process.stderr.pause();
-}
-function reset_input_and_exit(){
-	reset_input();
-	/*if(fs.existsSync('/usr/bin/stty')){
-		require('child_process').spawnSync('/usr/bin/stty', ['echo'], {
-			"stdio": [process.stdin, process.stdout, process.stderr]
-		});
-	} else if(fs.existsSync('/bin/stty')){
-		require('child_process').spawnSync('/bin/stty', ['echo'], {
-			"stdio": [process.stdin, process.stdout, process.stderr]
-		});
-	}
-	require('child_process').spawnSync('/bin/stty', [], {
-		"stdio": [process.stdin, process.stdout, process.stderr]
-	});*/
-	process.exit(0);
-}
