@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var isWin = /^win/.test(process.platform);
 var SAVE_PATH = process.cwd() + '/.avoscloud/node/';
 var SAVE_FILE = SAVE_PATH + 'node' + (isWin? '.exe' : '.tar.gz');
@@ -86,7 +87,7 @@ function determine(){
 
 function download(url){
 	if(!fs.existsSync(SAVE_PATH)){
-		fs.mkdirSync(SAVE_PATH);
+		mkdir_tree(SAVE_PATH);
 	}
 	if(fs.existsSync(SAVE_FILE)){
 		untar();
@@ -244,4 +245,12 @@ function show_progress(req, res){
 		process.stderr.write(' [' + progress.join('') + ']   ' +
 		                     Math.floor(percent*100) + '%\r');
 	});
+}
+
+function mkdir_tree(dir){
+	var parent = path.resolve(dir, '..');
+	if(!fs.existsSync(dir)){
+		mkdir_tree(parent);
+		fs.mkdirSync(dir);
+	}
 }

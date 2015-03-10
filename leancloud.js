@@ -8,19 +8,9 @@ if(!require('./scripts/check_version.js')){
 	return;
 }
 
-try{
-	global.colors = require('colors/safe');
-} catch(e){
-	require('./scripts/pure_install.js')(function (e){
-		if(e === 0){
-			console.log('colors installed...');
-			console.log('请重试！');
-		} else{
-			error('缺少npm依赖：colors');
-		}
-	}, "colors");
-	return;
-}
+var confirm_module = require('./scripts/pure_install.js').confirm;
+console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
+console.assert(confirm_module('promise'), '安装失败，请尝试手动安装');
 
 var CAPPPATH = global.CAPPPATH = ''; // 项目路径
 
