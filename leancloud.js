@@ -12,6 +12,8 @@ var confirm_module = require('./scripts/pure_install.js').confirm;
 console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('promise'), '安装失败，请尝试手动安装');
 
+var colors = global.colors = require('colors/safe');
+
 var CAPPPATH = global.CAPPPATH = ''; // 项目路径
 
 var APPPATH = global.APPPATH = process.cwd() + '/'; // 项目路径 - 运行时

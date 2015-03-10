@@ -18,12 +18,12 @@ module.exports.confirm = function (req, pack){
 		global.colors = require(req);
 		return true;
 	} catch(e){
-		console.info('try to install %s installed...');
+		console.info('正在安装依赖 %s...', pack || req);
 		var exit = module.exports(pack || req);
 		if(exit === 0){
 			try{
 				global.colors = require('colors/safe');
-				console.info('%s installed...', pack || req);
+				console.info('%s 安装成功！', pack || req);
 				return true;
 			} catch(e){
 				console.error('无法安装依赖 %s ...', pack || req);
