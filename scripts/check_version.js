@@ -145,17 +145,7 @@ function untar(){
 
 function install_tar(){
 	stopAnimation();
-	animation();
-	
-	require('./pure_install.js')(function (e){
-		stopAnimation();
-		if(e === 0){
-			console.log('tar installed...');
-			untar();
-		} else{
-			error('缺少npm依赖：tar');
-		}
-	}, "tar");
+	console.assert(require('./pure_install.js').confirm('tar'), '缺少npm依赖：tar');
 }
 
 function error(msg){
