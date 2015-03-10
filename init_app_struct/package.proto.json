@@ -27,7 +27,8 @@
 	"devDependencies": {
 		"avoscloud-code": "git+https://github.com/GongT/avoscloud-code-command.git",
 		"chokidar"      : "~0.12.0",
-		"promise"       : "~6.1.0"
+		"promise"       : "~6.1.0",
+		"repl.history"  : "*"
 	},
 	"private"        : true,
 	"analyze"        : true,

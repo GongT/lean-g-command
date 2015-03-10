@@ -28,7 +28,7 @@ process.on('SIGINT', cleanup);
 //catches uncaught exceptions
 process.on('uncaughtException', cleanup);
 
-var child, killtime = 0, ctrlCpress = false;
+var child, killtime = 0, ctrlCpress = false, firstTime = true;
 function real_restart_server(){
 	killtime = 0;
 	if(child){
@@ -44,7 +44,7 @@ function real_restart_server(){
 	}
 	child = avosrun.spawn(['-P', port],
 			{
-				stdio: [process.stdin, 'pipe', 'pipe'],
+				stdio: [process.stdin, 'pipe', 'pipe', 'pipe'],
 				env  : process.env
 			});
 	child.on("exit", function (code){
@@ -56,6 +56,7 @@ function real_restart_server(){
 			console.log(colors.red('\n服务器没有正确启动\x1B[0m\n==============================='));
 		}
 		if(code == 100){
+			need_update.every(true);
 			real_restart_server();
 			return;
 		}
@@ -63,6 +64,9 @@ function real_restart_server(){
 			console.log(colors.red('lean-cloud server failed with code ' + code));
 			if(!child.ispassthru && child.datacache){
 				process.stdout.write('\x1B[38;5;9m' + child.datacache + '\x1B[0m');
+				if(child.datacache.indexOf('uncaughtException: listen EADDRINUSE')){
+					process.exit(1);
+				}
 			}
 		}
 		child = null;
@@ -84,6 +88,9 @@ function start_timeout(){
 		clearTimeout(child.starting);
 	}
 	child.starting = setTimeout(function (){
+		if(!child){
+			return;
+		}
 		if(child.datacache){
 			var msg = '服务器没有在规定时间内启动，可能出现错误，这些是启动过程中的输出';
 			process.stdout.write("\n" + colors.red(msg) + "\n\n");
@@ -104,7 +111,7 @@ function remove_start_timeout(){
 }
 
 function on_file_change(path){
-	process.stderr.write('\rfile changed: ' + path);
+	process.stderr.write('\rfile changed: ' + path + '\r');
 	if(/errormessage\.json/.test(path)){
 		need_update.errno = true;
 	}
@@ -126,9 +133,9 @@ function on_file_change_struct(path){
 		restart_server();
 		return;
 	}
-	process.stderr.write('\rfile added or removed: ' + path);
+	process.stderr.write('\rfile added or removed: ' + path + '\r');
 	var will_restart = false;
-	if(/[\/\\](debug|functions)[\/\\]/.test(path)){
+	if(/[\/\\](functions-debug|functions)[\/\\]/.test(path)){
 		need_update.function = true;
 		need_update.debug = true;
 		will_restart = true;
@@ -174,18 +181,35 @@ function collect_output(data){
 		if(pos != -1){
 			remove_start_timeout();
 			process.stdout.write('\x1B[38;5;10m\nServer restart OK!\x1B[0m\n');
-			process.stdout.write('\n打开 http://localhost:' + port + '/ 调试网站\n' +
-			                     '打开 http://localhost:' + port + '/avos 调试云代码\n');
+			
+			if(firstTime){
+				firstTime = false;
+				process.stdout.write('\n打开 http://localhost:' + port + '/ 调试网站\n' +
+				                     '打开 http://localhost:' + port + '/avos 调试云代码\n');
+				process.stdin.write('输入 rs 重启服务器\n输入 help 查看帮助\n');
+			}
+			
 			process.stdout.write(child.datacache.substr(pos + SIG_SUCCESS.length) + '\n');
-			process.stdin.write('进入命令行交互界面...\n\n\n');
 			child.stdout.pipe(process.stderr);
 			child.stderr.on('data', function (data){
 				data = colorful_error(data.toString());
 				process.stdout.write('\x1B[38;5;1m' + data + '\x1B[0m');
 			});
 			delete child.datacache;
+			child.kill('SIGPIPE');
 			child.ispassthru = true;
+			remote_call('process.stdout.columns = ' + process.stdout.columns + ';');
 		}
+	}
+}
+
+process.stdout.on('resize', function (){
+	remote_call('process.stdout.columns = ' + process.stdout.columns + ';');
+});
+
+function remote_call(code){
+	if(child && child.exitCode === null && child.stdio[3]){
+		child.stdio[3].write(code + '\0');
 	}
 }
 
@@ -206,9 +230,12 @@ function cleanup(){
 }
 
 var need_update = {
-	none: function (){
+	none : function (v){
+		this.every(false);
+	},
+	every: function (v){
 		for(var i in global.update){
-			need_update[i] = false;
+			need_update[i] = v;
 		}
 	}
 };

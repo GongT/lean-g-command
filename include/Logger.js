@@ -12,64 +12,115 @@ var levels = {
 	'error': 'ERROR'
 };
 var levels_color = {
-	'print': '14',
-	'debug': '8',
-	'info' : '14',
-	'log'  : '8',
-	'warn' : '3',
-	'error': '9'
+	'print': '0;40;90',
+	'debug': '1;40;97',
+	'info' : '1;40;96',
+	'log'  : '0',
+	'warn' : '0;40;33',
+	'error': '5;40;31'
 };
-var disabled = [];
+
+var regist = [];
+var noLocal = [];
+
+if(!AV.isDebugEnv){ // 正式环境不要info和debug
+	noLocal.push('debug');
+	noLocal.push('info');
+}
+
+(function (){ // 测试环境接受命令行参数 有颜色
+	if(AV.localhost){
+		for(var name in levels){
+			var first = name.substr(0, 1);
+			if(process.argv.indexOf('+' + first)){
+				var reen = noLocal.indexOf(name);
+				if(reen >= 0){
+					noLocal.splice(reen, 1);
+				}
+			} else if(process.argv.indexOf('-' + first)){
+				noLocal.push(name);
+			}
+			levels[name] = levels[name];
+			if(levels_color[name]){
+				var color = '\x1B[' + levels_color[name] + 'm';
+				var normal = '\x1B[0m';
+				levels[name] = color + levels[name] + normal;
+			}
+		}
+	} else{
+		noLocal.push('print');
+		noLocal.push('debug');
+	}
+})();
+
+(function (){
+	for(var name in levels){ // 准备所有级别的输出函数
+		var text = levels[name].toUpperCase();
+		var fn = console.log;
+		if(name == 'warn' || name == 'error'){
+			fn = console['error'];
+		}
+		
+		Logger[name + 'ToLocalOnly'] = createPrepend(text, fn);
+		Logger[name + 'ToNull'] = noop;
+		if(remoteLogger){
+			Logger[name + 'ToLocalRemote'] = createPrepend(text, remote(fn));
+			Logger[name + 'ToRemoteOnly'] = createPrepend(text, remote());
+		} else{
+			Logger[name + 'ToLocalRemote'] = Logger[name + 'ToLocalOnly'];
+			Logger[name + 'ToRemoteOnly'] = Logger[name + 'ToNull'];
+		}
+	}
+})();
 
 function Logger(msg){
+	if(regist[msg]){
+		return regist[msg];
+	}
+	this._prepend = '[' + msg + ']';
 	for(var name in levels){
-		var text = levels[name];
-		if(disabled.indexOf(name) >= 0){
-			if(name == 'debug'){
-				this[name] = noop;
-			} else if(remoteLogger){
-				this[name] = prepend('[' + msg + '][' + text + '] ', remote());
-			} else{
-				this[name] = noop;
-			}
+		if(noLocal.indexOf(name) == -1){
+			this.enableLocal(name);
 		} else{
-			var fn = console.log;
-			if(name == 'warn' || name == 'error'){
-				fn = console.error;
-			}
-			this[name] = prepend('[' + msg + '][' + text + '] ', remote(fn));
+			this.disableLocal(name);
 		}
 	}
 }
-
-if(!AV.isDebugEnv){
-	disabled.push('debug');
-	disabled.push('info');
-}
-
-if(AV.localhost){
-	for(var name in levels){
-		var first = name.substr(0, 1);
-		if(process.argv.indexOf('+' + first)){
-			var reen = disabled.indexOf(name);
-			if(reen >= 0){
-				disabled.splice(reen, 1);
-			}
-		} else if(process.argv.indexOf('-' + first)){
-			disabled.push(name);
-		}
-		levels[name] = levels[name];
-		if(levels_color[name]){
-			var color = '\x1B[38;5;' + levels_color[name] + 'm';
-			var normal = '\x1B[0m';
-			levels[name] = color + levels[name] + normal;
-		}
+Logger.prototype.enableLocal = function (level){
+	if(level == 'debug'){
+		this[level] = Logger[level + 'ToLocalOnly'];
+	} else{
+		this[level] = Logger[level + 'ToLocalRemote'];
 	}
-} else{
-	disabled.push('print');
-	disabled.push('debug');
-}
-Logger.prototype.debug_database = (disabled.indexOf('debug') == -1)? function (p, text){
+};
+Logger.prototype.disableLocal = function (level){
+	if(level == 'debug'){
+		this[level] = Logger[level + 'ToNull'];
+	} else{
+		this[level] = Logger[level + 'ToRemoteOnly'];
+	}
+};
+Logger.enableLocal = function (level){
+	var item = noLocal.indexOf(level);
+	if(item != -1){
+		noLocal.splice(item, 1);
+		regist.forEach(function (log){
+			log.enableLocal(level);
+		});
+	}
+};
+Logger.disableLocal = function (level){
+	var item = noLocal.indexOf(level);
+	if(item == -1){
+		noLocal.push(item);
+		regist.forEach(function (log){
+			log.disableLocal(level);
+		});
+	}
+};
+Logger.status = noLocal;
+
+Logger.prototype.debug_database = (noLocal.indexOf('debug') == -1)? function (p, text){
 	var self = this;
 	if(!text){
 		text = '';
@@ -85,11 +136,11 @@ Logger.prototype.debug_database = (disabled.indexOf('debug') == -1)? function (p
 	return p;
 };
 
-function prepend(what, fn){
+function createPrepend(level, fn){
 	if(!fn){
-		fn = console.log;
+		return noop;
 	}
-	return function (){
+	return function (){ // this is `Logger`
 		for(var i = 0; i < arguments.length; i++){
 			if(arguments[i] instanceof Error){
 				arguments[i] = arguments[i].stack;
@@ -99,15 +150,15 @@ function prepend(what, fn){
 			}
 		}
 		if(typeof arguments[0] == 'string'){ // log("debug %s is %d", a, b)
-			arguments[0] = what + arguments[0];
+			arguments[0] = this._prepend + '[' + level + ']' + arguments[0];
 			fn.apply(console, arguments);
 		} else if(arguments.length <= 1){ // log(10086)
-			fn.apply(console, [what, arguments[0]]);
+			fn.apply(console, [this._prepend + '[' + level + ']', arguments[0]]);
 		} else{ // log(10086, ab, cd)
-			var args = [what].concat(arguments);
+			var args = [this._prepend + '[' + level + ']'].concat(arguments);
 			fn.apply(console, args);
 		}
-	}
+	};
 }
 function getTs(){
 	var d = new Date();
@@ -165,7 +216,7 @@ function create_client(){
 	});
 	loggerSocket.on('connect', function (){
 		retryTimeout = 0;
-		console.log('[RemoteLogger]socket created ... 级别 [' + disabled.join(',') + '] 将不会出现在leancloud后台');
+		console.log('[RemoteLogger]socket created ... 级别 [' + noLocal.join(',') + '] 将不会出现在leancloud后台');
 		connected = true;
 		if(loggerSocket.cache){
 			loggerSocket.write(loggerSocket.cache);

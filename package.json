@@ -25,7 +25,8 @@
 	"preferGlobal"   : true,
 	"devDependencies": {
 		"chokidar"       : "~0.12.0",
-		"promise"       : "~6.1.0"
+		"promise"       : "~6.1.0",
+		"repl.history"  : "*"
 	},
 	"analyze"        : true,
 	"license"        : "MIT"
