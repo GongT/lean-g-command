@@ -64,17 +64,17 @@ function spawn_linux(args, options){
 	return childProcess.spawn(module.exports.runner, args, options);
 }
 
-function exec_windows(args, options){
+function exec_windows(command, args, options){
 	if(!args){
 		args = [];
 	}
-	args = ['/C', 'node', module.exports.runner].concat(args);
+	args = ['/C', 'node', command].concat(args);
 	
 	console.log('exec external file - %s %s.', process.env.comspec, args.join(' '));
 	return childProcess.exec(process.env.comspec, args, options);
 }
 
-function exec_linux(args, options){
-	console.log('exec external file - %s %s.', module.exports.runner, args.join(' '));
-	return childProcess.exec(module.exports.runner, args, options);
+function exec_linux(command, args, options){
+	console.log('exec external file - %s %s.', command, args.join(' '));
+	return childProcess.exec(command, args, options);
 }
