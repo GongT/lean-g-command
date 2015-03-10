@@ -48,9 +48,9 @@ function real_restart_server(){
 				env  : process.env
 			});
 	child.on("exit", function (code){
-		if(code == 9 || (code == 0 && ctrlCpress)){
-			console.log(colors.red('\n结束调试（因为按下了 ^C）'));
-			process.exit(0);
+		if(code == 111 || (code == 0 && ctrlCpress)){
+			console.log(colors.red('\n结束调试（因为按下了 ^C）...'));
+			return;
 		}
 		if(code == 10){
 			console.log(colors.red('\n服务器没有正确启动\x1B[0m\n==============================='));
@@ -61,6 +61,10 @@ function real_restart_server(){
 			return;
 		}
 		if(code != 0){
+			if(ctrlCpress){
+				process.exit(0);
+				return;
+			}
 			console.log(colors.red('lean-cloud server failed with code ' + code));
 			if(!child.ispassthru && child.datacache){
 				process.stdout.write('\x1B[38;5;9m' + child.datacache + '\x1B[0m');
@@ -162,8 +166,18 @@ var SIG_SUCCESS = 'Press CTRL-C to stop server.\n';
 var SIG_ERROR = 'Error: ';
 var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/../..')), 'g');
 function collect_output(data){
-	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
+	 process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
 	var pos;
+	if(/\ueeee/.test(data)){
+		setTimeout(function (){ // handle some time ctrl+c not affect
+			if(child){
+				ctrlCpress = true;
+				child.unref();
+				child.kill('SIGHUP');
+			}
+		}, 1000);
+		return;
+	}
 	if(!child.ispassthru){
 		start_timeout();
 		child.datacache += data.toString();

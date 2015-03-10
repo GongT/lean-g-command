@@ -15,7 +15,7 @@ console.assert(confirm_module('promise'), '安装失败，请尝试手动安装'
 var colors = global.colors = require('colors/safe');
 
 var CAPPPATH = global.CAPPPATH = ''; // 项目路径
-
+process.removeAllListeners()
 var APPPATH = global.APPPATH = process.cwd() + '/'; // 项目路径 - 运行时
 var CLOUDROOT = global.CLOUDROOT = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
 
