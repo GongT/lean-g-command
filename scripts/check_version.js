@@ -6,7 +6,7 @@ var PATH_TO_NODE = isWin? SAVE_FILE : SAVE_PATH + 'bin/node';
 
 module.exports = (function (){
 	var get_sub = /v\d+\.(\d+)\.\d+/;
-	console.error('nodejs version = '+process.version);
+	console.error('nodejs version = ' + process.version);
 	
 	var maths = get_sub.exec(process.version);
 	if(!maths){
@@ -93,7 +93,7 @@ function download(url){
 	} else{
 		var file = fs.createWriteStream(SAVE_FILE);
 		not_complete();
-		console.log('正在从 %s 下载');
+		console.log('正在从 %s 下载', url);
 		var req = require("http").get(url, function (res){
 			if(res.statusCode != 200){
 				error("nodejs下载服务器错误");
