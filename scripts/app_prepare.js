@@ -107,10 +107,14 @@ function main(AV){
 	app.use(require('less-middleware')('public'));
 	
 	//启用cookie 1小时
-	app.use(express.cookieParser('gfx'));
+	if(!CONFIG.session){
+		CONFIG.session = {};
+	}
+	app.use(express.cookieParser(CONFIG.cookeyParser || 'leang'));
 	app.use(avosExpressCookieSession({
-		cookie: {maxAge: 1000*60*60*24*360},
-		key   : CONFIG.sessionKey || 'NODESESSID'
+		cookie   : {maxAge: CONFIG.session.expire},
+		key      : CONFIG.session.key || 'NODESESSID',
+		fetchUser: CONFIG.session.fetchUser
 	}));
 	
 	if(local){

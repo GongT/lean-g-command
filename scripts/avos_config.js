@@ -147,7 +147,7 @@ function update_avos_module(){
 	fs.readdirSync(APPPATH + 'cloud/database').forEach(function (f){
 		var base = APPPATH + 'cloud/database/' + f + '/';
 		var basepath = 'cloud/database/' + f + '/';
-		if(!fs.existsSync(base) || !fs.lstatSync(base).isDirectory() || f == '_proto_'){
+		if(/^(\.|_)/.test(f) || !fs.existsSync(base) || !fs.lstatSync(base).isDirectory()){
 			return;
 		}
 		var database = class_name(basename(f));
