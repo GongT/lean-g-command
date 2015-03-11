@@ -40,7 +40,7 @@ if(!AV.isDebugEnv){ // 正式环境不要info和debug
 			} else if(process.argv.indexOf('-' + first)){
 				noLocal.push(name);
 			}
-			levels[name] = levels[name];
+			levels[name] = levels[name].toUpperCase();
 			if(levels_color[name]){
 				var color = '\x1B[' + levels_color[name] + 'm';
 				var normal = '\x1B[0m';
@@ -55,9 +55,9 @@ if(!AV.isDebugEnv){ // 正式环境不要info和debug
 
 (function (){
 	for(var name in levels){ // 准备所有级别的输出函数
-		var text = levels[name].toUpperCase();
+		var text = levels[name];
 		var fn = console.log;
-		if(name == 'warn' || name == 'error'){
+		if(AV.localhost || name == 'warn' || name == 'error'){
 			fn = console['error'];
 		}
 		
@@ -78,6 +78,9 @@ function Logger(msg){
 		return regist[msg];
 	}
 	this._prepend = '[' + msg + ']';
+	if(AV.localhost){
+		this._prepend = '\x1B[0m' + this._prepend;
+	}
 	for(var name in levels){
 		if(noLocal.indexOf(name) == -1){
 			this.enableLocal(name);
@@ -150,12 +153,12 @@ function createPrepend(level, fn){
 			}
 		}
 		if(typeof arguments[0] == 'string'){ // log("debug %s is %d", a, b)
-			arguments[0] = this._prepend + '[' + level + ']' + arguments[0];
+			arguments[0] = this._prepend + '[' + level + '] ' + arguments[0];
 			fn.apply(console, arguments);
 		} else if(arguments.length <= 1){ // log(10086)
-			fn.apply(console, [this._prepend + '[' + level + ']', arguments[0]]);
+			fn.apply(console, [this._prepend + '[' + level + '] ', arguments[0]]);
 		} else{ // log(10086, ab, cd)
-			var args = [this._prepend + '[' + level + ']'].concat(arguments);
+			var args = [this._prepend + '[' + level + '] '].concat(arguments);
 			fn.apply(console, args);
 		}
 	};

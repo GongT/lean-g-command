@@ -50,6 +50,15 @@ function main(AV){
 	append_log('load config...');
 	var CONFIG = AV.CONFIG = require(GENPATH + 'config.js');
 	AV.isDebugEnv = CONFIG.isDebugEnv;
+	if(!AV.CONFIG.template){
+		AV.CONFIG.template = {};
+	}
+	if(!AV.CONFIG.session){
+		AV.CONFIG.session = {};
+	}
+	
+	append_log('load remotelogger...');
+	AV.Logger = require(GROOT + 'include/Logger.js');
 	
 	append_log('load library (libload apierror prototype)...');
 	AV.lib = AV.library = require(GROOT + 'include/library_loader.js');
@@ -67,8 +76,7 @@ function main(AV){
 		AV.InputChecker.register(n, types[n]);
 	}
 	
-	append_log('load library (logger controller cloudcode servercloud)...');
-	AV.Logger = require(GROOT + 'include/Logger.js');
+	append_log('load library (controller cloudcode servercloud)...');
 	AV.ExpressController = require(GROOT + 'include/ExpressController.js');
 	AV.CloudCodeWrapper = require(GROOT + 'include/CloudCodeWrapper.js');
 	AV.ServerCloud = require(GROOT + 'include/ServerCloud.js');

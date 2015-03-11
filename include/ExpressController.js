@@ -1,5 +1,6 @@
 var _ = require('util');
 // var AV = Object.AV;
+var console = new AV.Logger('EC');
 var express = AV.express;
 
 module.exports = ExpressController;
@@ -18,7 +19,7 @@ ExpressController.prototype.route = function (path, router){
 	
 	if(AV.localhost){
 		AV.expressRoutersDebug += path + ' => ' + this.file + '\n';
-		console.log(path + ' => ' + this.file);
+		console.debug(path + ' => ' + this.file);
 	}
 	if(this._prepares.length){
 		router[m](path, init_runtime.bind(this), runPrepare.bind(this), runMain.bind(this));
@@ -73,7 +74,7 @@ module.exports.parse = function (config){
 	AV.expressRoutersDebug = '';
 	export_express_router(config, '/');
 	if(AV.localhost){
-		AV.expressRoutersDebug = console.log.bind(console, AV.expressRoutersDebug)
+		AV.expressRoutersDebug = console.debug.bind(console, AV.expressRoutersDebug)
 	}
 };
 
@@ -93,7 +94,7 @@ function export_express_router(config, _path){
 		var def = config[name];
 		if(typeof def === 'string'){
 			AV.expressRoutersDebug += '/' + def + '\n';
-			console.log('/' + def);
+			console.debug('/' + def);
 			var cntl = require(def);
 			cntl.file = def;
 			cntl.path = _path;
@@ -239,12 +240,12 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 	} else{
 		this.assign('error', e);
 		if(e instanceof AV.ApiError){
-			this.display(template || 'global/standard');
+			this.display(template || AV.CONFIG.template.standardErrorPage || 'standard_error');
 		} else if(e instanceof Error){
 			console.error(e.stack);
-			this.display(template || 'global/internal');
+			this.display(template ||  AV.CONFIG.template.internalErrorPage || 'internal_error');
 		} else{
-			this.display(template || 'global/user');
+			this.display(template ||  AV.CONFIG.template.userErrorPage || 'user_error');
 		}
 	}
 };
@@ -351,12 +352,12 @@ PrepareFunction.prototype.from = function (method, name, type){ // get, post, co
 			uctype = 'requireObjectId';
 		}
 		this._functions.push(function (){
-			console.log('this.input.%s.%s(%s)', method_name, uctype, name);
+			// console.info('this.input.%s.%s(%s)', method_name, uctype, name);
 			return this.input[method_name][uctype](name);
 		});
 	} else{
 		this._functions.push(function (){
-			// console.log('this.input.%s[%s]', method_name, name);
+			// console.debug('this.input.%s[%s]', method_name, name);
 			return this.input[method_name][name];
 		});
 	}
