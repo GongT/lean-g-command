@@ -60,6 +60,10 @@ if(fs.existsSync(APPPATH + '.runlock')){
 var flock = fs.openSync(APPPATH + '.runlock', 'w');
 fs.write(flock, process.pid.toString(), process.pid.toString().length);
 function exitHandler(options, err){
+	if(global.preventExit){
+		global.preventExit = false;
+		return;
+	}
 	if(options.cleanup){
 		if(flock){
 			fs.close(flock);
@@ -72,11 +76,11 @@ function exitHandler(options, err){
 		}
 	}
 	if(options.error){
-		console.log(err.stack);
-		process.exit();
+		console.log(err.stack || err);
+		process.exit(1);
 	}
 	if(options.exit){
-		process.exit();
+		process.exit(err);
 	}
 }
 exitHandler.exit = exitHandler.bind(null, {exit: true});

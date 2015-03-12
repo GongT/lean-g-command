@@ -1,6 +1,6 @@
 var _ = require('util');
 // var AV = Object.AV;
-var console = new AV.Logger('EC');
+var console = new AV.Logger('ExpressController');
 var express = AV.express;
 
 module.exports = ExpressController;
@@ -115,10 +115,10 @@ function export_express_router(config, _path){
 				stat.map[_path + name] = cntl;
 			} else if(AV.localhost){
 				AV.expressRoutersDebug += '\t' + _path + name + ' => not implement\n';
-				console.error('%s => not implement', _path + name);
+				console.warn('%s => not implement', _path + name);
 			} else{
 				AV.expressRoutersDebug += 'Error: not implement express path ' + +_path + name + '\n';
-				console.error('Error: not implement express path ' + _path + name);
+				console.warn('Error: not implement express path ' + _path + name);
 			}
 		} else{
 			export_express_router(def, _path + (name? name + '/' : ''));

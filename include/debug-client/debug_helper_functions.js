@@ -2,7 +2,7 @@ var functions = {};
 
 functions.rs = function (){
 	console.error('restarting server');
-	process.exit(100);
+	process.graceful_exit(100);
 };
 
 functions.help = function (){
@@ -20,7 +20,8 @@ functions.help = function (){
 };
 
 functions.exit = function (){
-	process.exit(9);
+	process.stdout.write('/\ueeee\r退出调试…………');
+	process.graceful_exit(0);
 };
 
 // ----- finish -----

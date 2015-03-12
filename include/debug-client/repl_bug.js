@@ -11,9 +11,7 @@ module.exports.ctrl_c = function (){
 		if(!(repl.bufferedCommand && repl.bufferedCommand.length > 0) && empty){
 			if(sawSIGINT){
 				console.log(require('colors/safe').red('\ueeee\r结束调试（因为按下了 ^C）\r'));
-				process.removeAllListeners('exit');
-				fs.closeSync(3);
-				process.exit(111);
+				process.graceful_exit(111);
 				return;
 			}
 			rli.output.write('(^C again to quit)\n');

@@ -17,40 +17,73 @@ process.env.DEBUG = 1;
 process.stdin.setEncoding('utf8');
 
 var watch = require('chokidar').watch(require('fs').realpathSync('./'), {
-	ignored      : /\.git|\.idea|\.avoscloud|node_modules|README|___jb_bak___|__gen|public\//,
+	ignored      : /\.git|\.idea|\.avoscloud|README|___jb_bak___|__gen|public\/|views\//,
 	ignoreInitial: true
-}).on('add', on_file_change_struct).on('change', on_file_change).on('unlink', on_file_change_struct);
+});
+setTimeout(function (){
+	watch.on('add', on_file_change_struct).on('change', on_file_change).on('unlink', on_file_change_struct)
+}, 1000);
 
-//do something when app is closing
-process.on('exit', cleanup);
-//catches ctrl+c event
-process.on('SIGINT', cleanup);
-//catches uncaught exceptions
-process.on('uncaughtException', cleanup);
+process.on('exit', cleanup.bind('exit'));
+process.on('SIGINT', cleanup.bind('SIGINT'));
+process.on('uncaughtException', cleanup.bind('uncaughtException'));
 
-var child, killtime = 0, ctrlCpress = false, firstTime = true;
+var child, killtime = 0, ctrlCpress = false, firstTime = true, forceExitCode = 0;
 function real_restart_server(){
 	killtime = 0;
 	if(child){
-		process.stdout.write('   Server process now restarting...\r');
-		child.unref();
 		child.removeAllListeners('exit');
-		child.kill('SIGINT');
+		if(child.killed){
+			child = null;
+			return kill_child_restart();
+		} else{
+			return remote_call('process.exit();')
+		}
 	}
 	
 	update_config();
-	if(child === null){
-		process.stdout.write('Starting server process...\r');
+	if(child === undefined){
+		console.log('正在启动……');
+	} else if(child === null){
+		console.log('正在重启……');
 	}
+	forceExitCode = false;
 	child = avosrun.spawn(['-P', port],
 			{
 				stdio: [process.stdin, 'pipe', 'pipe', 'pipe'],
 				env  : process.env
 			});
-	child.on("exit", function (code){
+	child.on('exit', function (code){
+		// console.log('parent :: childrend exit %s', code)
+		if(child){
+			child.stdio[3].removeAllListeners();
+			child.stdout.removeAllListeners();
+			child.stderr.removeAllListeners();
+		}
+		if(!child.ispassthru && child.datacache){
+			if(child.datacache.indexOf('uncaughtException: listen EADDRINUSE')){
+				console.log('地址、端口被占用');
+				process.exit(1);
+			}
+			process.stdout.write('\x1B[38;5;9m' + child.datacache + '\x1B[0m');
+		}
+	});
+	child.on('close', function (code){
+		if(child){
+			child.removeAllListeners();
+			child = null;
+		}
+		
+		// console.log('parent :: childrend close %s -> %s ', code,forceExitCode);
+		if(forceExitCode){
+			code = forceExitCode;
+		}
 		if(code == 111 || (code == 0 && ctrlCpress)){
 			console.log(colors.red('\n结束调试（因为按下了 ^C）...'));
 			return;
+		}
+		if(code == 110){
+			return real_restart_server();
 		}
 		if(code == 10){
 			console.log(colors.red('\n服务器没有正确启动\x1B[0m\n==============================='));
@@ -65,26 +98,30 @@ function real_restart_server(){
 				process.exit(0);
 				return;
 			}
-			console.log(colors.red('lean-cloud server failed with code ' + code));
-			if(!child.ispassthru && child.datacache){
-				process.stdout.write('\x1B[38;5;9m' + child.datacache + '\x1B[0m');
-				if(child.datacache.indexOf('uncaughtException: listen EADDRINUSE')){
-					process.exit(1);
-				}
+			if(code > 128){
+				code = '信号' + (code - 128);
 			}
+			console.log(colors.red('本地调试初始化过程中子线程发生错误 - ' + code));
 		}
-		child = null;
 	});
 	child.stdout.on('data', collect_output.bind('stdout'));
 	child.stderr.on('data', collect_output.bind('stderr'));
 	child.datacache = '';
 	start_timeout();
 }
+
 function restart_server(){
 	if(killtime){
 		clearTimeout(killtime);
 	}
-	killtime = setTimeout(real_restart_server, child? 2000 : 0);
+	killtime = setTimeout(function (){
+		kill_child_restart();
+	}, child? 2000 : 0);
+}
+
+function kill_child_restart(){
+	forceExitCode = 110;
+	child.kill('SIGTERM');
 }
 
 function start_timeout(){
@@ -115,10 +152,7 @@ function remove_start_timeout(){
 }
 
 function on_file_change(path){
-	process.stderr.write('\rfile changed: ' + path + '\r');
-	if(/errormessage\.json/.test(path)){
-		need_update.errno = true;
-	}
+	process.stderr.write('\r*** file changed: ' + path + ' ***\r');
 	if(/[\/\\](timers|trigger)[\/\\]/.test(path)){
 		console.log('\x1B[38;5;14m触发器和定时器需要部署才能生效！\x1B[0m');
 	} else if(/[\/\\](config)[\/\\]/.test(path)){
@@ -129,15 +163,20 @@ function on_file_change(path){
 		}
 	} else if(/[\/\\]errormessage.json/.test(path)){
 		need_update.errno = true;
+	} else if(/[\/\\](lean-g)[\/\\]/.test(path)){
+		console.log('核心模块有改动，当前进程退出。');
+		remote_call('process.graceful_exit(0);');
+		watch.close();
+		return;
 	}
 	restart_server();
 }
 function on_file_change_struct(path){
+	process.stderr.write('\r*** file added or removed: ' + path + ' ***\r');
 	if(killtime && need_update.everything){
 		restart_server();
 		return;
 	}
-	process.stderr.write('\rfile added or removed: ' + path + '\r');
 	var will_restart = false;
 	if(/[\/\\](functions-debug|functions)[\/\\]/.test(path)){
 		need_update.function = true;
@@ -166,16 +205,20 @@ var SIG_SUCCESS = 'Press CTRL-C to stop server.\n';
 var SIG_ERROR = 'Error: ';
 var server_root = new RegExp(RegExpEscape(require('path').resolve(__dirname + '/../..')), 'g');
 function collect_output(data){
+	if(!child){
+		return process.stdout.write('\x1B[48;5;9m' + this + ': ' + data + '\x1B[0m');
+	}
 	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
 	var pos;
 	if(/\ueeee/.test(data)){
-		setTimeout(function (){ // handle some time ctrl+c not affect
-			if(child){
+		if(child){
+			var c = child;
+			setTimeout(function (){ // handle some time ctrl+c not affect
 				ctrlCpress = true;
-				child.unref();
-				child.kill('SIGHUP');
-			}
-		}, 1000);
+				c.kill('SIGTERM');
+				c = null;
+			}, 50);
+		}
 		return;
 	}
 	if(!child.ispassthru){
@@ -237,9 +280,26 @@ function colorful_error(s){
 			.replace(/at (.*) \(\/cloud/mg, 'at \x1B[38;5;14m$1\x1B[0m (/cloud')
 }
 function cleanup(){
-	watch.close();
+	process.removeAllListeners('exit');
+	process.removeAllListeners('SIGINT');
+	process.removeAllListeners('UncaughtException');
+	process.on('exit', cleanup.bind('exit'));
+	process.on('SIGINT', cleanup.bind('SIGINT'));
+	process.on('uncaughtException', cleanup.bind('uncaughtException'));
+	
+	if(watch){
+		watch.close();
+		watch = null;
+	}
 	if(child){
-		child.kill('SIGINT');
+		console.error('子线程还没有退出');
+		global.preventExit = true;
+	} else if(this == 'exit'){
+		process.exit.apply(process, arguments);
+	} else if(this == 'uncaughtException'){
+		throw arguments[0];
+	} else{
+		process.exit(0);
 	}
 }
 
@@ -268,5 +328,5 @@ function RegExpEscape(s){
 	return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
 
-process.stdout.write('starting lean-cloud server... ');
+process.stdout.write('正在启动LeanCloud本地调试服务器……');
 real_restart_server();

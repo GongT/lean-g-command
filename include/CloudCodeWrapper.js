@@ -34,13 +34,7 @@ CallbackList.prototype.process = function (fn){
 				return fn.apply(this, arguments);
 			}
 		} catch(e){
-			if(e instanceof AV.InputChecker.InputCheckFailError){
-				return AV.Promise.error(e);
-			} else if(e instanceof AV.ApiError){
-				return AV.Promise.error(e);
-			} else{
-				throw e;
-			}
+			return AV.Promise.error(e);
 		}
 	});
 	this.lastcallback = undefined;
@@ -57,29 +51,19 @@ CallbackList.prototype.next = function (fn){
 				ret = fn.apply(this, arguments);
 			}
 		} catch(e){
-			if(e instanceof AV.InputChecker.InputCheckFailError){
-				return AV.Promise.error(e);
-			} else if(e instanceof AV.ApiError){
-				return AV.Promise.error(e);
-			} else{
-				throw e;
-			}
+			return AV.Promise.error(e);
 		}
 		if(fn.hasNext && ret === undefined){
 			return AV.Promise.error(AV.E.E_EMPTY_RETURN);
 		}
 		if(AV.Promise.is(ret)){
 			if(selfFunction._fail_trigger_error){
-				return ret.then(undefined, function (){
+				ret = ret.then(undefined, function (){
 					return selfFunction._fail_trigger_error;
-				})
+				});
 			}
-			return ret;
-		} else if(ret instanceof AV.ApiError){
-			return AV.Promise.error(ret);
-		} else{
-			return ret;
 		}
+		return ret;
 	});
 	if(this.lastcallback){
 		this.lastcallback.hasNext = true;
@@ -175,9 +159,10 @@ CallbackList.prototype.create_instance = function (args, runtime){
 	return CallbackList.create_instance(this, args, runtime);
 };
 CallbackList.prototype.getFunction = function (){
+	var self = this;
 	return function (){
-		return CallbackList.create_instance(this, arguments, this);
-	}.bind(this);
+		return CallbackList.create_instance(self, arguments, this);
+	};
 };
 
 function CloudClodeWrapper(module){
@@ -234,12 +219,13 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 			}
 		}
 		if(e instanceof AV.ApiError){
-			console.log('CloudCode [' + title + '] return error: ' + e.stringify());
+			console.warn('云代码[' + title + ']返回非0状态 - ' + e.stringify());
 			e.response(rsp);
 		} else if(e instanceof Error){
-			rsp.error('编程错误：[' + title + ']处理链的某一个回调返回了不符合标准的错误对象: ' + e.stack);
-		}else{
-			console.log('CloudCode [' + title + '] return standard error: ' + e.message);
+			console.error('编程错误：云代码[' + title + ']抛出异常 - ' + e.stack);
+			rsp.error('编程错误：云代码[' + title + ']抛出异常 - ' + e.message);
+		} else{
+			console.error('云代码[' + title + ']返回字符串错误 - ' + e.stack);
 			rsp.error(e);
 		}
 	});

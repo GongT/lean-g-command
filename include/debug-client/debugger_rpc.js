@@ -8,7 +8,7 @@ module.exports = function script_runner(){
 		var slices = scripts.split(/\0/);
 		var last = slices.pop();
 		slices.forEach(function (code){
-			// console.log('run script: ', code)
+			console.log('run script: ', code);
 			try{
 				vm.runInThisContext(code, {displayErrors: false});
 			} catch(e){
@@ -17,7 +17,7 @@ module.exports = function script_runner(){
 		});
 		if(last){
 			try{
-				// console.log('run script: ', last)
+				console.log('run script: ', last);
 				var script = vm.createScript(last, {
 					filename     : 'rpc',
 					displayErrors: false

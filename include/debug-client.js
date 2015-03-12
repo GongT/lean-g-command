@@ -11,6 +11,30 @@ function init(app){
 	process.stdout.isTTY = true;
 	process.stdin.removeAllListeners('data');
 	process.stdout.removeAllListeners('data');
+	process.stdin.on('end', function (){
+		process.graceful_exit(111);
+	});
+	process.on('exit', function (){
+		process.graceful_exit(10);
+	});
+	process.on('UncaughtException', function (){
+		process.graceful_exit(10);
+	});
+	process.graceful_exit = function (exit_code){
+		process.stdout.write('关闭退出事件监听器\r');
+		process.removeAllListeners('exit');
+		process.removeAllListeners('UncaughtException');
+		process.stdout.write('关闭远程日志\r');
+		AV.Logger.closeRemote();
+		try{
+			process.stdout.write('正在关闭远程过程调用\r');
+			fs.closeSync(3);
+			process.stdout.write('                         \r');
+		} catch(e){
+			console.log('\n' + e.message);
+		}
+		process.exit(exit_code || 0);
+	};
 	
 	var replfix = require(AV.GROOT + 'include/debug-client/repl_bug');
 	var repl = global.repl = require('repl').start({
@@ -45,7 +69,7 @@ function init(app){
 	require(AV.GROOT + 'include/debug-client/readline_bug')(repl);
 	
 	process.on('SIGPIPE', function (){
-		process.stdin.write('Children: 进入命令行交互界面...\n');
+		process.stdin.write('Children[' + process.pid + ']: 进入命令行交互界面...\n');
 		if(!repl.historyInited){
 			process.stdin.write('安装 repl.history 可以保存输入历史。(npm install repl.history)\n');
 		}
@@ -53,9 +77,9 @@ function init(app){
 		repl.displayPrompt();
 	});
 	
-	require(AV.GROOT + 'include/debug-client/debugger_rpc')();
-	
 	setTimeout(function (){
 		repl.displayPrompt();
 	}, 1000);
+	
+	require(AV.GROOT + 'include/debug-client/debugger_rpc')();
 }

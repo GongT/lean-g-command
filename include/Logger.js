@@ -245,6 +245,9 @@ function create_client(){
 	reconnect();
 }
 function reconnect(){
+	if(reconnect.never){
+		return;
+	}
 	var config = remoteLogger.split(/:/);
 	console.log('[RemoteLogger]创建连接 -> ' + config[0] + ':' + config[1]);
 	loggerSocket.connect(config[1], config[0]);
@@ -259,3 +262,13 @@ function socket_write(args){
 		loggerSocket.cache += getTs() + msg + '\n';
 	}
 }
+
+Logger.closeRemote = function (){
+	reconnect.never = true;
+	if(loggerSocket){
+		try{
+			loggerSocket.close();
+		} catch(e){
+		}
+	}
+};
