@@ -1,5 +1,8 @@
 var valid_object_id = /^[0-9a-f]{24}$/i;
 module.exports = {
+	"anything": function (v){
+		return v;
+	},
 	"string"            : function (v){
 		return v + '';
 	},

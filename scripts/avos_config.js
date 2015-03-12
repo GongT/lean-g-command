@@ -150,6 +150,7 @@ function update_avos_module(){
 		if(/^(\.|_)/.test(f) || !fs.existsSync(base) || !fs.lstatSync(base).isDirectory()){
 			return;
 		}
+		console.error(f);
 		var database = class_name(basename(f));
 		console.log('\t模型：' + database);
 		var datadef = read_module_folder(basepath, ['static', 'property']);

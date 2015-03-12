@@ -243,9 +243,9 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 			this.display(template || AV.CONFIG.template.standardErrorPage || 'standard_error');
 		} else if(e instanceof Error){
 			console.error(e.stack);
-			this.display(template ||  AV.CONFIG.template.internalErrorPage || 'internal_error');
+			this.display(template || AV.CONFIG.template.internalErrorPage || 'internal_error');
 		} else{
-			this.display(template ||  AV.CONFIG.template.userErrorPage || 'user_error');
+			this.display(template || AV.CONFIG.template.userErrorPage || 'user_error');
 		}
 	}
 };
@@ -349,7 +349,7 @@ PrepareFunction.prototype.from = function (method, name, type){ // get, post, co
 				AV.fatal('未知的输入类型：' + this._controller.file + ' -> ' + uctype);
 			}
 		} else{
-			uctype = 'requireObjectId';
+			uctype = 'requireAnything';
 		}
 		this._functions.push(function (){
 			// console.info('this.input.%s.%s(%s)', method_name, uctype, name);
@@ -371,8 +371,8 @@ PrepareFunction.prototype.process = function (fn){
 	this._functions.push(fn);
 	return this;
 };
-PrepareFunction.prototype.error_callback = function (runtime, ret, next){
-	return runtime.displayError(ret);
+PrepareFunction.prototype.error_callback = function (ret){
+	return this.displayError(ret);
 };
 PrepareFunction.prototype.els = function (fn){
 	this.error_callback = fn;
@@ -388,13 +388,18 @@ PrepareFunction.prototype.run = function (runtime, next){
 	function real_run(i){
 		var fn = list[i];
 		if(!fn){
-			var data = memory[0];
 			if(memory.length > 1){
 				throw new Error('controller.prepare 返回超过一个对象');
 			}
+			var data = memory[0];
+			if(undefined === data){
+				data = AV.E.E_NOT_EXISTS;
+			}
 			if(data instanceof AV.ApiError){
-				error_callback(runtime, data, next);
-				return;
+				data = error_callback.call(runtime, data);
+				if(!data){
+					return;
+				}
 			}
 			runtime[commit] = data;
 			return next();
@@ -402,12 +407,23 @@ PrepareFunction.prototype.run = function (runtime, next){
 		try{
 			var ret = fn.apply(runtime, memory);
 		} catch(e){
-			error_callback(runtime, e, next);
-			return;
+			runtime[commit] = error_callback.call(runtime, e);
+			if(runtime[commit]){
+				return next();
+			} else{
+				return;
+			}
+		}
+		if(undefined === ret){
+			ret = AV.E.E_NOT_EXISTS;
 		}
 		if(typeof ret == 'object' && ret instanceof AV.ApiError){
-			error_callback(runtime, ret, next);
-			return;
+			runtime[commit] = error_callback.call(runtime, ret);
+			if(runtime[commit]){
+				return next();
+			} else{
+				return;
+			}
 		}
 		if(Array.isArray(ret) && AV.Promise.is(ret[0])){
 			ret = AV.Promise.when(ret);
