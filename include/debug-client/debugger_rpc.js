@@ -32,4 +32,10 @@ module.exports = function script_runner(){
 			}
 		}
 	});
+};
+
+function isRecoverableError(e){
+	return e &&
+	       e.name === 'SyntaxError' &&
+	       /^(Unexpected end of input|Unexpected token )/.test(e.message);
 }

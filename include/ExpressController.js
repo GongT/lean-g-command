@@ -70,15 +70,23 @@ function runPrepare(req, rsp, next){
 /* 程序执行逻辑 END */
 
 /* exports */
-module.exports.parse = function (config){
+module.exports.parse = function (config, root){
 	AV.expressRoutersDebug = '';
-	export_express_router(config, '/');
+	var stat = ExpressController;
+	if(!stat.parsedConfig){
+		stat.parsedConfig = {};
+		stat.map = {};
+	}
+	_._extend(stat.parsedConfig, config);
+	
+	export_express_router(config, root || '/');
 	if(AV.localhost){
 		AV.expressRoutersDebug = console.debug.bind(console, AV.expressRoutersDebug)
 	}
 };
 
 function export_express_router(config, _path){
+	var stat = ExpressController;
 	var x = Object.keys(config).sort(function (a, b){
 		a = a.replace(/(^|\/)index($|\/)/, '$1$2');
 		b = b.replace(/(^|\/)index($|\/)/, '$1$2');
@@ -104,6 +112,7 @@ function export_express_router(config, _path){
 					cntl.route(_path.replace(/\/$/, '') || '/', AV.server);
 				}
 				cntl.route(_path + name, AV.server);
+				stat.map[_path + name] = cntl;
 			} else if(AV.localhost){
 				AV.expressRoutersDebug += '\t' + _path + name + ' => not implement\n';
 				console.error('%s => not implement', _path + name);
