@@ -28,14 +28,18 @@ function CallbackList(){
 CallbackList.prototype.process = function (fn){
 	assert(fn);
 	this.fnList.push(function (data){
+		var ret;
 		try{
 			if(data instanceof ArgumentsWrapper){
-				return fn.apply(this, data.args);
+				ret = fn.apply(this, data.args);
 			} else{
-				return fn.apply(this, arguments);
+				ret = fn.apply(this, arguments);
 			}
 		} catch(e){
 			return AV.Promise.error(e);
+		}
+		if(ret instanceof Error || ret instanceof AV.ApiError){
+			return AV.Promise.error(ret);
 		}
 	});
 	this.lastcallback = undefined;
@@ -64,6 +68,9 @@ CallbackList.prototype.next = function (fn){
 				});
 			}
 		}
+		if(ret instanceof Error || ret instanceof AV.ApiError){
+			return AV.Promise.error(ret);
+		}
 		return ret;
 	});
 	if(this.lastcallback){
@@ -84,7 +91,7 @@ CallbackList.prototype.fail_trigger_error = function (e){
 function _check_helper(ret, args, error_value, stack){
 	if(ret === true){
 		return args;
-	} else if(ret instanceof AV.ApiError){
+	} else if(ret instanceof Error || ret instanceof AV.ApiError){
 		return AV.Promise.error(ret);
 	} else{
 		if(error_value){
@@ -142,7 +149,10 @@ CallbackList.prototype.fork = function (testFn){
 		try{
 			var tree = testFn.apply(this, args);
 		} catch(e){
-			return e;
+			return AV.Promise.error(e);
+		}
+		if(tree instanceof Error || tree instanceof AV.ApiError){
+			return AV.Promise.error(tree);
 		}
 		if(!tree){
 			if(args.length > 1){
@@ -152,7 +162,7 @@ CallbackList.prototype.fork = function (testFn){
 			}
 		}
 		return CallbackList.create_instance(tree, args, this).then(function (e){ // 无视所有参数，恢复以前的
-			if(e instanceof AV.ApiError){
+			if(e instanceof Error || e instanceof AV.ApiError){
 				return AV.Promise.error(e);
 			}
 			if(args.length > 1){
