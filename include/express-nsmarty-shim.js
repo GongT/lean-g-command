@@ -4,7 +4,12 @@ var nsmarty = AV.nsmarty = require('nsmarty');
 var basename = require('path').basename;
 
 delete nsmarty.tpl_path;
-nsmarty.tpl_path = AV.server.get('views') + '/';
+if(AV.localhost){
+	nsmarty.tpl_path = AV.server.get('views') + '/';
+} else{
+	nsmarty.tpl_path = require('path').resolve(__dirname, '..') + '/' + AV.server.get('views') + '/';
+}
+console.log('template path set to ', nsmarty.tpl_path);
 AV.server.engine('.tpl', parse);
 
 module.exports.parse = register;

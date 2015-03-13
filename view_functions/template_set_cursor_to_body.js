@@ -1,4 +1,4 @@
-var nsmarty = require('nsmarty');
+var nsmarty = AV.nsmarty;
 // var AV = Object.AV;
 
 module.exports = function (params, data){

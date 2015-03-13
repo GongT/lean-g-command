@@ -131,6 +131,7 @@ function main(AV){
 	}
 	
 	AV.server = app;
+	app.set('views', 'views');
 	
 	append_log('load express smarty template...');
 	AV.templatePlugin = require(GROOT + 'include/express-nsmarty-shim.js');
@@ -138,7 +139,6 @@ function main(AV){
 		AV.templatePlugin.parseFile(f);
 	});
 	
-	app.set('views', 'views');
 	if(!CONFIG.lean.template || CONFIG.lean.template == 'ejs'){
 		app.set('view engine', 'ejs');
 	} else if(CONFIG.lean.template == 'smarty'){

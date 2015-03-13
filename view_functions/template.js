@@ -1,9 +1,14 @@
-var nsmarty = require('nsmarty');
+var nsmarty = AV.nsmarty;
 // var AV = Object.AV;
 var CONSTANTS = AV.CONSTANTS;
 
 module.exports = function (params, data){
-	var $ua = data.runtime.__req.headers['user-agent'].toLowerCase();
+	var $ua;
+	if(data.runtime.__req.headers['user-agent']){
+		$ua = data.runtime.__req.headers['user-agent'].toLowerCase();
+	} else{
+		$ua = '';
+	}
 	data._ua = $ua;
 	
 	var $class = params['class'] || '';

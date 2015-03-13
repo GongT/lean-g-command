@@ -14,12 +14,11 @@ function ServerCloud(config){
 
 module.exports = ServerCloud;
 
-ServerCloud.prototype.run = function (name, data, options){
+ServerCloud.prototype.run = function (name, data){
 	var config = this.config;
-	data = JSON.stringify(data);
-	console.debug('请求云代码 %s 在 %s\n\n', name, config.name || config.id);
-	var promise = new AV.Promise;
-	AV.Cloud.httpRequest({
+	console.debug('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
+	
+	return AV.Cloud.httpRequest({
 		url    : config.url + name,
 		method : "POST",
 		headers: {
@@ -29,31 +28,7 @@ ServerCloud.prototype.run = function (name, data, options){
 		},
 		json   : true,
 		body   : data
-	}, function (err, res, body){
-		if(err){
-			if(options.error){
-				options.error(err);
-				promise.reject(err);
-			}
-			return;
-		}
-		if(res.statusCode == 200){
-			body = body.result;
-			if('status' in body && body.status == 0){
-				if(options.success){
-					options.success(body);
-					promise.resolve(body);
-				}
-			} else if(options.error){
-				options.error(body);
-				promise.reject(body);
-			}
-		} else{
-			if(options.error){
-				options.error(body);
-				promise.reject(body);
-			}
-		}
+	}).then(function (body){
+		return body.data.result;
 	});
-	return promise;
 };

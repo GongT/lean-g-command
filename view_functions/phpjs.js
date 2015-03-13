@@ -1,4 +1,4 @@
-var nsmarty = require('nsmarty');
+var nsmarty = AV.nsmarty;
 // var AV = Object.AV;
 var phpjs = AV.phpjs = nsmarty.Parser._phpjs = require('phpjs');
 
