@@ -42,7 +42,13 @@ if(fs.existsSync(APPPATH + 'package.proto.json')){
 		process.exit(-1);
 	}
 	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg, null, 8).replace(/^        /mg, '\t'));
+	pkg = true;
 }
+global.write_package_json = function (){
+	if(pkg){
+		fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(PackageJson, null, 8).replace(/^        /mg, '\t'));
+	}
+};
 global.PackageJson = fs.readFileSync(APPPATH + 'package.json', 'utf-8');
 try{
 	eval('PackageJson=' + PackageJson);
