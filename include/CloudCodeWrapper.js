@@ -41,6 +41,7 @@ CallbackList.prototype.process = function (fn){
 		if(ret instanceof Error || ret instanceof AV.ApiError){
 			return AV.Promise.error(ret);
 		}
+		return ret;
 	});
 	this.lastcallback = undefined;
 	return this;
