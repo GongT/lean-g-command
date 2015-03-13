@@ -20,8 +20,6 @@ function init(app){
 	process.on('exit', function (){
 		process.graceful_exit(10);
 	});
-	process.on('UncaughtException', function (){
-	});
 	process.graceful_exit = function (exit_code){
 		console.trace('closing  -  ', exit_code);
 		exiting = true;

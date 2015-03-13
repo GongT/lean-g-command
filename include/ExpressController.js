@@ -197,7 +197,7 @@ function init_runtime(req, rsp, next){ // 初始化 请求环境
 		rt.input.path = new AV.InputChecker(req.params);
 	}
 	rt.input.cookie = req.cookies;
-	rt.input.scookie = req.signedCookie || {};
+	rt.input.scookie = req.signedCookies || {};
 	return next();
 }
 
@@ -441,6 +441,13 @@ PrepareFunction.prototype.run = function (runtime, next){
 			ret.then(function (){
 				memory = arguments;
 				real_run(i + 1);
+			}, function (e){
+				runtime[commit] = error_callback.call(runtime, e);
+				if(runtime[commit]){
+					next();
+				} else{
+					return e;
+				}
 			});
 		} else{
 			memory = [ret];

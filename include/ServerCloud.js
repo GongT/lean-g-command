@@ -18,6 +18,7 @@ ServerCloud.prototype.run = function (name, data, options){
 	var config = this.config;
 	data = JSON.stringify(data);
 	console.debug('请求云代码 %s 在 %s\n\n', name, config.name || config.id);
+	var promise = new AV.Promise;
 	AV.Cloud.httpRequest({
 		url    : config.url + name,
 		method : "POST",
@@ -32,6 +33,7 @@ ServerCloud.prototype.run = function (name, data, options){
 		if(err){
 			if(options.error){
 				options.error(err);
+				promise.reject(err);
 			}
 			return;
 		}
@@ -40,14 +42,18 @@ ServerCloud.prototype.run = function (name, data, options){
 			if('status' in body && body.status == 0){
 				if(options.success){
 					options.success(body);
+					promise.resolve(body);
 				}
 			} else if(options.error){
 				options.error(body);
+				promise.reject(body);
 			}
 		} else{
 			if(options.error){
 				options.error(body);
+				promise.reject(body);
 			}
 		}
 	});
+	return promise;
 };

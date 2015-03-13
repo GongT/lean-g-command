@@ -258,13 +258,15 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 			}
 		}
 		if(e instanceof AV.ApiError){
-			console.warn('云代码[' + title + ']返回非0状态 - ' + e.stringify());
+			if(e.status != AV.E.E_SUCCESS.code){
+				console.warn('云代码[' + title + ']返回非0状态 - ' + e.stringify());
+			}
 			e.response(rsp);
 		} else if(e instanceof Error){
 			console.error('编程错误：云代码[' + title + ']抛出异常 - ' + e.stack);
 			rsp.error('编程错误：云代码[' + title + ']抛出异常 - ' + e.message);
 		} else{
-			console.error('云代码[' + title + ']返回字符串错误 - ' + e.stack);
+			console.error('云代码[' + title + ']返回字符串错误 - ' + (e.stack || e.message || e));
 			rsp.error(e);
 		}
 	});

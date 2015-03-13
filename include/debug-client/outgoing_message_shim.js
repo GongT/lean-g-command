@@ -11,6 +11,7 @@ http.ServerResponse.prototype.__end = realResponse;
 
 console.log('\r\x1B[38;5;14mhttp.OutgoingMessage has been replaced!\x1B[0m');
 
+var successCode = [200, 301, 302, 304];
 var JsOrCss = /\.(js|css)$/;
 function shimResponse(data, encoding){
 	try{ // out going message no this.req 
@@ -20,11 +21,11 @@ function shimResponse(data, encoding){
 		}
 		this.lastcallstack = (new Error('上次调用')).stack;
 		if(!JsOrCss.test(this.req.url)){
-			if(this.statusCode != 200){
+			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stderr.write('\x1B[38;5;9m');
 			}
 			process.stdout.write('\rI: ' + this.req.method + ' ' + this.req.url + ' ' + this.statusCode + '\n');
-			if(this.statusCode != 200){
+			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stderr.write('\x1B[0m');
 			}
 		}

@@ -13,6 +13,9 @@ Checker.prototype._pname = 'params';
 Checker.prototype.get = function (name, opt){
 	return this[this._pname].hasOwnProperty(name)? this[this._pname][name] : opt;
 };
+Checker.prototype.has = function (name){
+	return this[this._pname].hasOwnProperty(name);
+};
 
 Checker.InputCheckFailError = InputCheckFailError;
 function InputCheckFailError(field, type, gotten){
@@ -42,12 +45,12 @@ function registType(type, checker){
 		return ret;
 	};
 	Checker.prototype['requireNullable' + uctype] = function (name){
-		var data = this.get(name, undefined);
-		if(data === undefined){
+		if(!this.has(name, undefined)){
 			debug('必选可空 参数 %s 没有传入', name);
 			throw new InputCheckFailError(name, 'requireNullable' + uctype, '{not-set}');
 		}
-		if(data === null){
+		var data = this.get(name, undefined);
+		if(data === null || data === undefined || data === ''){
 			return data;
 		}
 		var ret = checker.call(this, data);
