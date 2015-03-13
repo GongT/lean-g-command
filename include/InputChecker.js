@@ -36,7 +36,7 @@ function registType(type, checker){
 		}
 		var ret = checker.call(this, data);
 		if(ret === undefined){
-			debug('必选 参数 %s 的类型、内容错误（需要）实际是：', name, uctype, data);
+			debug('必选 参数 %s 的类型、内容错误（需要 %s）实际是 %s', name, uctype, data);
 			throw new InputCheckFailError(name, 'require' + uctype, data);
 		}
 		return ret;
@@ -44,7 +44,7 @@ function registType(type, checker){
 	Checker.prototype['requireNullable' + uctype] = function (name){
 		var data = this.get(name, undefined);
 		if(data === undefined){
-			debug('必选可空 参数 %s 但没有传入', name);
+			debug('必选可空 参数 %s 没有传入', name);
 			throw new InputCheckFailError(name, 'requireNullable' + uctype, '{not-set}');
 		}
 		if(data === null){
@@ -52,7 +52,7 @@ function registType(type, checker){
 		}
 		var ret = checker.call(this, data);
 		if(ret === undefined){
-			debug('必选可空 参数 %s 的类型、内容错误（需要）实际是：', name, uctype, data);
+			debug('必选可空 参数 %s 的类型、内容错误（需要 %s）实际是 %s', name, uctype, data);
 			throw new InputCheckFailError(name, 'requireNullable' + uctype, data);
 		}
 		return ret;
@@ -69,7 +69,7 @@ function registType(type, checker){
 		return data.map(function (v, i){
 			var ret = checker.call(this, v);
 			if(ret === undefined){
-				debug('必选数组 参数 %s 的第 %s 项类型、内容错误（需要）实际是：', name, i, uctype, v);
+				debug('必选数组 参数 %s 的第 %s 项类型、内容错误（需要 %s）实际是 %s', name, i, uctype, v);
 				throw new InputCheckFailError(name, 'require' + uctype + 'Array', [i, v]);
 			}
 			return ret;
@@ -83,7 +83,7 @@ function registType(type, checker){
 		}
 		var ret = checker.call(this, data, opt);
 		if(ret === undefined){
-			debug('必选数组 参数 %s 的第 %s 项类型、内容错误（需要）实际是：', name, d, uctype, v);
+			debug('可选参数 参数 %s 的类型、内容错误（需要 %s）实际是 %s', name, uctype, data);
 			throw new InputCheckFailError(name, 'optional' + uctype, this[this._pname][name])
 		}
 		return ret;
@@ -100,7 +100,7 @@ function registType(type, checker){
 		return data.map(function (v, i){
 			var ret = checker.call(this, v, opt);
 			if(ret === undefined){
-				debug('必选数组 参数 %s 的第 %s 项类型、内容错误（需要）实际是：', name, i, uctype, v);
+				debug('必选数组 参数 %s 的第 %s 项类型、内容错误（需要 %s）实际是 %s', name, i, uctype, v);
 				throw new InputCheckFailError(name, 'optional' + uctype + 'Array', [i, v]);
 			}
 			return ret;

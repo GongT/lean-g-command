@@ -8,31 +8,40 @@ function init(app){
 	}
 	console.log('starting server with debug console...');
 	global.AV = AV;
+	var exiting = false;
 	process.stdout.isTTY = true;
 	process.stdin.removeAllListeners('data');
 	process.stdout.removeAllListeners('data');
 	process.stdin.on('end', function (){
-		process.graceful_exit(111);
+		if(!exiting){
+			process.graceful_exit(111);
+		}
 	});
 	process.on('exit', function (){
 		process.graceful_exit(10);
 	});
 	process.on('UncaughtException', function (){
-		process.graceful_exit(10);
 	});
 	process.graceful_exit = function (exit_code){
+		console.trace('closing  -  ', exit_code);
+		exiting = true;
 		process.stdout.write('关闭退出事件监听器\r');
-		process.removeAllListeners('exit');
-		process.removeAllListeners('UncaughtException');
-		process.stdout.write('关闭远程日志\r');
+		process.removeAllListeners();
+		process.stdin.removeAllListeners();
+		process.stdin.emit('end'); // close repl
+		process.stderr.removeAllListeners();
+		process.stdout.removeAllListeners();
+		process.stdout.write('关闭远程日志          \r');
 		AV.Logger.closeRemote();
 		try{
-			process.stdout.write('正在关闭远程过程调用\r');
+			process.stdout.write('正在关闭远程过程调用         \r');
 			fs.closeSync(3);
-			process.stdout.write('                         \r');
+			process.stdout.write('                              \r');
 		} catch(e){
 			console.log('\n' + e.message);
 		}
+		process.stdin.pause();
+		process.stdin.setRawMode(false);
 		process.exit(exit_code || 0);
 	};
 	

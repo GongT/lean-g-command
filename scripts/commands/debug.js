@@ -120,8 +120,12 @@ function restart_server(){
 }
 
 function kill_child_restart(){
-	forceExitCode = 110;
-	child.kill('SIGTERM');
+	if(forceExitCode){
+		real_restart_server();
+	} else{
+		forceExitCode = 110;
+		child.kill('SIGTERM');
+	}
 }
 
 function start_timeout(){
@@ -163,11 +167,11 @@ function on_file_change(path){
 		}
 	} else if(/[\/\\]errormessage.json/.test(path)){
 		need_update.errno = true;
-	} else if(/[\/\\](lean-g)[\/\\]/.test(path)){
-		console.log('核心模块有改动，当前进程退出。');
-		remote_call('process.graceful_exit(0);');
-		watch.close();
-		return;
+		/*} else if(/[\/\\](lean-g)[\/\\]/.test(path)){
+		 console.log('核心模块有改动，当前进程退出。');
+		 remote_call('process.graceful_exit(0);');
+		 watch.close();
+		 return;*/
 	}
 	restart_server();
 }
@@ -208,7 +212,7 @@ function collect_output(data){
 	if(!child){
 		return process.stdout.write('\x1B[48;5;9m' + this + ': ' + data + '\x1B[0m');
 	}
-	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + data + '\x1B[0m');
+	// process.stdout.write('\x1B[48;5;238m' + this + ': ' + (data || '').toString() + '\x1B[0m');
 	var pos;
 	if(/\ueeee/.test(data)){
 		if(child){

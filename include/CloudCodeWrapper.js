@@ -2,6 +2,7 @@
 module.exports = CloudClodeWrapper;
 module.exports.CallbackList = CallbackList;
 module.exports.Arguments = ArgumentsWrapper;
+var console = new AV.Logger('CloudCodeWrapper');
 
 var define_fn = AV.Cloud.define;
 AV.Cloud.define = function (name, fn){
@@ -80,28 +81,50 @@ CallbackList.prototype.fail_trigger_error = function (e){
 	return this;
 };
 
+function _check_helper(ret, args, error_value, stack){
+	if(ret === true){
+		return args;
+	} else if(ret instanceof AV.ApiError){
+		return AV.Promise.error(ret);
+	} else{
+		if(error_value){
+			return AV.Promise.error(error_value);
+		}
+		console.error('没有正确编写checker函数，只能返回true/false/ApiError，而实际返回了：' + ret + '\n\t\t这个函数定义在了 ' + stack);
+		return AV.Promise.error(AV.E.E_CHECK_FAIL);
+	}
+}
 CallbackList.prototype.check = function (fn){
 	assert(fn);
+	if(AV.localhost){
+		var stack = (new Error).stack.split(/\n/g)[2];
+		if(stack){
+			if(/\/.+\.js/.test(stack)){
+				stack = /\/.+\.js([0-9:]+)?/.exec(stack)[0]
+			}
+		}
+		if(!stack){
+			stack = '';
+		}
+	}
 	this.fnList.push(function (data){
-		var ret;
+		var ret, saveArg;
+		if(arguments.length > 1){
+			saveArg = new ArgumentsWrapper(arguments);
+		} else{
+			saveArg = data;
+		}
 		if(data instanceof ArgumentsWrapper){
 			ret = fn.apply(this, data.args);
 		} else{
 			ret = fn.apply(this, arguments);
 		}
-		if(ret === true){
-			if(arguments.length > 1){
-				return new ArgumentsWrapper(arguments);
-			} else{
-				return data;
-			}
-		} else if(ret instanceof AV.ApiError){
-			return AV.Promise.error(ret);
+		if(AV.Promise.is(ret)){
+			return ret.then(function (ret){
+				return _check_helper(ret, saveArg, selfFunction._fail_trigger_error, stack);
+			});
 		} else{
-			if(selfFunction._fail_trigger_error){
-				return AV.Promise.error(selfFunction._fail_trigger_error);
-			}
-			return AV.Promise.error(AV.E.E_CHECK_FAIL);
+			return _check_helper(ret, saveArg, selfFunction._fail_trigger_error, stack);
 		}
 	});
 	var selfFunction = this.lastcallback = this.fnList[this.fnList.length - 1];
@@ -116,7 +139,11 @@ CallbackList.prototype.fork = function (testFn){
 		} else{
 			args = arguments;
 		}
-		var tree = testFn.apply(this, args);
+		try{
+			var tree = testFn.apply(this, args);
+		} catch(e){
+			return e;
+		}
 		if(!tree){
 			if(args.length > 1){
 				return new ArgumentsWrapper(args);
@@ -140,7 +167,8 @@ CallbackList.prototype.fork = function (testFn){
 };
 CallbackList.create_instance = function (clist, args, runtime){
 	if(!clist.fnList){
-		console.log('CallbackList.create_instance 错误', clist);
+		console.error('CallbackList.create_instance 错误', clist);
+		return AV.Promise.error(AV.E.E_SERVER);
 	}
 	var p = new AV.Promise;
 	p.resolve.apply(p, args);
