@@ -22,7 +22,7 @@ module.exports.confirm = function (req, pack){
 		var exit = module.exports(pack || req);
 		if(exit === 0){
 			try{
-				global.colors = require('colors/safe');
+				global.colors = require(req);
 				console.info('%s 安装成功！', pack || req);
 				return true;
 			} catch(e){

@@ -102,7 +102,7 @@ function export_express_router(config, _path){
 		var def = config[name];
 		if(typeof def === 'string'){
 			AV.expressRoutersDebug += '/' + def + '\n';
-			console.debug('/' + def);
+			// console.debug('/' + def);
 			var cntl = require(def);
 			cntl.file = def;
 			cntl.path = _path;
