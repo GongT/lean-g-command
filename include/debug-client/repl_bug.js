@@ -1,5 +1,5 @@
-var fs = require('fs');
-var vm = require('vm');
+var fs = require('fs'), vm = require('vm');
+
 module.exports.ctrl_c = function (){
 	var rli = repl.rli;
 	
@@ -10,8 +10,7 @@ module.exports.ctrl_c = function (){
 		rli.clearLine();
 		if(!(repl.bufferedCommand && repl.bufferedCommand.length > 0) && empty){
 			if(sawSIGINT){
-				console.log(require('colors/safe').red('\ueeee\r结束调试（因为按下了 ^C）\r'));
-				process.graceful_exit(111);
+				debug_shutdown();
 				return;
 			}
 			rli.output.write('(^C again to quit)\n');

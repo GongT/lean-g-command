@@ -9,8 +9,6 @@ http.ClientRequest.prototype.__end =
 http.OutgoingMessage.prototype.__end =
 http.ServerResponse.prototype.__end = realResponse;
 
-console.log('\r\x1B[38;5;14mhttp.OutgoingMessage has been replaced!\x1B[0m');
-
 var successCode = [200, 301, 302, 304];
 var JsOrCss = /\.(js|css)$/;
 function shimResponse(data, encoding){
@@ -24,7 +22,7 @@ function shimResponse(data, encoding){
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stderr.write('\x1B[38;5;9m');
 			}
-			process.stdout.write('\rI: ' + this.req.method + ' ' + this.req.url + ' ' + this.statusCode + '\n');
+			process.stdout.write('\rI: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode + '\n');
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stderr.write('\x1B[0m');
 			}
@@ -32,8 +30,16 @@ function shimResponse(data, encoding){
 		repl.displayPrompt();
 	} catch(e){
 		process.stderr.write('\x1B[38;5;8m');
-		process.stdout.write('\rO: ' + this.method + ' ' + this.path + '\n');
-		process.stderr.write('\x1B[0m');
+		process.stdout.write('\rO: ' + this.method + ' ' + this.path);
+		if(this._hasBody){
+			var out = this.output.join('').replace(this._header);
+			if(out.substr(0,1)=='{'){
+				process.stdout.write(' Body: '+out);
+			}else{
+				process.stdout.write(' Body: ** other content type **');
+			}
+		}
+		process.stderr.write('\x1B[K\x1B[0m\n');
 	}
 	return this.__end();
 }

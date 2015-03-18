@@ -3,46 +3,17 @@ var fs = require('fs');
 
 module.exports = init;
 function init(app){
-	if(!process.env.DEBUG){
+	if(!process.env.LEANG_DEBUG_PORT){
 		return;
 	}
-	console.log('starting server with debug console...');
+	console.log('协调开始');
+	var port = process.env.LEANG_DEBUG_PORT;
 	global.AV = AV;
-	var exiting = false;
-	process.stdout.isTTY = true;
-	process.stdin.removeAllListeners('data');
-	process.stdout.removeAllListeners('data');
-	process.stdin.on('end', function (){
-		if(!exiting){
-			process.graceful_exit(111);
-		}
-	});
-	process.on('exit', function (){
-		process.graceful_exit(10);
-	});
-	process.graceful_exit = function (exit_code){
-		console.trace('closing  -  ', exit_code);
-		exiting = true;
-		process.stdout.write('关闭退出事件监听器\r');
-		process.removeAllListeners();
-		process.stdin.removeAllListeners();
-		process.stdin.emit('end'); // close repl
-		process.stderr.removeAllListeners();
-		process.stdout.removeAllListeners();
-		process.stdout.write('关闭远程日志          \r');
-		AV.Logger.closeRemote();
-		try{
-			process.stdout.write('正在关闭远程过程调用         \r');
-			fs.closeSync(3);
-			process.stdout.write('                              \r');
-		} catch(e){
-			console.log('\n' + e.message);
-		}
-		process.stdin.pause();
-		process.stdin.setRawMode(false);
-		process.exit(exit_code || 0);
-	};
+	global.debug_shutdown = debug_shutdown;
 	
+	process.stdout.isTTY = true;
+	
+	console.log('命令界面启动');
 	var replfix = require(AV.GROOT + 'include/debug-client/repl_bug');
 	var repl = global.repl = require('repl').start({
 		prompt         : 'AVOS> ',
@@ -57,36 +28,41 @@ function init(app){
 	
 	try{
 		require('repl.history')(repl, AV.APPPATH + '.avoscloud/repl_history');
-		repl.historyInited = true;
+		console.log('同步率100%');
 	} catch(e){
+		console.log('同步率90%');
+		setTimeout(function (){
+			console.log('\x1B[38;5;14m推荐使用repl.history，可以保存输入历史\x1B[0m');
+			repl.displayPrompt();
+		}, 2000)
 	}
-	console.log('\r\x1B[38;5;14mrepl started\x1B[0m');
 	
 	require(AV.GROOT + 'include/debug-client/outgoing_message_shim');
+	console.log('星际通讯输出显像工具启动');
 	
-	if(AV.CONFIG.lean.template && AV.CONFIG.lean.template == 'smarty'){
-		app.use(function (_1, _2, next){
-			AV.nsmarty.clearCache();
-			next();
-		});
-	}
+	app.use(function (_1, _2, next){
+		AV.nsmarty.clearCache();
+		next();
+	});
+	console.log('古旧空间清除工具开始动作');
 	
 	require(AV.GROOT + 'include/debug-client/debug_helper_functions');
+	console.log('调试帮助程序载入');
 	
 	require(AV.GROOT + 'include/debug-client/readline_bug')(repl);
+	console.log('处理自动完成');
 	
-	process.on('SIGPIPE', function (){
-		process.stdin.write('Children[' + process.pid + ']: 进入命令行交互界面...\n');
-		if(!repl.historyInited){
-			process.stdin.write('安装 repl.history 可以保存输入历史。(npm install repl.history)\n');
-		}
-		process.stdin.write('\n');
-		repl.displayPrompt();
-	});
+	require(AV.GROOT + 'include/debug-client/debugger_rpc')(port);
+	console.log('次元隧道启动，连接目标：', port);
 	
-	setTimeout(function (){
-		repl.displayPrompt();
-	}, 1000);
-	
-	require(AV.GROOT + 'include/debug-client/debugger_rpc')();
+	console.log('\x1B[38;5;10m启动成功，世界线变动率\x1B[38;5;14m1.048596\x1B[0m');
+}
+
+var shuting_down = false;
+function debug_shutdown(status){
+	if(shuting_down){
+		return;
+	}
+	shuting_down = true;
+	process.exit(status || 0);
 }
