@@ -1,6 +1,6 @@
 var local = false;
-var fs = require('fs');
-var CLOUDROOT, GROOT, APPPATH, GENPATH;
+var fs = require('fs'), path = require('path');
+var ABS_ROOT, CLOUDROOT, GROOT, APPPATH, GENPATH;
 
 module.exports = DEPLOY;
 console.error('prepare deploy files');
@@ -9,6 +9,7 @@ function DEPLOY(AV, _require){
 	try{
 		process.env.TZ = 'UTC';
 		local = AV.localhost = true;
+		ABS_ROOT = AV.ABS_ROOT = path.resolve(process.cwd()) + '/';
 		GROOT = AV.GROOT = 'cloud/lean-g/';
 		CLOUDROOT = AV.CLOUDROOT = 'cloud/';
 		GENPATH = AV.GENPATH = CLOUDROOT + '__gen/';
@@ -16,6 +17,7 @@ function DEPLOY(AV, _require){
 		console.log('start deploy on localhost.');
 	} catch(e){
 		local = AV.localhost = false;
+		ABS_ROOT = AV.ABS_ROOT = __dirname + '/';
 		GROOT = AV.GROOT = 'cloud/lean-g/';
 		CLOUDROOT = AV.CLOUDROOT = 'cloud/';
 		GENPATH = AV.GENPATH = CLOUDROOT + '__gen/';
