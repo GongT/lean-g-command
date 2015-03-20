@@ -1,3 +1,5 @@
+module.paths.push(process.cwd() + "/node_modules");
+
 module.exports = function (){
 	var packages = Array.prototype.slice.call(arguments);
 	console.log('npm install %s...', packages);
@@ -16,9 +18,11 @@ module.exports = function (){
 module.exports.confirm = function (req, pack){
 	try{
 		global.colors = require(req);
+		console.info('require %s ok', req);
 		return true;
 	} catch(e){
-		console.info('正在安装依赖 %s...', pack || req);
+		console.info('Cannot require %s becouse: %s\n\n正在安装依赖 %s...', req, e, pack || req);
+		throw new Error;
 		var exit = module.exports(pack || req);
 		if(exit === 0){
 			try{

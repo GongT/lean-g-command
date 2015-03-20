@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+module.paths.push(process.cwd() + "/node_modules");
 
 var path = require('path'),
 		fs = require('fs'),
