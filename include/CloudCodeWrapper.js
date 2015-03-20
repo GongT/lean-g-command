@@ -292,6 +292,9 @@ CloudCodeRuntime.prototype.standard_return_data_array = function (data){
 	if(!this._return){
 		this._return = {status: 0};
 	}
+	if(data instanceof AV.Object){
+		data = data.toJSON();
+	}
 	for(var i in data){
 		if(data.hasOwnProperty(i)){
 			this._return[i] = data[i];
