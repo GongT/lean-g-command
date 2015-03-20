@@ -22,7 +22,6 @@ module.exports.confirm = function (req, pack){
 		return true;
 	} catch(e){
 		console.info('Cannot require %s becouse: %s\n\n正在安装依赖 %s...', req, e, pack || req);
-		throw new Error;
 		var exit = module.exports(pack || req);
 		if(exit === 0){
 			try{
