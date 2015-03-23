@@ -149,6 +149,15 @@ function main(AV){
 		throw new Error("未知模板引擎：" + CONFIG.lean.template);
 	}
 	
+	append_log('load express middlewares...');
+	if(fs.existsSync(CLOUDROOT + '/middlewares')){
+		fs.readdirSync(CLOUDROOT + '/middlewares').filter(function (f){
+			return !/^\./.test(f) && /\.js/.test(f);
+		}).forEach(function (f){
+			app.use(require(CLOUDROOT + '/middlewares/' + f));
+		});
+	}
+	
 	append_log('load express routers...');
 	require(GENPATH + 'import.express.js');
 	

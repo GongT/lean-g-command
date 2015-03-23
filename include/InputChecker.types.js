@@ -21,6 +21,9 @@ module.exports = {
 		if(parseFloat(v.toFixed(2)) != v){
 			return;
 		}
+		if(v < 0){
+			return;
+		}
 		return v;
 	},
 	"int"               : function (v){
