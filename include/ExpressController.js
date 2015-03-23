@@ -189,11 +189,9 @@ function init_runtime(req, rsp, next){ // 初始化 请求环境
 	rt.input = new InputHanler;
 	rt.input.get = new AV.InputChecker(req.query);
 	if(method == 'POST'){
-		rt.input.post = new AV.InputChecker(req.params);
-		if(this._paths.length){
-			rt.input.path = rt.input.post;
-		}
-	} else if(this._paths.length){
+		rt.input.post = new AV.InputChecker(req.body);
+	}
+	if(this._paths.length){
 		rt.input.path = new AV.InputChecker(req.params);
 	}
 	rt.input.cookie = req.cookies;
