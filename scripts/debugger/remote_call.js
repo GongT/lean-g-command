@@ -3,7 +3,6 @@ process.stdout.on('resize', function (){
 		client.write('process.stdout.columns = ' + process.stdout.columns + ';');
 	}
 });
-var DEBUG_PORT = 3099;
 var tcpserver, client;
 var scriptQueue = '';
 var console = new LogPrepend('远程过程调用');
@@ -30,7 +29,10 @@ function createServer(cb){
 			scriptQueue = '';
 		}
 	});
-	tcpserver.listen(DEBUG_PORT, function (){ //'listening' listener
+	
+	tcpserver.listen(0, function (){ //'listening' listener
+		process.env.LEANG_DEBUG_PORT = tcpserver.address().port;
+		console.log('debug port is ', process.env.LEANG_DEBUG_PORT);
 		cb();
 	});
 }
@@ -48,7 +50,6 @@ function runner(code){
 }
 
 module.exports.init = function (cb){
-	process.env.LEANG_DEBUG_PORT = DEBUG_PORT;
 	createServer(cb);
 	return {
 		run: runner
