@@ -40,7 +40,11 @@ function runner(code){
 		scriptQueue += code;
 		return;
 	}
-	client.write(code.toString());
+	try{
+		client.write(code.toString());
+	} catch(e){
+		console.error(e);
+	}
 }
 
 module.exports.init = function (cb){

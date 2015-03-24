@@ -20,17 +20,17 @@ function shimResponse(data, encoding){
 		this.lastcallstack = (new Error('上次调用')).stack;
 		if(!JsOrCss.test(this.req.url)){
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
-				process.stderr.write('\x1B[38;5;9m');
+				process.stdout.write('\x1B[38;5;9m');
 			}
 			process.stdout.write('\rI: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode +
 			                     '\n');
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
-				process.stderr.write('\x1B[0m');
+				process.stdout.write('\x1B[0m');
 			}
 		}
 		repl.displayPrompt();
 	} catch(e){
-		process.stderr.write('\x1B[38;5;8m');
+		process.stdout.write('\x1B[38;5;8m');
 		process.stdout.write('\rO: ' + this.method + ' ' + this.path);
 		if(this._hasBody){
 			var out = this.output.join('').replace(this._header, '');
@@ -40,7 +40,7 @@ function shimResponse(data, encoding){
 				process.stdout.write(' Body: ** not json data**');
 			}
 		}
-		process.stderr.write('\x1B[K\x1B[0m\n');
+		process.stdout.write('\x1B[K\x1B[0m\n');
 	}
 	return this.__end();
 }
@@ -55,7 +55,7 @@ function remove_extra(json){
 	delete data._MasterKey;
 	delete data._ClientVersion;
 	delete data._InstallationId;
-	delete data._InstallationId;
+	delete data._SessionToken;
 	
 	return JSON.stringify(data);
 }
