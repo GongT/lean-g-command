@@ -9,7 +9,8 @@ var levels = {
 	'info' : 'INFO',
 	'log'  : 'LOG',
 	'warn' : 'WARN',
-	'error': 'ERROR'
+	'error': 'ERROR',
+	'trace': 'TRACE'
 };
 var levels_color = {
 	'print': '0;40;90',
@@ -17,7 +18,8 @@ var levels_color = {
 	'info' : '1;40;96',
 	'log'  : '0',
 	'warn' : '0;40;33',
-	'error': '5;40;31'
+	'error': '5;40;31',
+	'trace': '0;40;33'
 };
 
 var regist = [];
@@ -54,11 +56,17 @@ if(!AV.isDebugEnv){ // 正式环境不要info和debug
 })();
 
 (function (){
+	if(!AV.localhost){
+		delete levels['trace'];
+	}
 	for(var name in levels){ // 准备所有级别的输出函数
 		var text = levels[name];
 		var fn = console.log;
 		if(AV.localhost || name == 'warn' || name == 'error'){
 			fn = console['error'];
+		}
+		if(name == 'trace'){
+			fn = console['trace'];
 		}
 		
 		Logger[name + 'ToLocalOnly'] = createPrepend(text, fn);

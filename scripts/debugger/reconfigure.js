@@ -1,20 +1,15 @@
 var _need_update = {};
 var updater = {
-	none : function (){
-		this.every(false);
-	},
-	every: function (v){
-		for(var i in global.update){
-			updater[i] = v || true;
-		}
+	none: function (){
+		_need_update = {};
 	}
 };
 
 function update_config(){
+	ppTir = false;
 	for(var n in _need_update){
-		if(updater[n] === true){
-			updater[n] = false;
-			global.update[n]();
+		if(_need_update[n] === true){
+			updater[n]();
 		}
 	}
 }
@@ -26,12 +21,14 @@ Object.keys(global.update).forEach(function (i){
 		get         : function (){
 			return function (){
 				_need_update[i] = false;
-				return global.update[i];
+				return global.update[i]();
 			}
 		},
 		set         : function (v){
 			_need_update[i] = v;
-			prepare_update();
+			if(v){
+				prepare_update();
+			}
 		}
 	});
 });

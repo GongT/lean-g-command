@@ -1,7 +1,7 @@
 var savedFn;
 module.exports = function (fn){
-	// savedFn = fn.complete;
-	// repl.complete = completer;
+	//savedFn = fn.complete;
+	//repl.complete = completer;
 };
 
 function completer(line, callback){

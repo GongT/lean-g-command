@@ -3,12 +3,8 @@
  */
 var avosrun = require('../avrun.js');
 
-avosrun.external('git pull').then(function (){
-	avosrun('app').then(function (){
-		return avosrun('deploy');
-	}).then(null, function (){
-		console.log.apply(console.log, arguments);
-	});
-}, function (){
-	console.log('git pull failed');
+avosrun('app').then(function (){
+	return avosrun('deploy');
+}).then(null, function (){
+	console.log.apply(console.log, arguments);
 });

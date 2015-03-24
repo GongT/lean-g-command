@@ -7,7 +7,8 @@ var levels = {
 	'log'    : 'LOG',
 	'warn'   : 'WARN',
 	'error'  : 'ERROR',
-	'success': 'OK'
+	'success': 'OK',
+	'trace': 'TRACE'
 };
 var levels_color = {
 	'print'  : '0;40;90',
@@ -16,7 +17,8 @@ var levels_color = {
 	'log'    : '0',
 	'warn'   : '0;40;33',
 	'error'  : '5;40;31',
-	'success': '1;40;92'
+	'success': '1;40;92',
+	'trace': '0;40;33'
 };
 
 function LogPrepend(prepend){
@@ -29,6 +31,7 @@ LogPrepend.prototype.log = createPrepend('log', console.log);
 LogPrepend.prototype.warn = createPrepend('warn', console.error);
 LogPrepend.prototype.error = createPrepend('error', console.error);
 LogPrepend.prototype.success = createPrepend('success', console.log);
+LogPrepend.prototype.trace = createPrepend('trace', console.trace);
 
 function createPrepend(level, fn){
 	var restore = '\x1B[0m';

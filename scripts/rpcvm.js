@@ -1,8 +1,8 @@
 var vm = require('vm');
 try{
-	var console = new LogPrepend('调试远程过程调用');
+	var console = new LogPrepend('RPC-S');
 } catch(e){
-	console = new AV.Logger('调试远程过程调用');
+	console = new AV.Logger('RPC-C');
 }
 
 module.exports = function (stream){

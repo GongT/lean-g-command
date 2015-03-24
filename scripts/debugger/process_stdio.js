@@ -2,8 +2,10 @@ var SIG_SUCCESS = 'Press CTRL-C to stop server.\n';
 var SIG_ERROR = 'Error: ';
 var console = new LogPrepend('输入输出控制');
 var logparser = require('./logparser');
+var EventEmitter = require('events').EventEmitter;
 
-module.exports = function (stdout, stderr, emitter){
+module.exports = function (stdout, stderr){
+	var emitter = new EventEmitter;
 	stdout.handler = collect_output.bind(stdout);
 	stdout.bind = process.stdout;
 	stdout.store = '';
@@ -17,6 +19,8 @@ module.exports = function (stdout, stderr, emitter){
 	stderr.other = stdout;
 	stderr.emitter = emitter;
 	stderr.on('data', stderr.handler);
+	
+	return emitter;
 };
 
 function collect_output(data){
@@ -25,7 +29,7 @@ function collect_output(data){
 	var error = this.store.indexOf(SIG_ERROR);
 	if(error != -1){
 		console.error('发生错误：');
-		this.emitter.emit('error');
+		this.emitter.emit('fail', error);
 		return set_passed(this);
 	}
 	

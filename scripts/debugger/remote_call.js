@@ -1,9 +1,12 @@
 process.stdout.on('resize', function (){
-	remote_call('process.stdout.columns = ' + process.stdout.columns + ';');
+	if(client){
+		client.write('process.stdout.columns = ' + process.stdout.columns + ';');
+	}
 });
 var DEBUG_PORT = 3099;
 var tcpserver, client;
 var scriptQueue = '';
+var console = new LogPrepend('远程过程调用');
 
 function createServer(cb){
 	if(tcpserver){
@@ -11,17 +14,17 @@ function createServer(cb){
 	}
 	tcpserver = require('net').createServer(function (c){
 		if(client){
-			console.error('replace current client');
-			client.close();
+			console.log('replace current client');
 			client.destroy();
 		}
-		// console.log('client connected');
+		console.debug('client connected');
 		c.on('end', function (){
-			// console.log('client disconnected');
+			console.debug('client disconnected');
 			c.destroy();
 		});
 		require('../rpcvm')(c);
 		client = c;
+		client.write('process.stdout.columns = ' + process.stdout.columns + ';');
 		if(scriptQueue){
 			runner(scriptQueue);
 			scriptQueue = '';

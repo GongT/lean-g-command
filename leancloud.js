@@ -17,10 +17,10 @@ var colors = global.colors = require('colors/safe');
 
 var CAPPPATH = global.CAPPPATH = ''; // 项目路径
 
-var APPPATH = global.APPPATH = process.cwd() + '/'; // 项目路径 - 运行时
+var APPPATH = global.APPPATH = process.cwd().replace(/\\/g, '/') + '/'; // 项目路径 - 运行时
 var CLOUDROOT = global.CLOUDROOT = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
 
-var CGROOT = global.CGROOT = __dirname + '/'; // 框架存放路径
+var CGROOT = global.CGROOT = __dirname.replace(/\\/g, '/') + '/'; // 框架存放路径
 var GROOT = global.GROOT = 'cloud/lean-g/'; // 框架存放路径 - 运行时
 
 console.log('LEAN-G: set CGROOT = %s', CGROOT);

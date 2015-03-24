@@ -13,7 +13,7 @@ function init(app){
 	
 	process.stdout.isTTY = true;
 	
-	console.log('命令界面启动');
+	console.log('神经接续开始');
 	var replfix = require(AV.GROOT + 'include/debug-client/repl_bug');
 	var repl = global.repl = require('repl').start({
 		prompt         : 'AVOS> ',
@@ -38,7 +38,7 @@ function init(app){
 	}
 	
 	require(AV.GROOT + 'include/debug-client/outgoing_message_shim');
-	console.log('星际通讯输出显像工具启动');
+	console.log('星际显像工具启动');
 	
 	app.use(function (_1, _2, next){
 		AV.nsmarty.clearCache();
@@ -47,10 +47,10 @@ function init(app){
 	console.log('古旧空间清除工具开始动作');
 	
 	require(AV.GROOT + 'include/debug-client/debug_helper_functions');
-	console.log('调试帮助程序载入');
+	console.log('超级指令就绪');
 	
 	require(AV.GROOT + 'include/debug-client/readline_bug')(repl);
-	console.log('处理自动完成');
+	console.log('树状图设计者链接成功');
 	
 	require(AV.GROOT + 'include/debug-client/debugger_rpc')(port);
 	console.log('次元隧道启动，连接目标：', port);

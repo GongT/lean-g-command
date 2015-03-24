@@ -17,7 +17,7 @@ function DEPLOY(AV, _require){
 		console.log('start deploy on localhost.');
 	} catch(e){
 		local = AV.localhost = false;
-		ABS_ROOT = AV.ABS_ROOT = __dirname + '/';
+		ABS_ROOT = AV.ABS_ROOT = path.resolve(__dirname, '..') + '/';
 		GROOT = AV.GROOT = 'cloud/lean-g/';
 		CLOUDROOT = AV.CLOUDROOT = 'cloud/';
 		GENPATH = AV.GENPATH = CLOUDROOT + '__gen/';
@@ -150,8 +150,8 @@ function main(AV){
 	}
 	
 	append_log('load express middlewares...');
-	if(fs.existsSync(CLOUDROOT + '/middlewares')){
-		fs.readdirSync(CLOUDROOT + '/middlewares').filter(function (f){
+	if(fs.existsSync(AV.ABS_ROOT + CLOUDROOT + 'middlewares')){
+		fs.readdirSync(AV.ABS_ROOT + CLOUDROOT + 'middlewares').filter(function (f){
 			return !/^\./.test(f) && /\.js/.test(f);
 		}).forEach(function (f){
 			app.use(require(CLOUDROOT + '/middlewares/' + f));

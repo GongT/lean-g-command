@@ -1,39 +1,94 @@
 var console = new LogPrepend('文件监视器');
+var path = require('path');
+var watch, imm;
+var reconfigure = require('./reconfigure');
 
-var watch;
+var EventEmitter = require('events').EventEmitter;
+var self = module.exports = new EventEmitter;
 
-function on_file_add(f){
-	console.log('file add ', f);
-}
-
-function on_file_delete(f){
-	console.log('file delete ', f);
-}
-
-module.exports.start = function (){
+self.start = function (){
+	if(watch){
+		console.warn('重复start');
+		return;
+	}
 	watch = require('chokidar').watch(require('fs').realpathSync('./'), {
 		ignored      : /\.git|\.idea|\.avoscloud|README|___jb_bak___|__gen|public\/|views\//,
 		ignoreInitial: true
 	});
-	setImmediate(function (){
-		watch.on('add', on_file_add).on('change', on_file_change).on('unlink', on_file_delete)
+	imm = setImmediate(function (){
+		imm = 0;
+		watch.on('add', on_struct_change).on('change', on_file_change).on('unlink', on_struct_change)
 	});
 };
 
-module.exports.stop = function (){
-	watch.destroy();
+self.stop = function (){
+	if(!watch){
+		console.trace('重复stop');
+		return;
+	}
+	
+	watch.removeAllListeners();
+	watch.close();
+	watch = false;
+	if(imm){
+		clearImmediate(imm);
+	}
 };
 
-require('events').EventEmitter.apply(module.exports);
-
-function on_file_change(path){
-	console.log('file change ', path);
-	// process.stderr.write('\r*** file changed: ' + path + ' ***\r');
-	if(/[\/\\](timers|trigger)[\/\\]/.test(path)){
-		console.log('\x1B[38;5;14m触发器和定时器需要部署才能生效！\x1B[0m');
-	} else if(/[\/\\](config)[\/\\]/.test(path)){
-	} else if(/[\/\\]errormessage.json/.test(path)){
-	} else if(/[\/\\](lean-g)[\/\\]/.test(path)){
-		console.log('核心模块有改动，当前进程退出。');
+function on_file_change(file){
+	file = path.resolve(file);
+	file = file.replace(/\\/g, '/');
+	file = file.replace(/^.*\/lean-g\//, 'G/');
+	file = file.replace(global.APPPATH + 'cloud/', 'C/');
+	file = file.replace(global.APPPATH, 'R/');
+	
+	if(/(^C\/timers|\/trigger)\//.test(file)){
+		console.info('触发器和定时器需要部署才能生效！');
+	} else if(/^C\/(config)\//.test(file)){
+		console.info('更新配置');
+		reconfigure.config = true;
+	} else if(/^R\/errormessage.json/.test(file)){
+		console.info('更新错误码');
+		reconfigure.errno = true;
+	} else if(/^G\/scripts\/|^\/G\/(lean-g)\/leancloud.js/.test(file)){
+		console.info('核心模块有改动，当前进程可能需要重启才能生效。');
+	} else if(/\.js/.test(file)){
+		console.debug('file change ', file);
+	} else if(/\/views\//.test(file)){
+		console.debug('views change ', file);
+	} else{
+		console.debug('外部文件修改，忽略之', file);
+		return;
 	}
+	self.emit('change');
+}
+
+function on_struct_change(file){
+	file = path.resolve(file);
+	file = file.replace(/\\/g, '/');
+	file = file.replace(/^.*\/lean-g\//, 'G/');
+	file = file.replace(global.APPPATH + 'cloud/', 'C/');
+	file = file.replace(global.APPPATH, 'R/');
+	
+	if(/^C\/database\//.test(file)){
+		console.info('更新数据库定义');
+		reconfigure.module = true;
+	} else if(/^C\/functions(\-debug)?\//.test(file)){
+		console.info('更新云代码');
+		reconfigure.function = true;
+	} else if(/^C\/library\//.test(file)){
+		console.info('更新library');
+		reconfigure.library = true;
+	} else if(/^C\/controllers\//.test(file)){
+		console.info('更新express');
+		reconfigure.express = true;
+	} else if(/\.js/.test(file)){
+		console.debug('file struct change ', file);
+	} else if(/\/views\//.test(file)){
+		console.debug('views struct change ', file);
+	} else{
+		console.debug('外部文件添加删除，忽略之', file);
+		return;
+	}
+	self.emit('change');
 }

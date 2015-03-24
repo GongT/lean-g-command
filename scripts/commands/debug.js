@@ -33,12 +33,14 @@ controller.on('started', remove_start_timeout);
 controller.on('shutdown', function (code){
 	switch(code){
 	case 0:
+		console.info('正常退出~');
 		process.exit(0);
 		break;
 	case 100:
 		console.info('restarting...');
 		controller.restartService();
-	default :
+		break;
+	default:
 		console.error('调试服务器启动失败');
 	}
 });
