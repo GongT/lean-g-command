@@ -9,7 +9,8 @@ functions.help = function (){
 	msg += '可用命令：\n';
 	msg += '\trs - 重新生成并重启服务器\n';
 	msg += '\texit - 退出，也可以通过按两次Ctrl+C实现\n';
-	msg += '\tdebug [on|off|show] [level] - \n';
+	msg += '\tdebug level/text level_or_message on/off - 还没写好\n';
+	msg += '\tdebug grep `regexp`/off - 还没写好\n';
 	
 	console.log(msg);
 };

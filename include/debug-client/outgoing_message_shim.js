@@ -22,7 +22,8 @@ function shimResponse(data, encoding){
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stderr.write('\x1B[38;5;9m');
 			}
-			process.stdout.write('\rI: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode + '\n');
+			process.stdout.write('\rI: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode +
+			                     '\n');
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stderr.write('\x1B[0m');
 			}
@@ -32,14 +33,29 @@ function shimResponse(data, encoding){
 		process.stderr.write('\x1B[38;5;8m');
 		process.stdout.write('\rO: ' + this.method + ' ' + this.path);
 		if(this._hasBody){
-			var out = this.output.join('').replace(this._header);
-			if(out.substr(0,1)=='{'){
-				process.stdout.write(' Body: '+out);
-			}else{
-				process.stdout.write(' Body: ** other content type **');
+			var out = this.output.join('').replace(this._header, '');
+			if(out.substr(0, 1) == '{'){
+				process.stdout.write(' Body: ' + remove_extra(out));
+			} else{
+				process.stdout.write(' Body: ** not json data**');
 			}
 		}
 		process.stderr.write('\x1B[K\x1B[0m\n');
 	}
 	return this.__end();
+}
+
+function remove_extra(json){
+	var data = JSON.parse(json);
+	if(!data){
+		return '** unavailable json data **';
+	}
+	delete data._ApplicationId;
+	delete data._ApplicationKey;
+	delete data._MasterKey;
+	delete data._ClientVersion;
+	delete data._InstallationId;
+	delete data._InstallationId;
+	
+	return JSON.stringify(data);
 }

@@ -75,7 +75,8 @@ ProcessController.prototype.register_handlers = function (){
 	
 	em.on('success', function (){
 		self.running = true;
-		self.call('console.log("\\n\\t这里是一个node自带的repl，相当于直接运行“node”之后出现的“>”可以查看变量内容等。\\n\\t输入rs强制重启服务器，help查看更多指令\\n");repl.displayPrompt();')
+		self.call('console.log("\\n\\t浏览器打开 http://127.0.0.1:' + port.toString() +
+		          '/ 进行调试\\n\\t这里是一个node自带的repl，相当于直接运行“node”之后出现的“>”可以查看变量内容等。\\n\\t输入rs强制重启服务器，help查看更多指令\\n");repl.displayPrompt();')
 	});
 	em.on('fail', function (){
 		self.running = false;

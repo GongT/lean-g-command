@@ -59,7 +59,6 @@ function shutdownService(cb){
 		});
 	} else{
 		console.warn('调试服务器并未启动...');
-		self.emit('shutdown', 0);
 		if(cb){
 			cb();
 		}
