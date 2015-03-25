@@ -4,19 +4,23 @@ var realResponse = http.ServerResponse.prototype.end;
 http.ClientRequest.prototype.end =
 http.OutgoingMessage.prototype.end =
 http.ServerResponse.prototype.end = shimResponse;
-
-http.ClientRequest.prototype.__end =
-http.OutgoingMessage.prototype.__end =
-http.ServerResponse.prototype.__end = realResponse;
-
+/*
+ http.ClientRequest.prototype.__end =
+ http.OutgoingMessage.prototype.__end =
+ http.ServerResponse.prototype.__end = realResponse;
+ */
 var successCode = [200, 301, 302, 304];
 var JsOrCss = /\.(js|css)$/;
 function shimResponse(data, encoding){
-	try{ // out going message no this.req 
+	var ret;
+	if(this.req){
 		if(this.finished){
 			console.error(this.req.originalUrl + 'multiple call to response.end()\n' +
 			              this.lastcallstack + '\n' + (new Error('本次调用')).stack);
 		}
+		
+		ret = realResponse.apply(this, arguments);
+		
 		this.lastcallstack = (new Error('上次调用')).stack;
 		if(!JsOrCss.test(this.req.url)){
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
@@ -29,7 +33,9 @@ function shimResponse(data, encoding){
 			}
 		}
 		repl.displayPrompt();
-	} catch(e){
+	} else{
+		ret = realResponse.apply(this, arguments);
+		
 		process.stdout.write('\x1B[38;5;8m');
 		process.stdout.write('\rO: ' + this.method + ' ' + this.path);
 		if(this._hasBody){
@@ -37,12 +43,12 @@ function shimResponse(data, encoding){
 			if(out.substr(0, 1) == '{'){
 				process.stdout.write(' Body: ' + remove_extra(out));
 			} else{
-				process.stdout.write(' Body: ** not json data**');
+				process.stdout.write(' Body: ** not json data (length = ' + out.length + ') **');
 			}
 		}
 		process.stdout.write('\x1B[K\x1B[0m\n');
 	}
-	return this.__end();
+	return ret;
 }
 
 function remove_extra(json){

@@ -4,6 +4,7 @@
 var controller = require('../debugger/bootstrap');
 var colors = global.colors = require('colors/safe');
 var console = new LogPrepend('调试服务器管理');
+var reconfigure = require('../debugger/reconfigure');
 
 console.info('正在启动LeanCloud本地调试服务器……');
 
@@ -38,6 +39,7 @@ controller.on('shutdown', function (code){
 		break;
 	case 100:
 		console.info('restarting...');
+		reconfigure.all();
 		controller.restartService();
 		break;
 	default:

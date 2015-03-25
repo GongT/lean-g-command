@@ -150,13 +150,7 @@ function main(AV){
 	}
 	
 	append_log('load express middlewares...');
-	if(fs.existsSync(AV.ABS_ROOT + CLOUDROOT + 'middlewares')){
-		fs.readdirSync(AV.ABS_ROOT + CLOUDROOT + 'middlewares').filter(function (f){
-			return !/^\./.test(f) && /\.js/.test(f);
-		}).forEach(function (f){
-			app.use(require(CLOUDROOT + '/middlewares/' + f));
-		});
-	}
+	require(GROOT + '/appldr/middlewares.js')(AV, append_log);
 	
 	append_log('load express routers...');
 	require(GENPATH + 'import.express.js');
@@ -181,6 +175,7 @@ function end_log(){
 	if(deploylogtimer){
 		clearTimeout(deploylogtimer);
 	}
+	AV.deploylog = deploylog;
 	deploylog = deploylogtimer = undefined;
 }
 function append_log(msg){

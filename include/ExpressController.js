@@ -306,6 +306,9 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 };
 
 ExpressControllerRuntime.prototype.json = function (){
+	if(!this._tVar['status']){
+		this._tVar['status'] = 0;
+	}
 	this.__rsp.send(this._tVar);
 	return this;
 };

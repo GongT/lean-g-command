@@ -2,6 +2,9 @@ var _need_update = {};
 var updater = {
 	none: function (){
 		_need_update = {};
+	},
+	all : function (){
+		global.update.everything();
 	}
 };
 
