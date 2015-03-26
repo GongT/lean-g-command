@@ -63,9 +63,10 @@ CallbackList.prototype.next = function (fn){
 			return AV.Promise.error(AV.E.E_EMPTY_RETURN);
 		}
 		if(AV.Promise.is(ret)){
-			if(selfFunction._fail_trigger_error){
+			if(selfFunction._on_error){
+				var self = this;
 				ret = ret.then(undefined, function (){
-					return selfFunction._fail_trigger_error;
+					return selfFunction._on_error.apply(self, arguments);
 				});
 			}
 		}
@@ -81,11 +82,24 @@ CallbackList.prototype.next = function (fn){
 	return this;
 };
 
+CallbackList.prototype.on_error = function (fn){
+	if(!this.lastcallback){
+		throw new Error("[" + this.__title__ + "]fail_trigger_error() 必须在 next() 或 check() 后立刻调用");
+	}
+	if(typeof fn != 'function'){
+		throw new TypeError("[" + this.__title__ + "]error_handler() 需要一个函数");
+	}
+	this.lastcallback._on_error = fn;
+	return this;
+};
 CallbackList.prototype.fail_trigger_error = function (e){
 	if(!this.lastcallback){
 		throw new Error("[" + this.__title__ + "]fail_trigger_error() 必须在 next() 或 check() 后立刻调用");
 	}
-	this.lastcallback._fail_trigger_error = e;
+	if(!(e instanceof AV.ApiError)){
+		throw new TypeError("[" + this.__title__ + "]error_handler() 需要一个ApiError");
+	}
+	this.lastcallback._t_error = e;
 	return this;
 };
 
@@ -129,10 +143,10 @@ CallbackList.prototype.check = function (fn){
 		}
 		if(AV.Promise.is(ret)){
 			return ret.then(function (ret){
-				return _check_helper(ret, saveArg, selfFunction._fail_trigger_error, stack);
+				return _check_helper(ret, saveArg, selfFunction._t_error, stack);
 			});
 		} else{
-			return _check_helper(ret, saveArg, selfFunction._fail_trigger_error, stack);
+			return _check_helper(ret, saveArg, selfFunction._t_error, stack);
 		}
 	});
 	var selfFunction = this.lastcallback = this.fnList[this.fnList.length - 1];
