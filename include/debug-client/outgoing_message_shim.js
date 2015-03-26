@@ -63,5 +63,5 @@ function remove_extra(json){
 	delete data._InstallationId;
 	delete data._SessionToken;
 	
-	return JSON.stringify(data);
+	return JSON.stringify(data).substr(0, 26);
 }
