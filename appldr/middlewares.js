@@ -1,3 +1,4 @@
+var fs = require("fs");
 module.exports = function (AV, log){
 	if(fs.existsSync(AV.ABS_ROOT + AV.CLOUDROOT + 'middlewares')){
 		fs.readdirSync(AV.ABS_ROOT + AV.CLOUDROOT + 'middlewares').filter(function (f){
