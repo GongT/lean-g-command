@@ -84,20 +84,20 @@ CallbackList.prototype.next = function (fn){
 
 CallbackList.prototype.on_error = function (fn){
 	if(!this.lastcallback){
-		throw new Error("[" + this.__title__ + "]fail_trigger_error() 必须在 next() 或 check() 后立刻调用");
+		throw new Error("CallbackList.error_handler() 必须在 next() 或 check() 后立刻调用");
 	}
 	if(typeof fn != 'function'){
-		throw new TypeError("[" + this.__title__ + "]error_handler() 需要一个函数");
+		throw new TypeError("CallbackList.error_handler() 需要一个函数");
 	}
 	this.lastcallback._on_error = fn;
 	return this;
 };
 CallbackList.prototype.fail_trigger_error = function (e){
 	if(!this.lastcallback){
-		throw new Error("[" + this.__title__ + "]fail_trigger_error() 必须在 next() 或 check() 后立刻调用");
+		throw new Error("CallbackList.fail_trigger_error() 必须在 next() 或 check() 后立刻调用");
 	}
 	if(!(e instanceof AV.ApiError)){
-		throw new TypeError("[" + this.__title__ + "]error_handler() 需要一个ApiError");
+		throw new TypeError("CallbackList.fail_trigger_error() 需要一个ApiError");
 	}
 	this.lastcallback._t_error = e;
 	return this;
