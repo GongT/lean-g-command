@@ -36,7 +36,7 @@ function shimResponse(data, encoding){
 	} else{
 		ret = realResponse.apply(this, arguments);
 		
-		process.stdout.write('\x1B[38;5;8m');
+		process.stdout.write('\x1B[38;5;244m');
 		process.stdout.write('\rO: ' + this.method + ' ' + this.path);
 		if(this._hasBody){
 			var out = this.output.join('').replace(this._header, '');
