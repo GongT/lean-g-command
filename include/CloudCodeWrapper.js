@@ -279,9 +279,12 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 		} else if(e instanceof Error){
 			console.error('编程错误：云代码[' + title + ']抛出异常 - ' + e.stack);
 			rsp.error('编程错误：云代码[' + title + ']抛出异常 - ' + e.message);
-		} else{
+		} else if(e){
 			console.error('云代码[' + title + ']返回字符串错误 - ' + (e.stack || e.message || e));
 			rsp.error(e);
+		}else{
+			console.error('云代码[' + title + ']返回未知错误 ',e);
+			rsp.error('internal server error');
 		}
 	});
 };
@@ -309,7 +312,6 @@ CloudCodeRuntime.prototype.standard_return_data_array = function (data){
 	if(!this._return){
 		this._return = data;
 		if(!this._return.hasOwnProperty('status')){
-			console.log('set status =0')
 			this._return.status = 0;
 		}
 		return;
@@ -320,7 +322,6 @@ CloudCodeRuntime.prototype.standard_return_data_array = function (data){
 		}
 	}
 	if(!this._return.hasOwnProperty('status')){
-		console.log('set status =0')
 		this._return.status = 0;
 	}
 };
