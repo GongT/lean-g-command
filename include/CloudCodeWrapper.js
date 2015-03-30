@@ -303,16 +303,25 @@ CloudCodeRuntime.prototype.standard_return_data = function (name, value){
 	this._return[name] = value;
 };
 CloudCodeRuntime.prototype.standard_return_data_array = function (data){
-	if(!this._return){
-		this._return = {status: 0};
-	}
 	if(data instanceof AV.Object){
 		data = data.toJSON();
+	}
+	if(!this._return){
+		this._return = data;
+		if(!this._return.hasOwnProperty('status')){
+			console.log('set status =0')
+			this._return.status = 0;
+		}
+		return;
 	}
 	for(var i in data){
 		if(data.hasOwnProperty(i)){
 			this._return[i] = data[i];
 		}
+	}
+	if(!this._return.hasOwnProperty('status')){
+		console.log('set status =0')
+		this._return.status = 0;
 	}
 };
 
