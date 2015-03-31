@@ -172,11 +172,11 @@ function update_avos_express(){
 	
 	var vflist = {};
 	fs.readdirSync(CGROOT + 'view_functions').filter(isJsFile).forEach(function (f){
-		vflist[basename(f, '.js')] = 'view_functions/' + f;
+		vflist[basename(f, '.js')] = GROOT + 'view_functions/' + f;
 	});
-	if(fs.existsSync(APPPATH + 'cloud/view_functions')){
-		fs.readdirSync(APPPATH + 'cloud/view_functions').filter(isJsFile).forEach(function (f){
-			vflist[basename(f, '.js')] = 'cloud/view_functions/' + f;
+	if(fs.existsSync(CLOUDROOT + 'view_functions')){
+		fs.readdirSync(CLOUDROOT + 'view_functions').filter(isJsFile).forEach(function (f){
+			vflist[basename(f, '.js')] = CLOUDROOT + 'view_functions/' + f;
 		});
 	}
 	var arr = Object.keys(vflist).map(function (k){

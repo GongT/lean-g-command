@@ -15,7 +15,7 @@ AV.server.engine('.tpl', parse);
 module.exports.parse = register;
 module.exports.parseFile = function (file){
 	var name = basename(file, '.js');
-	var fn = require(AV.GROOT + file);
+	var fn = require(file);
 	if(typeof fn === 'function'){
 		var type = fn.type || 'function';
 		register(type, name, fn);

@@ -30,5 +30,7 @@ ServerCloud.prototype.run = function (name, data){
 		body   : data
 	}).then(function (body){
 		return body.data.result;
+	}, function (response){
+		return response.text;
 	});
 };

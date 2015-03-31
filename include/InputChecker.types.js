@@ -109,8 +109,8 @@ module.exports = {
 		}
 	},
 	'geoObject'         : function (v){
-		var lat = v.lat || v.latitude;
-		var lng = v.lng || v.longitude;
+		var lat = parseFloat(v.lat || v.latitude);
+		var lng = parseFloat(v.lng || v.longitude);
 		if(lat && lng){
 			return new AV.GeoPoint(lat, lng);
 		}
