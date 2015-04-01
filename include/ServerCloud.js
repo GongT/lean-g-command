@@ -16,6 +16,7 @@ module.exports = ServerCloud;
 
 ServerCloud.prototype.run = function (name, data){
 	var config = this.config;
+	data.source = AV.CONFIG.AppSource;
 	console.debug('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
 	
 	return AV.Cloud.httpRequest({
@@ -29,6 +30,9 @@ ServerCloud.prototype.run = function (name, data){
 		json   : true,
 		body   : data
 	}).then(function (body){
+		if(body.data.code){
+			return AV.Promise.error(AV.E.E_SERVER.attach(body.data))
+		}
 		return body.data.result;
 	}, function (response){
 		return response.text;
