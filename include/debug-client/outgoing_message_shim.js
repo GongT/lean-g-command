@@ -26,8 +26,9 @@ function shimResponse(data, encoding){
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stdout.write('\x1B[38;5;9m');
 			}
-			process.stdout.write('\rI: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode +
-			                     '\n');
+			process.stdout.write('\r\x1B[38;5;14mI: ' + this.req.method + ' ' +
+			                     decodeURI(this.req.url) + ' ' + this.statusCode +
+			                     '\x1B[0m\n');
 			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
 				process.stdout.write('\x1B[0m');
 			}

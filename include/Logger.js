@@ -65,7 +65,7 @@ if(!AV.isDebugEnv){ // 正式环境不要info和debug
 		if(AV.localhost || name == 'warn' || name == 'error'){
 			fn = console['error'];
 		}
-		if(name == 'trace'){
+		if(AV.localhost && name == 'trace'){
 			fn = console['trace'];
 		}
 		
