@@ -50,10 +50,18 @@ global.write_package_json = function (){
 		fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(PackageJson, null, 8).replace(/^        /mg, '\t'));
 	}
 };
+global.delete_package_json = function (){
+	if(pkg && fs.existsSync(APPPATH + 'package.json')){
+		fs.unlinkSync(APPPATH + 'package.json');
+	}
+};
 global.PackageJson = fs.readFileSync(APPPATH + 'package.json', 'utf-8');
 try{
 	eval('PackageJson=' + PackageJson);
-	global.LeanParams = PackageJson.leancloud || {};
+	if(!PackageJson.leancloud){
+		PackageJson.leancloud = {};
+	}
+	global.LeanParams = PackageJson.leancloud;
 } catch(e){
 	console.error('无法解析package.json:\n\n' + e.stack);
 	process.exit(-1);

@@ -27,6 +27,7 @@ var fs = require('fs');
  */
 
 avosrun('app').then(function (){
+	require('../deploy_helper/modify_package');
 	return avosrun('deploy');
 }).then(function (){
 	return avosrun('publish');
