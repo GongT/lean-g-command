@@ -118,16 +118,14 @@ function _check_helper(ret, args, error_value, stack){
 }
 CallbackList.prototype.check = function (fn){
 	assert(fn);
-	if(AV.localhost){
-		var stack = (new Error).stack.split(/\n/g)[2];
-		if(stack){
-			if(/\/.+\.js/.test(stack)){
-				stack = /\/.+\.js([0-9:]+)?/.exec(stack)[0]
-			}
+	var stack = (new Error).stack.split(/\n/g)[2];
+	if(stack){
+		if(/\/.+\.js/.test(stack)){
+			stack = /\/.+\.js([0-9:]+)?/.exec(stack)[0]
 		}
-		if(!stack){
-			stack = '';
-		}
+	}
+	if(!stack){
+		stack = '';
 	}
 	this.fnList.push(function (data){
 		var ret, saveArg;
@@ -241,7 +239,7 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 	var title = self.__title__;
 	// console.log('getTitle(%s)', title);
 	var chk = new AV.InputChecker(req.params);
-	var runtime = new CloudCodeRuntime;
+	var runtime = req.runtime = new CloudCodeRuntime;
 	var p = CallbackList.create_instance(this._call_list, [chk], runtime);
 	
 	p.then(function (data){
@@ -282,8 +280,8 @@ CloudClodeWrapper.prototype.runner = function (req, rsp){
 		} else if(e){
 			console.error('云代码[' + title + ']返回字符串错误 - ' + (e.stack || e.message || e));
 			rsp.error(e);
-		}else{
-			console.error('云代码[' + title + ']返回未知错误 ',e);
+		} else{
+			console.error('云代码[' + title + ']返回未知错误 ', e);
 			rsp.error('internal server error');
 		}
 	});

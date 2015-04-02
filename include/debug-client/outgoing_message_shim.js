@@ -1,4 +1,5 @@
 var http = require('http');
+var fs = require('fs');
 var realResponse = http.ServerResponse.prototype.end;
 
 http.ClientRequest.prototype.end =
@@ -10,7 +11,6 @@ http.ServerResponse.prototype.end = shimResponse;
  http.ServerResponse.prototype.__end = realResponse;
  */
 var successCode = [200, 301, 302, 304];
-var JsOrCss = /\.(js|css)$/;
 function shimResponse(data, encoding){
 	var ret;
 	if(this.req){
@@ -22,17 +22,26 @@ function shimResponse(data, encoding){
 		ret = realResponse.apply(this, arguments);
 		
 		this.lastcallstack = (new Error('上次调用')).stack;
-		if(!JsOrCss.test(this.req.url)){
-			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
-				process.stdout.write('\x1B[38;5;9m');
+		if(successCode.indexOf(parseInt(this.statusCode)) == -1){
+			process.stdout.write('\r\x1B[38;5;9m');
+		} else if(this.runtime){
+			if(this.runtime._tVar.status == 0){
+				process.stdout.write('\r\x1B[38;5;2m');
+			} else{
+				process.stdout.write('\r\x1B[38;5;3m');
 			}
-			process.stdout.write('\r\x1B[38;5;14mI: ' + this.req.method + ' ' +
-			                     decodeURI(this.req.url) + ' ' + this.statusCode +
-			                     '\x1B[0m\n');
-			if(successCode.indexOf(parseInt(this.statusCode)) == -1){
-				process.stdout.write('\x1B[0m');
+		} else{
+			if(fs.existsSync('public' + this.req.url.split(/\?/)[0])){
+				process.stdout.write('\r\x1B[2m');
+			} else{
+				process.stdout.write('\r\x1B[38;5;14m');
 			}
 		}
+		process.stdout.write('I: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode);
+		if(this.runtime && this.runtime._tVar.status != 0){
+			process.stdout.write(' -> ' + this.runtime._tVar.status + ': ' + this.runtime._tVar.message);
+		}
+		process.stdout.write('\x1B[0m\n');
 		repl.displayPrompt();
 	} else{
 		ret = realResponse.apply(this, arguments);
