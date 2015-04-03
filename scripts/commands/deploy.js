@@ -6,7 +6,6 @@ var fs = require('fs');
 
 avosrun('app').then(function (){
 	require('../deploy_helper/modify_package');
-	fs.unlinkSync(APPPATH + '/.avoscloud/deploy.json');
 	return avosrun('deploy');
 }).then(function (){
 	return avosrun('publish');
