@@ -14,6 +14,8 @@ var successCode = [200, 301, 302, 304];
 function shimResponse(data, encoding){
 	var ret;
 	if(this.req){
+		process.stdout.write('\r\x1B[K');
+		var skip = false;
 		if(this.finished){
 			console.error(this.req.originalUrl + 'multiple call to response.end()\n' +
 			              this.lastcallstack + '\n' + (new Error('本次调用')).stack);
@@ -32,6 +34,7 @@ function shimResponse(data, encoding){
 			}
 		} else{
 			if(fs.existsSync('public' + this.req.url.split(/\?/)[0])){
+				skip = true;
 				process.stdout.write('\r\x1B[2m');
 			} else{
 				process.stdout.write('\r\x1B[38;5;14m');
@@ -41,13 +44,13 @@ function shimResponse(data, encoding){
 		if(this.runtime && this.runtime._tVar.status != 0){
 			process.stdout.write(' -> ' + this.runtime._tVar.status + ': ' + this.runtime._tVar.message);
 		}
-		process.stdout.write('\x1B[0m\n');
+		process.stdout.write('\x1B[0m' + (skip? '\r' : '\n'));
 		repl.displayPrompt();
 	} else{
 		ret = realResponse.apply(this, arguments);
 		
-		process.stdout.write('\x1B[38;5;244m');
-		process.stdout.write('\rO: ' + this.method + ' ' + this.path);
+		process.stdout.write('');
+		process.stdout.write('\r\x1B[K\x1B[38;5;244mO: ' + this.method + ' ' + this.path);
 		if(this._hasBody){
 			var out = this.output.join('').replace(this._header, '');
 			if(out.substr(0, 1) == '{'){
@@ -56,7 +59,7 @@ function shimResponse(data, encoding){
 				process.stdout.write(' Body: ** not json data (length = ' + out.length + ') **');
 			}
 		}
-		process.stdout.write('\x1B[K\x1B[0m\n');
+		process.stdout.write('\x1B[0m\n');
 	}
 	return ret;
 }

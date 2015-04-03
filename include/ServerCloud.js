@@ -37,7 +37,7 @@ ServerCloud.prototype.run = function (name, data){
 			return AV.Promise.error(AV.E.E_SERVER.attach('empty response'));
 		}
 		if(body.data.result.status != 0){
-			return AV.Promise.error(body.data.result);
+			return AV.Promise.error(AV.E.E_RPC.attach(body.data.result));
 		}
 		return body.data.result;
 	}, function (response){
