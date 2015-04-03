@@ -28,7 +28,7 @@ ServerCloud.prototype.run = function (name, data){
 			'Content-Type'               : 'application/json'
 		},
 		json   : true,
-		body   : data
+		body   : new Buffer(JSON.stringify(data))
 	}).then(function (body){
 		if(body.data.code){
 			return AV.Promise.error(AV.E.E_SERVER.attach(body.data))
