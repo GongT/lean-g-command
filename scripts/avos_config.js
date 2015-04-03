@@ -1,4 +1,5 @@
 var fs = require('fs');
+var path = require('path');
 var basename = require('path').basename;
 
 var APPPATH = global.APPPATH;
@@ -112,6 +113,29 @@ function read_proto_folder(){
 	return data;
 }
 
+function deepReadDirSync(dir){
+	var result = [];
+	if(!fs.existsSync(dir)){
+		return result;
+	}
+	dir = path.resolve(dir) + '/';
+	read(dir, '');
+	return result;
+	
+	function read(prepend, dir){
+		if(dir && !/[\/\\]$/.test(dir)){
+			dir += '/';
+		}
+		fs.readdirSync(prepend + dir).forEach(function (f){
+			if(fs.lstatSync(prepend + dir + f).isDirectory()){
+				read(prepend + dir, f);
+			} else{
+				result.push(dir + f);
+			}
+		});
+	}
+}
+
 function read_module_folder(basepath, types){
 	var data = {};
 	for(var i in types){
@@ -218,10 +242,11 @@ function update_avos_function(){
 	var source = [];
 	
 	/* 客户端用的云代码 */
-	fs.readdirSync(APPPATH + 'cloud/functions').filter(isJsFile).forEach(function (f){
-		console.log('\t云代码：' + f);
-		source.push('AV.Cloud.define("' + basename(f, '.js') + '", AV.Cloud.' + basename(f, '.js') +
-		            ' = require("cloud/functions/' + f + '"));');
+	deepReadDirSync(APPPATH + 'cloud/functions').filter(isJsFile).forEach(function (f){
+		var base = f.replace(/\.js$/, '');
+		var name = base.replace(/\/|\\/g, '_');
+		console.log('\t云代码：' + base);
+		source.push('AV.Cloud.define("' + base + '", AV.Cloud.' + name + ' = require("cloud/functions/' + f + '"));');
 	});
 	
 	/* 调试用的云代码 */
