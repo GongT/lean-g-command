@@ -64,8 +64,7 @@ function update_avos_config(){
 	// 配置文件
 	console.log('\t复制配置文件...');
 	fs.writeFileSync(APPPATH + 'config/global.json', JSON.stringify(APP_CONFIG));
-	APP_CONFIG.package = global.PackageJson || {};
-	APP_CONFIG.lean = global.LeanParams || {};
+	global.deploySettings.configure(APP_CONFIG);
 	fs.writeFileSync(GENPATH + 'config.js', 'module.exports = ' + JSON.stringify(APP_CONFIG));
 	
 	// 应用列表

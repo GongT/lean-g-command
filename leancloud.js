@@ -34,38 +34,8 @@ if(!initfunc){
 }
 
 // 解析package.json
-if(fs.existsSync(APPPATH + 'package.proto.json')){
-	var pkg = fs.readFileSync(APPPATH + 'package.proto.json', 'utf-8');
-	try{
-		eval('pkg=' + pkg);
-	} catch(e){
-		console.error('无法解析package.proto.json:\n\n' + e.stack);
-		process.exit(-1);
-	}
-	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg, null, 8).replace(/^        /mg, '\t'));
-	pkg = true;
-}
-global.write_package_json = function (){
-	if(pkg){
-		fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(PackageJson, null, 8).replace(/^        /mg, '\t'));
-	}
-};
-global.delete_package_json = function (){
-	if(pkg && fs.existsSync(APPPATH + 'package.json')){
-		fs.unlinkSync(APPPATH + 'package.json');
-	}
-};
-global.PackageJson = fs.readFileSync(APPPATH + 'package.json', 'utf-8');
-try{
-	eval('PackageJson=' + PackageJson);
-	if(!PackageJson.leancloud){
-		PackageJson.leancloud = {};
-	}
-	global.LeanParams = PackageJson.leancloud;
-} catch(e){
-	console.error('无法解析package.json:\n\n' + e.stack);
-	process.exit(-1);
-}
+global.deploySettings = require('./scripts/deploy_helper/deploy_settings');
+deploySettings.commit();
 
 // 防止多进程同时启动
 if(fs.existsSync(APPPATH + '.runlock')){
@@ -86,12 +56,10 @@ function exitHandler(options, err){
 		if(fs.existsSync(APPPATH + '.runlock')){
 			fs.unlinkSync(APPPATH + '.runlock');
 		}
-		if(pkg && fs.existsSync(APPPATH + 'package.json')){
-			fs.unlinkSync(APPPATH + 'package.json');
-		}
+		deploySettings.delete_package_json();
 	}
 	if(options.error){
-		console.log(err.stack || err);
+		console.log(err.stack || err.message || err);
 		process.exit(1);
 	}
 	if(options.exit){

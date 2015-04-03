@@ -4,30 +4,9 @@
 var avosrun = require('../avrun.js');
 var fs = require('fs');
 
-/*
- var PackageJson = global.PackageJson;
- if(!PackageJson.leancloud){
- PackageJson.leancloud = {};
- }
- if(!PackageJson.leancloud.deploy){
- PackageJson.leancloud.deploy = [];
- }
-
- var local_dep = {src: []};
- Object.keys(PackageJson.dependencies || {}).forEach(function (key){
- if(fs.existsSync('node_modules/' + key)){
- local_dep.src.push('node_modules/' + key + '/**');
- delete PackageJson.dependencies[key];
- }
- });
- if(local_dep.src.length){
- PackageJson.leancloud.deploy.push(local_dep);
- }
- global.write_package_json();
- */
-
 avosrun('app').then(function (){
 	require('../deploy_helper/modify_package');
+	fs.unlinkSync(APPPATH + '/.avoscloud/deploy.json');
 	return avosrun('deploy');
 }).then(function (){
 	return avosrun('publish');

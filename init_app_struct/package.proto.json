@@ -32,10 +32,5 @@
 	},
 	"private"        : true,
 	"analyze"        : true,
-	"license"        : "",
-	"leancloud"      : {
-		"deploy": ["views"],
-		"debug" : 3000
-		/*"deploy": ["node_modules/!(avoscloud-code)/**", "views"]*/
-	}
+	"license"        : ""
 }

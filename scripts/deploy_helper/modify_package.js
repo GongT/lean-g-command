@@ -1,18 +1,18 @@
-if(!global.LeanParams.deploy){
-	global.LeanParams.deploy = {};
-}
-global.LeanParams.deploy.unshift({"src": ["views/**"]});
+var fs = require('fs');
 
-global.write_package_json();
-/*
- global.LeanParams.deploy.unshift({
- "src": [
- "node_modules/**",
- "!node_modules/avoscloud-code/**",
- "!node_modules/chokidar/**",
- "!node_modules/nested_dependence/**",
- "!node_modules/promise/**",
- "!node_modules/request/**"
- ]
- });
- */
+var deploySettings = global.deploySettings;
+
+deploySettings.upload('views');
+
+var local_dep = {src: []};
+Object.keys(PackageJson.dependencies || {}).forEach(function (key){
+	if(fs.existsSync('node_modules/' + key)){
+		local_dep.src.push('node_modules/' + key + '/**');
+	}
+});
+
+if(local_dep.src.length){
+	deploySettings.upload(local_dep);
+}
+deploySettings.commit();
+deploySettings.delete_package_json();
