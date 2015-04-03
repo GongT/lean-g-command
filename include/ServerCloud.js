@@ -31,7 +31,13 @@ ServerCloud.prototype.run = function (name, data){
 		body   : new Buffer(JSON.stringify(data))
 	}).then(function (body){
 		if(body.data.code){
-			return AV.Promise.error(AV.E.E_SERVER.attach(body.data))
+			return AV.Promise.error(AV.E.E_SERVER.attach(body.data));
+		}
+		if(!body.data.result.hasOwnProperty('status')){
+			return AV.Promise.error(AV.E.E_SERVER.attach('empty response'));
+		}
+		if(body.data.result.status != 0){
+			return AV.Promise.error(body.data.result);
 		}
 		return body.data.result;
 	}, function (response){

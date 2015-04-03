@@ -161,6 +161,9 @@ Object.defineProperties(InputHanler.prototype, {
 	},
 	pager: {
 		value: function (minCount, maxCount){
+			if(this.__pager){
+				return this.__pager;
+			}
 			if(!minCount){
 				minCount = 5;
 			}
@@ -173,12 +176,16 @@ Object.defineProperties(InputHanler.prototype, {
 				apply : function (avquery){
 					avquery.skip(this.cursor);
 					avquery.limit(this.count);
+				},
+				assign: function (data){
+					data.cursor = this.cursor;
+					data.count = this.count;
 				}
 			};
 			if(p.count < minCount && p.count > maxCount){
 				throw new AV.E.E_INPUT_INVALID_PAGER;
 			}
-			return p;
+			return this.__pager = p;
 		}
 	}
 });
@@ -232,6 +239,8 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 	if(this.__req.xhr){
 		if(e instanceof AV.ApiError){
 			this._tVar = e.toStrongJSON();
+		} else if(e && e.hasOwnProperty('status')){
+			this._tVar = e;
 		} else if(e instanceof Error){
 			this._tVar = {
 				status : AV.E.E_SERVER.code,
@@ -241,7 +250,7 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 			};
 			console.error(e.stack);
 		} else{
-			this._tVar = AV.E.E_SERVER.toStrongJSON();
+			this._tVar = AV.E.E_SERVER.data(e).toStrongJSON();
 		}
 		this.json();
 	} else{
