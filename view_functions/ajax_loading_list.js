@@ -187,7 +187,7 @@ var request_init = function ($, replacer){
 			if(locked){
 				return;
 			}
-			if(lastTouch && lastTouch - e.originalEvent.touches[0][touchVar]*dir > 600 && test()){
+			if(lastTouch && lastTouch - e.originalEvent.touches[0][touchVar]*dir > 3 && test()){
 				lastTouch = false;
 				ajax(options);
 			} else{

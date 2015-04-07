@@ -243,9 +243,15 @@ function update_avos_function(){
 	/* 客户端用的云代码 */
 	deepReadDirSync(APPPATH + 'cloud/functions').filter(isJsFile).forEach(function (f){
 		var base = f.replace(/\.js$/, '');
-		var name = base.replace(/\/|\\/g, '_');
-		console.log('\t云代码：' + base);
-		source.push('AV.Cloud.define("' + base + '", AV.Cloud.' + name + ' = require("cloud/functions/' + f + '"));');
+		var internal = base.replace(/\/|\\/g, '_');
+		var name = base.replace(/\/|\\/g, '::');
+		if(base == name){
+			console.log('\t云代码：%s', name);
+		} else{
+			console.log('\t云代码：%s -> %s', base, name);
+		}
+		source.push('AV.Cloud.define("' + name + '", AV.Cloud.' + internal + ' = require("cloud/functions/' + f +
+		            '"));');
 	});
 	
 	/* 调试用的云代码 */

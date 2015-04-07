@@ -16,7 +16,9 @@ module.exports = ServerCloud;
 
 ServerCloud.prototype.run = function (name, data){
 	var config = this.config;
-	data.source = AV.CONFIG.AppSource;
+	if(!data.source){
+		data.source = AV.CONFIG.AppSource;
+	}
 	console.debug('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
 	
 	return AV.Cloud.httpRequest({
