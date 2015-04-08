@@ -118,6 +118,7 @@ function deepReadDirSync(dir){
 		return result;
 	}
 	dir = path.resolve(dir) + '/';
+	var base = dir;
 	read(dir, '');
 	return result;
 	
@@ -125,11 +126,12 @@ function deepReadDirSync(dir){
 		if(dir && !/[\/\\]$/.test(dir)){
 			dir += '/';
 		}
+		console.log('read %s', prepend, dir);
 		fs.readdirSync(prepend + dir).forEach(function (f){
 			if(fs.lstatSync(prepend + dir + f).isDirectory()){
 				read(prepend + dir, f);
 			} else{
-				result.push(dir + f);
+				result.push(prepend.replace(base, '') + dir + f);
 			}
 		});
 	}

@@ -10,6 +10,9 @@ function Checker(params){
 }
 Checker.prototype._pname = 'params';
 
+Checker.prototype.raw = function (){
+	return this[this._pname];
+};
 Checker.prototype.get = function (name, opt){
 	return this[this._pname].hasOwnProperty(name)? this[this._pname][name] : opt;
 };

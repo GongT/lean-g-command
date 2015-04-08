@@ -8,6 +8,8 @@ var reconfigure = require('../debugger/reconfigure');
 
 console.info('正在启动LeanCloud本地调试服务器……');
 
+process.stdout.write('\033]0;' + APP_CONFIG.applicationName + '\007');
+
 var shuttingDown = false;
 process.on('exit', function (code){
 	if(controller.status > 0){
