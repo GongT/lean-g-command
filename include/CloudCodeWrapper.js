@@ -68,6 +68,10 @@ CallbackList.prototype.next = function (fn){
 				ret = ret.then(undefined, function (){
 					return selfFunction._on_error.apply(self, arguments);
 				});
+			}else if(selfFunction._t_error){
+				ret = ret.then(undefined, function (){
+					return selfFunction._t_error;
+				});
 			}
 		}
 		if(ret instanceof Error || ret instanceof AV.ApiError){

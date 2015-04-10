@@ -8,6 +8,6 @@ module.exports = function (params){
 	for(var i = 1; params.hasOwnProperty(i); i++){
 		args.push(params[i]);
 	}
-	// console.log('call %s(%s)', fn, args);
+	// console.log('call %s(%s)', fn, args.join(', '));
 	return phpjs[fn].apply(phpjs, args);
 };
