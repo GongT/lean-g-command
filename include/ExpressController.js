@@ -128,21 +128,23 @@ function export_express_router(config, _path){
 /* exports END */
 
 /* 运行环境 */
-function InputHanler(){ // 输入与请求类型不符（比如get请求里读取post参数）的错误处理
+function InputHanler(rt, req, rsp){ // 输入与请求类型不符（比如get请求里读取post参数）的错误处理
+	this.parent = rt;
+	this.__req = req;
+	this.__rsp = rsp;
 }
 Object.defineProperties(InputHanler.prototype, {
 	post : {
 		get: function (){
-			if(this.__post){
+			if(this.parent.method == 'POST'){
+				if(!this.__post){
+					this.__post = new AV.InputChecker(this.__req.body);
+				}
 				return this.__post;
-			}
-			if(AV.localhost){
+			} else if(AV.localhost){
 				console.trace('试图从GET请求中获取POST数据');
 			}
 			throw new ReferenceError('试图从GET请求中获取POST数据');
-		},
-		set: function (v){
-			this.__post = v;
 		}
 	},
 	path : {
@@ -187,17 +189,21 @@ Object.defineProperties(InputHanler.prototype, {
 			}
 			return this.__pager = p;
 		}
+	},
+	
+	header: {
+		get: function (){
+			return {
+				url: this.__req.url
+			}
+		}
 	}
 });
 
 function init_runtime(req, rsp, next){ // 初始化 请求环境
-	var method = this.method;
 	var rt = rsp.runtime = new ExpressControllerRuntime(req, rsp);
-	rt.input = new InputHanler;
+	rt.input = new InputHanler(this, req, rsp);
 	rt.input.get = new AV.InputChecker(req.query);
-	if(method == 'POST'){
-		rt.input.post = new AV.InputChecker(req.body);
-	}
 	if(this._paths.length){
 		rt.input.path = new AV.InputChecker(req.params);
 	}
@@ -325,6 +331,7 @@ ExpressControllerRuntime.prototype.redirect = function (path, status){
 	if(!~path.indexOf('://') && 0 != path.indexOf('//')){
 		path = AV.site_url(path);
 	}
+	console.debug('重定向到：%s', path);
 	this.__rsp.location(path);
 	// 302=temp  301=perma
 	this.__rsp.status(status || 302).send('<h1>redirect to <a href="' + path + '">' + path + '</a></h1>');
