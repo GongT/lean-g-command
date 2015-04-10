@@ -44,6 +44,7 @@ function on_file_change(file){
 	
 	if(/(^C\/timers|\/trigger)\//.test(file)){
 		console.info('触发器和定时器需要部署才能生效！');
+		return;
 	} else if(/^C\/(config)\//.test(file)){
 		console.info('更新配置');
 		reconfigure.config = true;
@@ -52,6 +53,7 @@ function on_file_change(file){
 		reconfigure.errno = true;
 	} else if(/^G\/scripts\/|^\/G\/(lean-g)\/leancloud.js/.test(file)){
 		console.info('核心模块有改动，当前进程可能需要重启才能生效。');
+		return;
 	} else if(/\.js/.test(file)){
 		console.debug('file change ', file);
 	} else if(/\/views\//.test(file)){
@@ -60,7 +62,7 @@ function on_file_change(file){
 		console.debug('外部文件修改，忽略之', file);
 		return;
 	}
-	self.emit('change');
+	self.emit('change', file);
 }
 
 function on_struct_change(file){
@@ -90,5 +92,5 @@ function on_struct_change(file){
 		console.debug('外部文件添加删除，忽略之', file);
 		return;
 	}
-	self.emit('change');
+	self.emit('change', file);
 }

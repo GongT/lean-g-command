@@ -28,14 +28,12 @@ module.exports = function (stream){
 					displayErrors: false
 				});
 				script.runInThisContext({displayErrors: false});
+				scripts = '';
 			} catch(e){
-				if(isRecoverableError(e)){
-					scripts = last;
-				} else{
-					console.error(e.stack);
-					console.error('运行的命令为：' + last);
-				}
+				scripts = last;
 			}
+		} else{
+			scripts = '';
 		}
 	});
 };

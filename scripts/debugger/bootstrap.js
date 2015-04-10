@@ -110,7 +110,8 @@ self.remoteCall = function (params){
 };
 
 filewatcher.on('change', function (){
-	restartService();
+	console.info('调试程序重启，因为检测到文件修改：', arguments);
+	setTimeout(restartService, 500);
 });
 self.on('started', function (){
 	filewatcher.start();

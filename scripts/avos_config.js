@@ -57,6 +57,7 @@ function map_back(name){
 
 /**/
 function update_avos_config(){
+	console.log('更新配置...');
 	// CurrentApp
 	console.log('\t设置当前 app-id...');
 	fs.writeFileSync(APPPATH + '.avoscloud/curr_app', APP_NAME);
@@ -153,6 +154,7 @@ function read_module_folder(basepath, types){
 }
 
 function update_avos_module(){
+	console.log('生成数据模型载入文件...');
 	var source = [];
 	
 	var prototype = read_proto_folder();
@@ -189,6 +191,7 @@ function update_avos_module(){
 }
 
 function update_avos_express(){
+	console.log('生成HTTP服务文件...');
 	var source = [];
 	
 	var controllers = read_tree('cloud/controllers/');
@@ -211,6 +214,7 @@ function update_avos_express(){
 }
 
 function update_avos_library(){
+	console.log('生成库文件载入文件...');
 	var source = [];
 	
 	/* lib自动载入工具参数 */
@@ -240,6 +244,7 @@ function read_tree(dir){
 }
 
 function update_avos_function(){
+	console.log('生成云代码载入文件...');
 	var source = [];
 	
 	/* 客户端用的云代码 */
@@ -271,6 +276,7 @@ function update_avos_function(){
 }
 
 function update_avos_trigger(){
+	console.log('生成触发器载入文件...');
 	var source = [];
 	
 	/* 触发器 */
@@ -325,6 +331,7 @@ function update_avos_trigger(){
 }
 
 function update_debug(){
+	console.log('更新代码补全...');
 	var scripts = '';
 	scripts += 'global.APP_CONFIG = ' + JSON.stringify(APP_CONFIG, null, 8);
 	scripts += 'global.APP_NAME = ' + JSON.stringify(APP_NAME, null, 8);
@@ -333,6 +340,7 @@ function update_debug(){
 }
 
 function update_error_number(){
+	console.log('生成错误码js文件...');
 	var em = require(APPPATH + 'errormessage.json');
 	var last_code = -1;
 	var script = [];
@@ -360,11 +368,8 @@ module.exports.debug = update_debug;
 module.exports.config = update_avos_config;
 module.exports.errno = update_error_number;
 module.exports.everything = function (){
-	console.log('更新配置...');
 	module.exports.config();
-	console.log('更新代码补全...');
 	module.exports.debug();
-	console.log('生成错误码js文件...');
 	module.exports.errno();
 	// 所有载入器
 	module.exports.source();
@@ -376,14 +381,9 @@ module.exports.module = update_avos_module;
 module.exports.trigger = update_avos_trigger;
 module.exports.express = update_avos_express;
 module.exports.source = function (){
-	console.log('生成云代码载入文件...');
 	module.exports.function();
-	console.log('生成库文件载入文件...');
 	module.exports.library();
-	console.log('生成数据模型载入文件...');
 	module.exports.module();
-	console.log('生成触发器载入文件...');
 	module.exports.trigger();
-	console.log('生成HTTP服务文件...');
 	module.exports.express();
 };

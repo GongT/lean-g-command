@@ -32,7 +32,7 @@ ProcessController.prototype.shutdown = function (cb){
 		this.exitcallback = cb;
 	}
 	if(this.remote){
-		this.call('debug_shutdown("normal");');
+		this.call('debug_shutdown(0);');
 	} else{
 		this.kill('SIGTERM');
 	}
