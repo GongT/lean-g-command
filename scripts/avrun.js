@@ -38,6 +38,29 @@ module.exports.external = function (cmd, args){
 	});
 };
 
+module.exports.external_stdout = function (cmd, args){
+	return new Promise(function (resolve, reject){
+		console.log('start external program - %s', cmd);
+		var p = platformExternalSpawn(cmd, args);
+		var stdout = '', stderr = '';
+		p.stdout.on('data', function (data){
+			stdout += data.toString();
+		});
+		
+		p.stderr.on('data', function (data){
+			stderr += data.toString();
+		});
+		p.on("exit", function (code){
+			if(code == 0){
+				resolve(stdout, stderr);
+			} else{
+				console.log("sub command failed with code " + code);
+				reject(stdout, stderr);
+			}
+		});
+	});
+};
+
 module.exports.runner = require('path').resolve(APPPATH, 'node_modules/avoscloud-code/bin/run.js');
 if(!module.exports.runner){
 	console.error("Cannot find avoscloud-code.");

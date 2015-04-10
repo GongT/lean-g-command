@@ -46,6 +46,10 @@ function on_file_change(file){
 		console.info('触发器和定时器需要部署才能生效！');
 		return;
 	} else if(/^C\/(config)\//.test(file)){
+		if(/global.json/.test(file)){
+			console.warn('config/global.json 不应该被修改');
+			return;
+		}
 		console.info('更新配置');
 		reconfigure.config = true;
 	} else if(/^R\/errormessage.json/.test(file)){
@@ -84,6 +88,9 @@ function on_struct_change(file){
 	} else if(/^C\/controllers\//.test(file)){
 		console.info('更新express');
 		reconfigure.express = true;
+	} else if(/package.json/.test(file)){
+		console.warn('package.json 不应该被修改');
+		return;
 	} else if(/\.js/.test(file)){
 		console.debug('file struct change ', file);
 	} else if(/\/views\//.test(file)){

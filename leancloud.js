@@ -38,24 +38,16 @@ global.deploySettings = require('./scripts/deploy_helper/deploy_settings');
 deploySettings.commit();
 
 // 防止多进程同时启动
-if(fs.existsSync(APPPATH + '.runlock')){
-	console.error('另一个进程正在运行，这样做可能导致数据不同步（尤其上传代码时）。\n如果上次崩溃退出，那么删除 .runlock 文件重试。');
-	process.exit(-1);
-}
-var flock = fs.openSync(APPPATH + '.runlock', 'w');
-fs.write(flock, process.pid.toString(), process.pid.toString().length);
+global.singleInstance = require('./scripts/deploy_helper/single_instance');
+singleInstance.start(real_run);
+
 function exitHandler(options, err){
 	if(global.preventExit){
 		global.preventExit = false;
 		return;
 	}
 	if(options.cleanup){
-		if(flock){
-			fs.close(flock);
-		}
-		if(fs.existsSync(APPPATH + '.runlock')){
-			fs.unlinkSync(APPPATH + '.runlock');
-		}
+		singleInstance.stop();
 		deploySettings.delete_package_json();
 	}
 	if(options.error){
@@ -137,8 +129,10 @@ global.APP_CONFIG = APP_CONFIG;
 global.update = require(CGROOT + 'scripts/avos_config');
 
 /* real run !! */
-global.update.everything();
-require(command_file);
+function real_run(){
+	global.update.everything();
+	require(command_file);
+}
 
 /* support functions */
 function usage(text){
