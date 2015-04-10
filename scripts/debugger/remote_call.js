@@ -22,7 +22,7 @@ function createServer(cb){
 			c.destroy();
 		});
 		require('../rpcvm')(c);
-		client = c;
+		client = global.debugClient = c;
 		client.write('process.stdout.columns = ' + process.stdout.columns + ';');
 		if(scriptQueue){
 			runner(scriptQueue);

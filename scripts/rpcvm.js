@@ -36,6 +36,18 @@ module.exports = function (stream){
 			scripts = '';
 		}
 	});
+	
+	stream.on('error', function (e){
+		console.log('rpc socket error: ', e.message);
+	});
+	
+	process.on('exit', function (){
+		try{
+			stream.end();
+			stream.destroy();
+		} catch(e){
+		}
+	});
 };
 
 function isRecoverableError(e){

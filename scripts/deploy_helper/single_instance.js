@@ -9,6 +9,7 @@ if(!fs.existsSync(global.APPPATH + '/.avoscloud')){
 	fs.mkdirSync(global.APPPATH + '/.avoscloud', 0777);
 }
 
+var started = false;
 function checkInstance(){
 	return new Promise(function (resolve, reject){
 		var pid = 0;
@@ -25,7 +26,7 @@ function checkInstance(){
 				'/FI',
 				'PID eq ' + pid,
 				'/FI',
-				'IMAGENAME eq ' + process.argv[0]
+				'IMAGENAME eq ' + require('path').basename(process.argv[0])
 			]).then(function (stdout, stderr){
 				if(/node.exe/.test(stdout)){
 					reject();
@@ -56,16 +57,21 @@ singleInstance.start = function (cb){
 		fs.writeFile(lockFile, process.pid.toFixed(0), function (err){
 			if(err){
 				console.error(err);
+				return;
 			}
+			started = true;
 			cb();
 		});
 	}, function (){
+		started = false;
 		console.error('已经启动另一个实例，为了防止出现问题，请先关闭它。');
 	});
 };
 
 singleInstance.stop = function (){
-	fs.existsSync(lockFile) && fs.unlinkSync(lockFile);
+	if(started){
+		fs.existsSync(lockFile) && fs.unlinkSync(lockFile);
+	}
 };
 
 

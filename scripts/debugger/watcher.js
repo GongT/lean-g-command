@@ -58,6 +58,9 @@ function on_file_change(file){
 	} else if(/^G\/scripts\/|^\/G\/(lean-g)\/leancloud.js/.test(file)){
 		console.info('核心模块有改动，当前进程可能需要重启才能生效。');
 		return;
+	} else if(/package\.json/.test(file)){
+		console.warn('package.json 不应该被修改');
+		return;
 	} else if(/\.js/.test(file)){
 		console.debug('file change ', file);
 	} else if(/\/views\//.test(file)){
@@ -88,7 +91,7 @@ function on_struct_change(file){
 	} else if(/^C\/controllers\//.test(file)){
 		console.info('更新express');
 		reconfigure.express = true;
-	} else if(/package.json/.test(file)){
+	} else if(/package\.json/.test(file)){
 		console.warn('package.json 不应该被修改');
 		return;
 	} else if(/\.js/.test(file)){

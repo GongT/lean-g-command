@@ -35,7 +35,6 @@ if(!initfunc){
 
 // 解析package.json
 global.deploySettings = require('./scripts/deploy_helper/deploy_settings');
-deploySettings.commit();
 
 // 防止多进程同时启动
 global.singleInstance = require('./scripts/deploy_helper/single_instance');
@@ -51,7 +50,8 @@ function exitHandler(options, err){
 		deploySettings.delete_package_json();
 	}
 	if(options.error){
-		console.log(err.stack || err.message || err);
+		console.error('LEAN-G 底层捕获了异常: ');
+		console.error(err.stack || err.message || err);
 		process.exit(1);
 	}
 	if(options.exit){
@@ -130,6 +130,10 @@ global.update = require(CGROOT + 'scripts/avos_config');
 
 /* real run !! */
 function real_run(){
+	deploySettings.commit();
+	process.on('exit', function (){
+		deploySettings.delete_package_json();
+	});
 	global.update.everything();
 	require(command_file);
 }
