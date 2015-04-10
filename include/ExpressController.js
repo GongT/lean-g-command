@@ -383,8 +383,8 @@ PrepareFunction.prototype.from = function (method, name, type){ // get, post, co
 		});
 	} else{
 		this._functions.push(function (){
-			// console.debug('this.input.%s[%s]', method_name, name);
-			return this.input[method_name][name];
+			// console.debug('this.input.%s[%s]', cookie, name);
+			return this.input[cookie][name];
 		});
 	}
 	return this;
