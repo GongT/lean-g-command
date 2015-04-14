@@ -1,17 +1,28 @@
 var valid_object_id = /^[0-9a-f]{24}$/i;
 module.exports = {
-	"anything": function (v){
+	"anything"          : function (v){
 		return v;
 	},
 	"string"            : function (v){
 		return v + '';
 	},
 	"JSONString"        : function (v){
-		v = JSON.parse(v);
-		if(!v){
+		try{
+			v = JSON.parse(v);
+		} catch(e){
 			return;
 		}
 		return v;
+	},
+	"JSONDataObject"    : function (v){
+		try{
+			v = JSON.parse(v);
+		} catch(e){
+			return;
+		}
+		if(typeof v === 'object' && !Array.isArray(v)){
+			return new AV.InputChecker(v);
+		}
 	},
 	"money"             : function (v){
 		v = parseFloat(v);
