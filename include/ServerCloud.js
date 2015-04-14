@@ -32,16 +32,20 @@ ServerCloud.prototype.run = function (name, data){
 		json   : true,
 		body   : new Buffer(JSON.stringify(data))
 	}).then(function (body){
-		if(body.data.code){
-			return AV.Promise.error(AV.E.E_SERVER.attach(body.data));
+		try{
+			if(body.data.code){
+				return AV.Promise.error(AV.E.E_SERVER.attach(body.data));
+			}
+			if(!body.data.result.hasOwnProperty('status')){
+				return AV.Promise.error(AV.E.E_SERVER.attach('empty response'));
+			}
+			if(body.data.result.status != 0){
+				return AV.Promise.error(AV.E.E_RPC.attach(body.data.result));
+			}
+			return body.data.result;
+		} catch(e){
+			return AV.Promise.error(body);
 		}
-		if(!body.data.result.hasOwnProperty('status')){
-			return AV.Promise.error(AV.E.E_SERVER.attach('empty response'));
-		}
-		if(body.data.result.status != 0){
-			return AV.Promise.error(AV.E.E_RPC.attach(body.data.result));
-		}
-		return body.data.result;
 	}, function (response){
 		return response.text;
 	});
