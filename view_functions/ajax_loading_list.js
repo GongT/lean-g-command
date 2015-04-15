@@ -46,7 +46,11 @@ module.exports.type = 'block';
 
 var request_init = function ($, replacer){
 	if($){
-		window.ajax_loading_init = init;
+		window.ajax_loading_init = function (options){
+			setTimeout(function (){
+				init(options);
+			}, 0);
+		};
 	} else{
 		var request = [];
 		window.ajax_loading_init = function (options){

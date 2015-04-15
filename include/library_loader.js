@@ -19,6 +19,10 @@ function assign_object_path(object, path, value){
 
 function define_prototype(prototype, name, file){
 	if(typeof file == 'string'){
+		if(prototype.hasOwnProperty(name)){
+			console.error('[LibraryLoader]重名覆盖：' + file);
+			delete prototype[name];
+		}
 		Object.defineProperty(prototype, name, {
 			get         : function (){
 				delete prototype[name];
@@ -30,17 +34,18 @@ function define_prototype(prototype, name, file){
 			configurable: true
 		});
 	} else{
-		var self = {}, data = file;
-		Object.defineProperty(prototype, name, {
-			value       : self,
-			enumerable  : true,
-			configurable: true
-		});
+		var self = prototype[name];
+		var data = file;
+		if(!self){
+			self = {};
+			Object.defineProperty(prototype, name, {
+				value       : self,
+				enumerable  : true,
+				configurable: true
+			});
+		}
 		
 		for(name in data){
-			if(self[name]){
-				continue;
-			}
 			(function (name, file){
 				define_prototype(self, name, file);
 			})(name, data[name]);
@@ -49,15 +54,21 @@ function define_prototype(prototype, name, file){
 }
 
 Library.prototype.load = function (name){
-	assign_object_path(this, name, require("cloud/library/" + name + ".js"));
+	if(name == 'load' || name == 'autoload'){
+		throw new Error('[LibraryLoader]库文件的名字因被内部占用而无法使用，请换一个别的：' + name);
+	}
+	try{
+		return assign_object_path(this, name, require("cloud/library/" + name + ".js"));
+	} catch(e){
+		console.error('[LibraryLoader]请求的库文件不存在：cloud/library/' + name + '.js');
+		return undefined;
+	}
 };
 Library.prototype.autoload = function (data){
-	this.autoload = function (){
-		throw new Error('do not call auto twice');
-	};
+	console.log(data)
 	for(var name in data){
-		if(this[name]){
-			continue;
+		if(name == 'load' || name == 'autoload'){
+			throw new Error('[LibraryLoader]库文件的名字因被内部占用而无法使用，请换一个别的：' + name);
 		}
 		(function (name, file){
 			define_prototype(Library.prototype, name, file);
@@ -65,4 +76,4 @@ Library.prototype.autoload = function (data){
 	}
 };
 
-module.exports = new Library;
+module.exports = Library;

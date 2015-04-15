@@ -59,11 +59,16 @@ function main(AV){
 		AV.CONFIG.session = {};
 	}
 	
+	var FS = AV.FS = require(GROOT + 'include/FileSystem.js');
+	
 	append_log('load remotelogger...');
 	AV.Logger = require(GROOT + 'include/Logger.js');
 	
 	append_log('load library (libload apierror prototype)...');
-	AV.lib = AV.library = require(GROOT + 'include/library_loader.js');
+	var LibraryLoader = AV.LibraryLoader = require(GROOT + 'include/library_loader.js');
+	AV.lib = AV.library = new LibraryLoader;
+	AV.library.autoload(FS.read_source_tree('cloud/library/'));
+	
 	AV.ApiError = require(GROOT + 'include/ApiError.js');
 	AV.CLS = require(GROOT + 'include/module.prototype.js');
 	
@@ -88,13 +93,6 @@ function main(AV){
 	
 	append_log('load cloudcode functions...');
 	require(GROOT + 'include/global-functions.js');
-	
-	// 开始启动
-	append_log('load custom code...');
-	require(GENPATH + 'import.librarys.js');
-	require(GENPATH + 'import.modules.js');
-	require(GENPATH + 'import.functions.js');
-	require(GENPATH + 'import.triggers.js');
 	
 	if(local){
 		AV.Cloud.define("__create_inspect", require(GROOT + 'include/InspectCC.js'));
@@ -152,12 +150,28 @@ function main(AV){
 	append_log('load express middlewares...');
 	require(GROOT + '/appldr/middlewares.js')(AV, append_log);
 	
-	append_log('load express routers...');
-	require(GENPATH + 'import.express.js');
+	append_log('detach control...');
 	
-	append_log('loader complete...');
-	
-	end_log();
+	var applisten = app.listen;
+	app.listen = function (){
+		append_log('control re-take...');
+
+		append_log('load database define...');
+		require(GENPATH + 'import.modules.js');
+		
+		append_log('load cloud code define...');
+		require(GENPATH + 'import.functions.js');
+		
+		append_log('load triggers define...');
+		require(GENPATH + 'import.triggers.js');
+		
+		append_log('load express routers...');
+		require(GENPATH + 'import.express.js');
+		
+		append_log('load complete turn control to leancloud...');
+		end_log();
+		applisten.apply (app,arguments);
+	};
 	return app;
 }
 

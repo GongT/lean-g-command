@@ -214,14 +214,6 @@ function update_avos_express(){
 }
 
 function update_avos_library(){
-	console.log('生成库文件载入文件...');
-	var source = [];
-	
-	/* lib自动载入工具参数 */
-	var auto_load = read_tree('cloud/library/');
-	source.push('AV.lib.autoload(' + JSON.stringify(auto_load, null, 8) + ');');
-	
-	fs.writeFileSync(GENPATH + 'import.librarys.js', source.join("\n"));
 }
 
 function read_tree(dir){

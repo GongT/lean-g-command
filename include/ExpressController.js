@@ -130,8 +130,16 @@ function export_express_router(config, _path){
 /* 运行环境 */
 function InputHanler(rt, req, rsp){ // 输入与请求类型不符（比如get请求里读取post参数）的错误处理
 	this.parent = rt;
-	this.__req = req;
-	this.__rsp = rsp;
+	Object.defineProperties(this, {
+		__req: {
+			value     : req,
+			enumerable: false
+		},
+		__rsp: {
+			value     : rsp,
+			enumerable: false
+		}
+	});
 }
 Object.defineProperties(InputHanler.prototype, {
 	post : {
