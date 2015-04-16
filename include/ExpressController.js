@@ -202,7 +202,8 @@ Object.defineProperties(InputHanler.prototype, {
 	header: {
 		get: function (){
 			return {
-				url: this.__req.url
+				method: this.__req.method,
+				url   : this.__req.url
 			}
 		}
 	}

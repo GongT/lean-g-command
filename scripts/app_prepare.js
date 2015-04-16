@@ -105,7 +105,7 @@ function main(AV){
 	app.use(express.compress());
 	app.set('env', local? 'development' : 'production');
 	app.set('x-powered-by', false);
-	app.set('lib', AV.lib);
+	app.set('lib', AV.library);
 	app.use(express.bodyParser());
 	
 	if(fs.existsSync('public/favicon.ico')){
@@ -155,7 +155,7 @@ function main(AV){
 	var applisten = app.listen;
 	app.listen = function (){
 		append_log('control re-take...');
-
+		
 		append_log('load database define...');
 		require(GENPATH + 'import.modules.js');
 		
@@ -170,7 +170,7 @@ function main(AV){
 		
 		append_log('load complete turn control to leancloud...');
 		end_log();
-		applisten.apply (app,arguments);
+		applisten.apply(app, arguments);
 	};
 	return app;
 }

@@ -65,7 +65,6 @@ Library.prototype.load = function (name){
 	}
 };
 Library.prototype.autoload = function (data){
-	console.log(data)
 	for(var name in data){
 		if(name == 'load' || name == 'autoload'){
 			throw new Error('[LibraryLoader]库文件的名字因被内部占用而无法使用，请换一个别的：' + name);
