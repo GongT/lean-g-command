@@ -144,13 +144,13 @@ function InputHanler(rt, req, rsp){ // 输入与请求类型不符（比如get�
 Object.defineProperties(InputHanler.prototype, {
 	post : {
 		get: function (){
-			if(this.parent.method == 'POST'){
+			if(this.parent.method == 'POST' || this.parent.method == 'ALL' || this.parent.method == 'PUT'){
 				if(!this.__post){
 					this.__post = new AV.InputChecker(this.__req.body);
 				}
 				return this.__post;
 			} else if(AV.localhost){
-				console.trace('试图从GET请求中获取POST数据');
+				console.trace('试图从`' + this.parent.method + '`请求中获取POST数据');
 			}
 			throw new ReferenceError('试图从GET请求中获取POST数据');
 		}

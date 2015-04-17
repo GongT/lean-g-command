@@ -87,6 +87,7 @@ function main(AV){
 	AV.ExpressController = require(GROOT + 'include/ExpressController.js');
 	AV.CloudCodeWrapper = require(GROOT + 'include/CloudCodeWrapper.js');
 	AV.ServerCloud = require(GROOT + 'include/ServerCloud.js');
+	require(GROOT + 'include/ExpressController.extra.js');
 	
 	append_log('load constants...');
 	AV.CONSTANTS = require(GENPATH + 'import.jsconst.js');
