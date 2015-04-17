@@ -4,7 +4,7 @@ try{
 } catch(e){
 	console = new AV.Logger('RPC-C');
 }
-
+var streams = [];
 module.exports = function (stream){
 	var scripts = '';
 	stream.on('data', function (data){
@@ -40,15 +40,18 @@ module.exports = function (stream){
 	stream.on('error', function (e){
 		console.log('rpc socket error: ', e.message);
 	});
-	
-	process.on('exit', function (){
+	streams.push(stream);
+};
+
+process.on('exit', function (){
+	streams.forEach(function (){
 		try{
 			stream.end();
 			stream.destroy();
 		} catch(e){
 		}
 	});
-};
+});
 
 function isRecoverableError(e){
 	return e &&

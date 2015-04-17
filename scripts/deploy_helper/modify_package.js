@@ -4,6 +4,7 @@ var deploySettings = global.deploySettings;
 
 deploySettings.upload('views');
 
+return;
 var local_dep = {src: []};
 Object.keys(PackageJson.dependencies || {}).forEach(function (key){
 	if(fs.existsSync('node_modules/' + key)){
