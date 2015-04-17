@@ -42,7 +42,7 @@ function runMain(req, rsp, next){
 	try{
 		this.main.call(rsp.runtime, rsp.runtime, req);
 	} catch(e){
-		console.error(e);
+		console.error('Main抛出异常: url=%s, error=%s', req.url, e.stack || e.message || e);
 		rsp.runtime.displayError(e);
 	}
 }
@@ -346,7 +346,8 @@ ExpressControllerRuntime.prototype.redirect = function (path, status){
 	this.__rsp.status(status || 302).send('<h1>redirect to <a href="' + path + '">' + path + '</a></h1>');
 	return this;
 };
-ExpressControllerRuntime.prototype.debug_send = function (data){
+ExpressControllerRuntime.prototype.debug_send = function (data, contentType){
+	this.__rsp.set('Content-Type', (contentType || 'text/html; charset=utf-8'));
 	this.__rsp.send(data);
 	return this;
 };

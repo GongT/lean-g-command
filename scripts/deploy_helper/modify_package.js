@@ -3,8 +3,10 @@ var fs = require('fs');
 var deploySettings = global.deploySettings;
 
 deploySettings.upload('views');
-
+deploySettings.commit();
 return;
+
+
 var local_dep = {src: []};
 Object.keys(PackageJson.dependencies || {}).forEach(function (key){
 	if(fs.existsSync('node_modules/' + key)){
