@@ -150,14 +150,14 @@ function main(AV){
 	append_log('load express middlewares...');
 	require(GROOT + '/appldr/middlewares.js')(AV, append_log);
 	
+	append_log('load database define...');
+	require(GENPATH + 'import.modules.js');
+	
 	append_log('detach control...');
 	
 	var applisten = app.listen;
 	app.listen = function (){
 		append_log('control re-take...');
-		
-		append_log('load database define...');
-		require(GENPATH + 'import.modules.js');
 		
 		append_log('load cloud code define...');
 		require(GENPATH + 'import.functions.js');
