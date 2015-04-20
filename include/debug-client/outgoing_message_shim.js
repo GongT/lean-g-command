@@ -50,13 +50,15 @@ function shimResponse(data, encoding){
 		ret = realResponse.apply(this, arguments);
 		
 		process.stdout.write('');
-		process.stdout.write('\r\x1B[K\x1B[38;5;244mO: ' + this.method + ' ' + this.path);
+		process.stdout.write('\r\x1B[K\x1B[38;5;244mO: ' + this.method + ' ' +
+		                     (this.path.length > 20? this.path.substr(0, 20) + '...' : this.path));
 		if(this._hasBody){
 			var out = this.output.join('').replace(this._header, '');
 			if(out.substr(0, 1) == '{'){
 				process.stdout.write(' Body: ' + remove_extra(out));
 			} else{
-				process.stdout.write(' Body: ** not json data (length = ' + out.length + ') **');
+				process.stdout.write(' Body: ** ' + out.substr(0, 14).replace(/\s/g, ' ') + ' (length = ' + out.length +
+				                     ')');
 			}
 		}
 		process.stdout.write('\x1B[0m\n');

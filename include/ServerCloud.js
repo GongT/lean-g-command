@@ -25,9 +25,10 @@ ServerCloud.prototype.run = function (name, data){
 		url    : config.url + name,
 		method : "POST",
 		headers: {
-			'X-AVOSCloud-Application-Id' : config.id,
-			'X-AVOSCloud-Application-Key': config.key,
-			'Content-Type'               : 'application/json'
+			'X-AVOSCloud-Application-Id'        : config.id,
+			'X-AVOSCloud-Application-Key'       : config.key,
+			'X-AVOSCloud-Application-Production': config.test? 1 : 0,
+			'Content-Type'                      : 'application/json'
 		},
 		json   : true,
 		body   : new Buffer(JSON.stringify(data))
