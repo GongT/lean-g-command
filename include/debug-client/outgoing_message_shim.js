@@ -2,9 +2,22 @@ var http = require('http');
 var fs = require('fs');
 var realResponse = http.ServerResponse.prototype.end;
 
-http.ClientRequest.prototype.end =
-http.OutgoingMessage.prototype.end =
-http.ServerResponse.prototype.end = shimResponse;
+global.startResponseLogging = function (){
+	http.ClientRequest.prototype.end =
+	http.OutgoingMessage.prototype.end =
+	http.ServerResponse.prototype.end = shimResponse;
+};
+
+global.stopResponseLogging = function (){
+	http.ClientRequest.prototype.end =
+	http.OutgoingMessage.prototype.end =
+	http.ServerResponse.prototype.end = realResponse;
+};
+
+if(!process.env['NO_OUTMSG_DEBUG']){
+	startResponseLogging();
+}
+
 /*
  http.ClientRequest.prototype.__end =
  http.OutgoingMessage.prototype.__end =
