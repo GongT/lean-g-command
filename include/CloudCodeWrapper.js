@@ -68,8 +68,11 @@ CallbackList.prototype.next = function (fn){
 				ret = ret.then(undefined, function (){
 					return selfFunction._on_error.apply(self, arguments);
 				});
-			}else if(selfFunction._t_error){
-				ret = ret.then(undefined, function (){
+			} else if(selfFunction._t_error){
+				ret = ret.then(undefined, function (e){
+					if(AV.localhost){
+						console.warn('错误被隐藏（显示为%s）:', selfFunction._t_error.name, e);
+					}
 					return selfFunction._t_error;
 				});
 			}
