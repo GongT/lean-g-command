@@ -1,10 +1,19 @@
 var valid_object_id = /^[0-9a-f]{24}$/i;
+var valid_url = /^https?:\/\/\S+$/;
+var valid_uri = /^\/\S+$/;
+var valid_special = /^(tel|mailto):/;
+
 module.exports = {
 	"anything"          : function (v){
 		return v;
 	},
 	"string"            : function (v){
 		return v + '';
+	},
+	"url"               : function (v){
+		if(valid_url.test(v) || valid_uri.test(v) || valid_special.test(v)){
+			return v;
+		}
 	},
 	"JSONString"        : function (v){
 		try{
