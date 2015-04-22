@@ -2,7 +2,8 @@
 var CONSTANTS = AV.CONSTANTS;
 
 var librarys = {
-	'jquery': ['jquery' + (CONSTANTS.isDebugEnv? '.min' : '') + '.js', 'jquery.cookie.js']
+	'jquery'     : ['jquery' + (CONSTANTS.isDebugEnv? '' : '.min') + '.js', 'jquery.cookie.js'],
+	'jquery-only': ['jquery' + (CONSTANTS.isDebugEnv? '' : '.min') + '.js']
 };
 
 var isJs = /\.js$/;

@@ -2,6 +2,7 @@ var _ = require('util');
 // var AV = Object.AV;
 var console = new AV.Logger('ExpressController');
 var express = AV.express;
+var expressRoutersDebug = '';
 
 module.exports = ExpressController;
 
@@ -18,7 +19,7 @@ ExpressController.prototype.route = function (path, router){
 	});
 	
 	if(AV.localhost){
-		AV.expressRoutersDebug += path + ' => ' + this.file + '\n';
+		expressRoutersDebug += '\t' + path + '\n';
 		console.debug(path + ' => ' + this.file);
 	}
 	if(this._prepares.length){
@@ -71,7 +72,7 @@ function runPrepare(req, rsp, next){
 
 /* exports */
 module.exports.parse = function (config, root){
-	AV.expressRoutersDebug = '';
+	expressRoutersDebug = '';
 	var stat = ExpressController;
 	if(!stat.parsedConfig){
 		stat.parsedConfig = {};
@@ -80,16 +81,29 @@ module.exports.parse = function (config, root){
 	_._extend(stat.parsedConfig, config);
 	
 	export_express_router(config, root || '/');
-	if(AV.localhost){
-		AV.expressRoutersDebug = console.debug.bind(console, AV.expressRoutersDebug)
-	}
 };
+
+if(AV.localhost){
+	Object.defineProperty(AV, 'expressRoutersDebug', {
+		get: function (){
+			process.stdout.write('\r' + expressRoutersDebug);
+			global.repl.displayPrompt();
+			return undefined;
+		}
+	});
+}
 
 function export_express_router(config, _path){
 	var stat = ExpressController;
-	var x = Object.keys(config).sort(function (a, b){
-		a = a.replace(/(^|\/)index($|\/)/, '$1$2');
-		b = b.replace(/(^|\/)index($|\/)/, '$1$2');
+	var sortedUrlKey = Object.keys(config).sort(function (a, b){ // 依据url的当前part字母顺序排序，index一律放到最后
+		if(a == 'index'){
+			return 1;
+		}
+		if(b == 'index'){
+			return -1;
+		}
+		// a = a.replace(/(^|\/)index($|\/)/, '$1$2');
+		// b = b.replace(/(^|\/)index($|\/)/, '$1$2');
 		if(a > b){
 			return 1;
 		} else if(a == b){
@@ -98,10 +112,10 @@ function export_express_router(config, _path){
 			return -1;
 		}
 	});
-	x.forEach(function (name){
+	sortedUrlKey.forEach(function (name){
 		var def = config[name];
 		if(typeof def === 'string'){
-			AV.expressRoutersDebug += '/' + def + '\n';
+			expressRoutersDebug += '/' + def + ':\n';
 			// console.debug('/' + def);
 			var cntl = require(def);
 			cntl.file = def;
@@ -114,10 +128,10 @@ function export_express_router(config, _path){
 				cntl.route(_path + name, AV.server);
 				stat.map[_path + name] = cntl;
 			} else if(AV.localhost){
-				AV.expressRoutersDebug += '\t' + _path + name + ' => not implement\n';
+				expressRoutersDebug += '\t' + _path + name + ' => not implement\n';
 				console.warn('%s => not implement', _path + name);
 			} else{
-				AV.expressRoutersDebug += 'Error: not implement express path ' + +_path + name + '\n';
+				expressRoutersDebug += '\tError: not implement express path ' + +_path + name + '\n';
 				console.warn('Error: not implement express path ' + _path + name);
 			}
 		} else{

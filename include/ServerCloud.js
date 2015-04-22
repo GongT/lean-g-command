@@ -19,7 +19,7 @@ ServerCloud.prototype.run = function (name, data){
 	if(!data.source){
 		data.source = AV.CONFIG.AppSource;
 	}
-	console.debug('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
+	console.log('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
 	
 	return AV.Cloud.httpRequest({
 		url    : config.url + name,
@@ -27,7 +27,7 @@ ServerCloud.prototype.run = function (name, data){
 		headers: {
 			'X-AVOSCloud-Application-Id'        : config.id,
 			'X-AVOSCloud-Application-Key'       : config.key,
-			'X-AVOSCloud-Application-Production': config.test? 1 : 0,
+			'X-AVOSCloud-Application-Production': config.test? 0 : 1,
 			'Content-Type'                      : 'application/json'
 		},
 		json   : true,
@@ -48,6 +48,7 @@ ServerCloud.prototype.run = function (name, data){
 			return AV.Promise.error(body);
 		}
 	}, function (response){
+		console.warn('云代码[%s]请求失败，可能是网络错误: %s', name, response.text);
 		return response.text;
 	});
 };

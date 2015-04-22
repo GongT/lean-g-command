@@ -63,7 +63,11 @@ module.exports.eval = function notDefaultEval(code, context, file, cb){
 			}
 		} catch(e){
 			err = e;
-			err.stack = err.stack.replace(/at REPLServer\.eval_handler[\S\s]+/, '').trim();
+			if(err.stack){
+				err.stack = err.stack.replace(/at REPLServer\.eval_handler[\S\s]+/, '').trim();
+			}else{
+				err.stack = err.toString();
+			}
 			if(err && process.domain){
 				process.domain.emit('error', err);
 				process.domain.exit();
