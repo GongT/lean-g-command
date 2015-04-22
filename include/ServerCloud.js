@@ -19,7 +19,7 @@ ServerCloud.prototype.run = function (name, data){
 	if(!data.source){
 		data.source = AV.CONFIG.AppSource;
 	}
-	console.log('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
+	console.info('请求云代码 %s 在 %s', config.url + name, config.name || config.id);
 	
 	return AV.Cloud.httpRequest({
 		url    : config.url + name,
