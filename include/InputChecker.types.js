@@ -51,7 +51,7 @@ module.exports = {
 		if(isNaN(val)){
 			return;
 		}
-		if(val != parseFloat(v)){
+		if(val.toString() != v){
 			return;
 		}
 		return val;
@@ -77,8 +77,13 @@ module.exports = {
 		}
 	},
 	"number"            : function (v){
-		v = parseFloat(v);
+		if(typeof v == 'string'){
+			v = parseFloat(v);
+		}
 		if(isNaN(v)){
+			return;
+		}
+		if(v.toString() != v){
 			return;
 		}
 		return v;
