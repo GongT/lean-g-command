@@ -6,11 +6,18 @@ var basename = require('path').basename;
 delete nsmarty.tpl_path;
 if(AV.localhost){
 	nsmarty.tpl_path = AV.server.get('views') + '/';
+	AV.server.engine('.tpl', function (path, options, fn){
+		if(AV.localhost){
+			nsmarty.Parser.cache_files = {};
+			nsmarty.cache = {};
+		}
+		parse(path, options, fn)
+	});
 } else{
 	nsmarty.tpl_path = require('path').resolve(__dirname, '..') + '/' + AV.server.get('views') + '/';
+	AV.server.engine('.tpl', parse);
 }
 console.log('template path set to ', nsmarty.tpl_path);
-AV.server.engine('.tpl', parse);
 
 module.exports.parse = register;
 module.exports.parseFile = function (file){

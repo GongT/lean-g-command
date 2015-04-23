@@ -16,6 +16,9 @@ module.exports = ServerCloud;
 
 ServerCloud.prototype.run = function (name, data){
 	var config = this.config;
+	if(!data){
+		data = {};
+	}
 	if(!data.source){
 		data.source = AV.CONFIG.AppSource;
 	}

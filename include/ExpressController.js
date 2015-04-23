@@ -365,7 +365,14 @@ ExpressControllerRuntime.prototype.debug_send = function (data, contentType){
 	this.__rsp.send(data);
 	return this;
 };
-_._extend(ExpressControllerRuntime.prototype, AV.InputChecker.prototype);
+_._extend(ExpressControllerRuntime.prototype, AV.InputChecker.prototype); // 这一行似乎想多了
+Object.defineProperty(ExpressControllerRuntime.prototype, 'defaultError', {
+	get: function (){
+		return this._defaultError || (this.defaultError = this._defaultError = function (e){
+					this.displayError(e);
+				}.bind(this));
+	}
+});
 /* 运行环境 END */
 
 /* 读取参数并处理 */

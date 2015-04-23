@@ -9,7 +9,7 @@ module.exports = function (params, template, data, repeat){
 	var source = options.source = data.site_url(params.__get('source', null, 1));
 	options.$loading = params.__get('loading', '');
 	options.$nomore = params.__get('nomore', '');
-	options.pager = params.__get('pager', 10);
+	options.count = params.__get('pager', 10);
 	options.init = params.__get('init', false);
 	options.tagName = params.__get('tag', 'DIV').toUpperCase();
 	
@@ -24,21 +24,33 @@ module.exports = function (params, template, data, repeat){
 	} else if(type == 'click'){
 		options.click = params.__get('click', null);
 		options.pendding = params.__get('pendding', 'after');
+	} else if(type == 'manual'){
+		// 只允许手动触发
 	} else{
 		return js_alert_error('Unknown ajax loading type: ' + type);
 	}
 	
 	var id = options.id = params.__get('id', '') || ('ajaxloading' + data.guid);
+	options.cls = params.__get('class', '');
 	
-	var ret = '<script type="text/javascript" debug="ajax loading list">';
+	var ret = '';
+	ret += replacer.getSingleInstance(data);
+	ret += '<script type="text/javascript" debug="ajax loading list">';
 	if(!data.__pllloaded){
 		data.__pllloaded = true;
-		ret += '(' + request_init + ')(window.$, ' + replacer + ');';
+		ret += '(' + request_init + ')(window.$, ' + replacer.getInstance(data) + ');';
 	}
 	ret += 'document.addEventListener("DOMContentLoaded", ajax_loading_init.bind(this,' + JSON.stringify(options) +
 	       '), false );';
 	ret += '</script>';
-	ret += '<script type="text/html" id="TPL_' + id + '">' + template + '</script>';
+	
+	ret += '<' + options.tagName + ' id="' + id + '"';
+	if(options.cls){
+		ret += ' class="' + options.cls + '"';
+	}
+	ret += '>';
+	ret += '<script type="text/html" class="TEMPLATE">' + template + '</script>';
+	ret += '</' + options.tagName + '>';
 	
 	return ret;
 };
@@ -69,20 +81,56 @@ var request_init = function ($, replacer){
 	function init(options){
 		options.$loading = $(options.$loading);
 		options.$nomore = $(options.$nomore);
-		var $tpl = $('#TPL_' + options.id);
-		options.$container = $(document.createElement(options.tagName)).attr('id', options.id).insertAfter($tpl);
+		options.$container = $('#' + options.id);
+		var $tpl = options.$container.find('.TEMPLATE').remove();
 		options.tpl = $tpl.html();
 		options.cursor = 0;
-		options.count = options.pager || 10;
 		
 		if(options.type == 'pull'){
 			init_pull(options);
 		} else if(options.type == 'click'){
 			var $click = $(options.click);
 			
+		} else if(options.type == 'manual'){
 		} else{
 			throw new Error('Unknown ajax loading type: ' + options.type);
 		}
+		var locked;
+		Object.defineProperty(options, 'lock', {
+			get: function (){
+				return locked;
+			},
+			set: function (v){
+				locked = v;
+				if(locked){
+					options.$container.addClass('busy');
+					this.$loading.show();
+				} else{
+					options.$container.removeClass('busy');
+					this.$loading.hide();
+				}
+			}
+		});
+		var nomore;
+		Object.defineProperty(options, 'nomore', {
+			get: function (){
+				return nomore;
+			},
+			set: function (v){
+				nomore = v;
+				if(nomore){
+					this.lock = false;
+					options.$container.addClass('finished').removeClass('have-more');
+					this.$nomore.show();
+					var e = new $.Event('finish', {options: options});
+					options.$container.trigger(e);
+				} else{
+					options.$container.addClass('have-more');
+					this.$nomore.hide();
+				}
+			}
+		});
+		options.nomore = false;
 		if(options.init){
 			ajax(options);
 		}
@@ -109,12 +157,9 @@ var request_init = function ($, replacer){
 					return;
 				}
 				
+				console.log('AjaxLoadingList请求结果: %O', json);
 				var e = new $.Event('data', json);
 				options.$container.trigger(e);
-				
-				if(json.list.length != options.count){ // this is the last page
-					options.nomore = true;
-				}
 				
 				var domarr = json.list.map(function (data){
 					return replacer(options.tpl, data);
@@ -124,7 +169,7 @@ var request_init = function ($, replacer){
 				} else{
 					options.$container.append(domarr);
 				}
-				options.cursor += json.list.length;
+				options.cursor += options.pager;
 				
 				setTimeout(function (){
 					e = new $.Event('change', json);
@@ -146,7 +191,6 @@ var request_init = function ($, replacer){
 	}
 	
 	function init_pull(options){
-		var locked = false;
 		var isWindow = options.parent == 'window';
 		var self = $(isWindow? document : options.parent);
 		var lastTouch = 0;
@@ -179,7 +223,7 @@ var request_init = function ($, replacer){
 			throw new Error('Unkown ajax pull direction: ' + options.direction);
 		}
 		function mouseHandler(e){
-			if(locked){
+			if(options.lock){
 				return;
 			}
 			if(e.originalEvent[mouseVar]*dir > 0 && test()){ // down
@@ -188,7 +232,7 @@ var request_init = function ($, replacer){
 		}
 		
 		function touchHandler(e){
-			if(locked){
+			if(options.lock){
 				return;
 			}
 			if(lastTouch && lastTouch - e.originalEvent.touches[0][touchVar]*dir > 3 && test()){
@@ -199,111 +243,19 @@ var request_init = function ($, replacer){
 			}
 		}
 		
-		Object.defineProperty(options, 'lock', {
-			get: function (){
-				return locked;
-			},
-			set: function (v){
-				locked = v;
-				if(locked){
-					options.$container.addClass('busy');
-					this.$loading.show();
-				} else{
-					options.$container.removeClass('busy');
-					this.$loading.hide();
-				}
-			}
-		});
-		var nomore;
-		Object.defineProperty(options, 'nomore', {
-			get: function (){
-				return nomore;
-			},
-			set: function (v){
-				nomore = v;
-				if(nomore){
-					this.lock = false;
-					options.$container.addClass('finished');
-					this.$nomore.show();
-					this.detach();
-					var e = new $.Event('finish', {options: options});
-					options.$container.trigger(e);
-				} else{
-					options.$container.addClass('have-more');
-					this.$nomore.hide();
-					this.attach();
-				}
-			}
-		});
-		var attached = false;
-		options.attach = function (){
-			if(attached){
-				return;
-			}
-			attached = true;
-			self.on('mousewheel', mouseHandler).on('touchmove', touchHandler);
-		};
-		options.detach = function (){
-			attached = false;
+		function detach(){
 			self.off('mousewheel', mouseHandler).off('touchmove', touchHandler);
-		};
-		options.nomore = false;
-	}
-}.toString();
-
-var replacer = function (template, data){
-	var n;
-	var _c = {};
-	while(n = /\[([a-z\.]*)(.*?)\]/ig.exec(template)){
-		var r1 = n[0];
-		var result = _c[r1];
-		if(result === undefined){
-			var name = n[1];
-			var config = n[2].trim();
-			result = data_path(name);
-			if(config){
-				if(config[0] == '='){
-					var eqiif = config.split(/\?/, 2);
-					if(result == eqiif[0]){
-						result = eval('true?' + eqiif[1]);
-					} else{
-						result = eval('false?' + eqiif[1]);
-					}
-				} else if(config[0] == '?'){
-					if(result){
-						result = eval('true' + config);
-					} else{
-						result = eval('false' + config);
-					}
-				} else if(config.substr(0, 2) == '||'){
-					result = eval('result' + config);
-				} else{
-					console.error('Unknown replace config %s in %s', config, r1);
-				}
-			}
 		}
-		template = template.replace(r1, result);
-	}
-	return template;
-	
-	function data_path(name){
-		var itr = data;
-		name = name.split('.');
-		name.every(function (name){
-			return itr = itr[name];
-		});
-		return itr || '';
+		
+		options.$container.on('finish', detach);
+		self.on('mousewheel', mouseHandler).on('touchmove', touchHandler);
 	}
 }.toString();
 
+var replacer = require(AV.GROOT + 'include/view_function_public/default_template.js');
+var uglify = require(AV.GROOT + 'include/view_function_public/uglify.js');
 if(!AV.isDebugEnv){
 	request_init = uglify(request_init);
-	replacer = uglify(replacer);
-}
-function uglify(script){
-	return script
-			.replace(/\s*\n\s*/gm, '')
-			.replace(/\s+(\}|\{|=|,)\s+/gm, '$1');
 }
 
 function js_alert_error(text){
