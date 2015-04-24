@@ -14,6 +14,7 @@ if(AV.localhost){
 		parse(path, options, fn)
 	});
 } else{
+	nsmarty.Parser.cache_files = {};
 	nsmarty.tpl_path = require('path').resolve(__dirname, '..') + '/' + AV.server.get('views') + '/';
 	AV.server.engine('.tpl', parse);
 }
