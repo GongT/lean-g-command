@@ -38,19 +38,22 @@ module.exports = function (params, template, data, repeat){
 	ret += '<script type="text/javascript" debug="ajax loading list">';
 	if(!data.__pllloaded){
 		data.__pllloaded = true;
-		ret += '(' + request_init + ')(window.$, ' + replacer.getInstance(data) + ');';
+		ret += '<script type="text/javascript" title="ajax loading list init">"use strict";';
+		ret += '\n(' + request_init + ')\n(window.$, ' + replacer.getInstance(data) + ');\n';
+		ret += '</script>\n';
 	}
-	ret += 'document.addEventListener("DOMContentLoaded", ajax_loading_init.bind(this,' + JSON.stringify(options) +
-	       '), false );';
-	ret += '</script>';
+	ret += '<script type="text/javascript" title="ajax loading ' + id + '">"use strict";';
+	ret += '\ndocument.addEventListener("DOMContentLoaded", ajax_loading_init.bind(this,' + JSON.stringify(options) +
+	       '), false );\n';
+	ret += '</script>\n';
 	
 	ret += '<' + options.tagName + ' id="' + id + '"';
 	if(options.cls){
 		ret += ' class="' + options.cls + '"';
 	}
-	ret += '>';
-	ret += '<script type="text/html" class="TEMPLATE">' + template + '</script>';
-	ret += '</' + options.tagName + '>';
+	ret += '>\n';
+	ret += '<script type="text/html" class="TEMPLATE">' + template + '</script>\n';
+	ret += '</' + options.tagName + '>\n';
 	
 	return ret;
 };

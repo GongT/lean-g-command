@@ -40,12 +40,6 @@ function init(app){
 	require(AV.GROOT + 'include/debug-client/outgoing_message_shim');
 	console.log('星际显像工具启动');
 	
-	app.use(function (_1, _2, next){
-		AV.nsmarty.clearCache();
-		next();
-	});
-	console.log('古旧空间清除工具开始动作');
-	
 	require(AV.GROOT + 'include/debug-client/debug_helper_functions');
 	console.log('超级指令就绪');
 	

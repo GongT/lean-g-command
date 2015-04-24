@@ -53,7 +53,7 @@ module.exports.getSingleInstance = function (data){
 	}
 	var name = 'TPL_REPLACE_FUNCTION';
 	data.__replacer_loaded = name;
-	return '<script type="text/javascript">' + replacer.replace('function', 'function ' + name) + '</script>';
+	return '<script type="text/javascript" title="TPL_REPLACE_FUNCTION">\n' + replacer.replace('function', 'function ' + name) + '\n</script>\n';
 };
 module.exports.getInstance = function (data){
 	return data.__replacer_loaded || 'alert("replacer.getSingleInstance not been called");';

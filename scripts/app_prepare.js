@@ -52,6 +52,7 @@ function main(AV){
 	append_log('load config...');
 	var CONFIG = AV.CONFIG = require(GENPATH + 'config.js');
 	AV.isDebugEnv = CONFIG.isDebugEnv;
+	AV.isTestEnv = CONFIG.isTestEnv;
 	if(!AV.CONFIG.template){
 		AV.CONFIG.template = {};
 	}

@@ -2,22 +2,15 @@ var _ = require('util');
 // var AV = Object.AV;
 var nsmarty = AV.nsmarty = require('nsmarty');
 var basename = require('path').basename;
+console.log('nsmarty version: ', nsmarty.version);
 
 delete nsmarty.tpl_path;
 if(AV.localhost){
 	nsmarty.tpl_path = AV.server.get('views') + '/';
-	AV.server.engine('.tpl', function (path, options, fn){
-		if(AV.localhost){
-			nsmarty.Parser.cache_files = {};
-			nsmarty.cache = {};
-		}
-		parse(path, options, fn)
-	});
 } else{
-	nsmarty.Parser.cache_files = {};
 	nsmarty.tpl_path = require('path').resolve(__dirname, '..') + '/' + AV.server.get('views') + '/';
-	AV.server.engine('.tpl', parse);
 }
+AV.server.engine('.tpl', parse);
 console.log('template path set to ', nsmarty.tpl_path);
 
 module.exports.parse = register;
@@ -67,7 +60,9 @@ function register(type, name, fn){
 }
 
 function parse(path, options, fn){
+	nsmarty.clearCache();
 	var cache = '';
+	console.log('request render view path ', path)
 	var stream = nsmarty.assign(path, options);
 	stream.on('data', function (data){
 		cache += data.toString();
