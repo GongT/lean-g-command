@@ -2,7 +2,6 @@ var _ = require('util');
 // var AV = Object.AV;
 var nsmarty = AV.nsmarty = require('nsmarty');
 var basename = require('path').basename;
-console.log('nsmarty version: ', nsmarty.version);
 
 delete nsmarty.tpl_path;
 if(AV.localhost){
@@ -62,7 +61,6 @@ function register(type, name, fn){
 function parse(path, options, fn){
 	nsmarty.clearCache();
 	var cache = '';
-	console.log('request render view path ', path)
 	var stream = nsmarty.assign(path, options);
 	stream.on('data', function (data){
 		cache += data.toString();
