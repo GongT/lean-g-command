@@ -114,7 +114,7 @@ var request_init = function ($, replacer){
 				alert('没有前一页啦');
 				return;
 			}
-			if(options.totalPageKnown && page > options.totalPageKnown){
+			if(options.totalPageKnown !== false && page > options.totalPageKnown){
 				alert('没有后一页啦');
 				return;
 			}
@@ -147,15 +147,19 @@ var request_init = function ($, replacer){
 		options.lock = true;
 		return $.ajax(e.ajax).done(function (json){
 			if(json.status == 0){
-				if(json.count){
+				setTimeout(function (){
+					e = new $.Event('change', json);
+					options.$container.trigger(e, [options]);
+				}, 0);
+				
+				if(json.hasOwnProperty('count')){
 					options.totalPageKnown = Math.ceil(json.count/options.count);
 					console.log('PagingList: got total page is "%s"', options.totalPageKnown);
 				}
-				if(json.list.length == 0){
-					// revert state
-					return;
+				if(json.list.length != 0){
+					options.$container.empty();
+					options.currentPage = options.nextPage;
 				}
-				options.$container.empty();
 				
 				console.log('AjaxPagingList请求结果: %O', json);
 				var e = new $.Event('data', json);
@@ -165,13 +169,6 @@ var request_init = function ($, replacer){
 					return replacer(options.tpl, data);
 				});
 				options.$container.append(domarr);
-				
-				options.currentPage = options.nextPage;
-				
-				setTimeout(function (){
-					e = new $.Event('change', json);
-					options.$container.trigger(e, [options.currentPage]);
-				}, 0);
 			} else{
 				handle_error(json);
 			}
@@ -185,8 +182,8 @@ var request_init = function ($, replacer){
 	function create_pager($parent, eroot){
 		var $in = $parent.find('input.data');
 		if($in.length){
-			eroot.on('change', function (e, currentPage){
-				$in.removeAttr('disabled').val(currentPage);
+			eroot.on('change', function (e, opt){
+				$in.removeAttr('disabled').val(opt.currentPage);
 			});
 			eroot.on('beforeAjax', function (){
 				$in.attr('disabled', 'disabled');

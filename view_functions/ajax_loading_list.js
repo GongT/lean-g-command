@@ -155,6 +155,11 @@ var request_init = function ($, replacer){
 		options.lock = true;
 		return $.ajax(e.ajax).done(function (json){
 			if(json.status == 0){
+				setTimeout(function (){
+					e = new $.Event('change', json);
+					options.$container.trigger(e, [options]);
+				}, 0);
+				
 				if(json.list.length == 0){
 					options.nomore = true;
 					return;
@@ -173,11 +178,6 @@ var request_init = function ($, replacer){
 					options.$container.append(domarr);
 				}
 				options.cursor += options.pager;
-				
-				setTimeout(function (){
-					e = new $.Event('change', json);
-					options.$container.trigger(e);
-				}, 0);
 			} else{
 				handle_error(json);
 			}
