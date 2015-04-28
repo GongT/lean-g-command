@@ -2,7 +2,7 @@ var cc = new AV.CloudCodeWrapper(module);
 var fs = require('fs');
 var path = require('path');
 
-var console = new AV.Logger('TEST');
+var console = new AV.Logger('InspectCC');
 
 cc.process(function (){
 	var script = '', dup = {'AV': AV};
@@ -15,36 +15,25 @@ cc.process(function (){
 			return;
 		}
 		for(var name in data){
+			var vname = pp + '.' + name;
+			if(parseInt(name).toString() == name){
+				vname = pp + '[' + name + ']';
+			}
+			if(/[\-\s\/\\]/.test(name)){
+				vname = pp + '[' + JSON.stringify(name) + ']';
+			}
+			if(isSkip(vname)){
+				script += '// ' + vname + ' -> skip\n';
+				continue;
+			}
+			
 			try{
 				if(!data.hasOwnProperty(name)){
 					continue;
 				}
 				var obj = data[name];
 			} catch(e){
-				console.error(e);
-				console.log(name);
-			}
-			
-			var vname = pp + '.' + name;
-			if(parseInt(name).toString() == name){
-				vname = pp + '[' + name + ']';
-			}
-			
-			if([
-				   'AV.require',
-				   'AV.E',
-				   'AV.CLS',
-				   'AV.library',
-				   'AV.Logger',
-				   'AV.lib',
-				   'AV.Timer',
-				   'AV.lib.inputChecker',
-				   'AV.CloudCodeWrapper',
-				   'AV.Object._classMap',
-				   'AV.express.mime',
-				   'AV.express.static'
-			   ].indexOf(vname) >= 0){
-				continue;
+				console.error('dump (%s in data) error: ', vname, e);
 			}
 			
 			if(typeof obj == 'function' || typeof obj == 'object'){
@@ -96,12 +85,13 @@ cc.process(function (){
 	}
 	
 	function append(varname, value, br){
-		console.warn(varname + ' = xxx;');
+		// console.warn(varname + ' = xxx;');
 		script += varname + ' = ' + value + ';' + (br === false? '' : '\n');
 	}
 	
 	var f = path.resolve('cloud/__gen/inspect.js');
 	fs.writeFileSync(f, script.trim());
+	console.log('dump inspect file to cloud/__gen/inspect.js');
 	return f;
 });
 
@@ -110,5 +100,33 @@ function search(obj, arr){
 		if(obj === arr[n]){
 			return n;
 		}
+	}
+}
+
+var skipNames = [
+	'AV.require',
+	'AV.E',
+	'AV.CLS',
+	'AV.Logger',
+	'AV.lib',
+	'AV.Timer',
+	'AV.site_url',
+	'AV.lib.inputChecker',
+	'AV.CloudCodeWrapper',
+	'AV.Object._classMap',
+	'AV.express.mime',
+	'AV.express.static',
+	'AV.Role._classMap',
+	'AV.User._classMap',
+	'AV.Installation._classMap',
+	'AV.express.request',
+	'AV.ExpressController.map'
+];
+function isSkip(vname){
+	if(/^AV\.Cloud\..*\.setTitle/.test(vname)){
+		return true;
+	}
+	if(skipNames.indexOf(vname) >= 0){
+		return true;
 	}
 }
