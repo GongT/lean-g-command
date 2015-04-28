@@ -3,7 +3,7 @@ var uglify = require(AV.GROOT + 'include/view_function_public/uglify.js');
 var replacer = function (template, data){
 	var n;
 	var _c = {};
-	while(n = /\[([a-z\.]*)(.*?)\]/ig.exec(template)){
+	while(n = /\[([a-z\._]*)(.*?)\]/ig.exec(template)){
 		var r1 = n[0];
 		var result = _c[r1];
 		if(result === undefined){
@@ -45,7 +45,9 @@ var replacer = function (template, data){
 	}
 }.toString();
 
-replacer = uglify(replacer);
+if(!AV.isDebugEnv){
+	replacer = uglify(replacer);
+}
 
 module.exports.getSingleInstance = function (data){
 	if(data.__replacer_loaded){
@@ -53,7 +55,8 @@ module.exports.getSingleInstance = function (data){
 	}
 	var name = 'TPL_REPLACE_FUNCTION';
 	data.__replacer_loaded = name;
-	return '<script type="text/javascript" title="TPL_REPLACE_FUNCTION">\n' + replacer.replace('function', 'function ' + name) + '\n</script>\n';
+	return '<script type="text/javascript" title="TPL_REPLACE_FUNCTION">\n' +
+	       replacer.replace('function', 'function ' + name) + '\n</script>\n';
 };
 module.exports.getInstance = function (data){
 	return data.__replacer_loaded || 'alert("replacer.getSingleInstance not been called");';

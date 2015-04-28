@@ -134,6 +134,7 @@ var request_init = function ($, replacer){
 			}
 		});
 		options.nomore = false;
+		options.$container.triggerHandler('ready', [options]);
 		if(options.init){
 			ajax(options);
 		}

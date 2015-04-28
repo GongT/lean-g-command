@@ -73,13 +73,16 @@ var request_init = function ($, replacer){
 		var $tpl = options.$container.find('.TEMPLATE').remove();
 		options.tpl = $tpl.html();
 		options.currentPage = 0;
-		options.$pager = $('#' + options.pagerId);
-		if(!options.$pager.length){
-			options.$pager = build_pager_dom(options).attr('id', options.id + 'Pager').insertAfter(options.$container);
+		
+		if(options.pagerId !== false){
+			options.$pager = $('#' + options.pagerId);
+			if(!options.$pager.length){
+				options.$pager = build_pager_dom(options)
+						.attr('id', options.id + 'Pager').insertAfter(options.$container);
+			}
+			
+			create_pager(options.$pager, options.$container);
 		}
-		
-		create_pager(options.$pager, options.$container);
-		
 		var locked;
 		Object.defineProperty(options, 'lock', {
 			get: function (){
@@ -121,6 +124,7 @@ var request_init = function ($, replacer){
 			options.nextPage = page;
 			ajax(options);
 		});
+		options.$container.triggerHandler('ready', [options]);
 		if(options.init){
 			options.$container.trigger('page', [1]);
 		}
