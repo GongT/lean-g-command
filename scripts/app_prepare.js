@@ -62,15 +62,15 @@ function main(AV){
 	
 	var FS = AV.FS = require(GROOT + 'include/FileSystem.js');
 	
-	append_log('load remotelogger...');
+	append_log('load error handler (remotelogger apierror)...');
 	AV.Logger = require(GROOT + 'include/Logger.js');
+	AV.ApiError = require(GROOT + 'include/ApiError.js');
 	
-	append_log('load library (libload apierror prototype)...');
+	append_log('load library (libload prototype)...');
 	var LibraryLoader = AV.LibraryLoader = require(GROOT + 'include/library_loader.js');
 	AV.lib = AV.library = new LibraryLoader;
 	AV.library.autoload(FS.read_source_tree('cloud/library/'));
 	
-	AV.ApiError = require(GROOT + 'include/ApiError.js');
 	AV.CLS = require(GROOT + 'include/module.prototype.js');
 	
 	append_log('load errors...');
