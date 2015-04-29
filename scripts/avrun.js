@@ -23,16 +23,20 @@ var platformExternalSpawn;
 module.exports.external = function (cmd, args){
 	return new Promise(function (resolve, reject){
 		console.log('start external program - %s', cmd);
-		var p = platformExternalSpawn(cmd, args, {
+		var params = {
 			stdio: 'inherit',
 			env  : process.env
-		});
+		};
+		if(arguments[2]){
+			require('util')._extend(params, arguments[2])
+		}
+		var p = platformExternalSpawn(cmd, args, params);
 		p.on("exit", function (code){
 			if(code == 0){
 				resolve();
 			} else{
 				console.log("sub command failed with code " + code);
-				reject();
+				reject(code);
 			}
 		});
 	});
@@ -70,9 +74,11 @@ if(!module.exports.runner){
 if(process.env.comspec){
 	module.exports.spawn = spawn_windows;
 	platformExternalSpawn = exec_windows;
+	process.isWindows = module.exports.isWindows = true;
 } else{
 	module.exports.spawn = spawn_linux;
 	platformExternalSpawn = exec_linux;
+	process.isWindows = module.exports.isWindows = false;
 }
 
 function spawn_windows(args, options){

@@ -38,7 +38,6 @@ global.deploySettings = require('./scripts/deploy_helper/deploy_settings');
 
 // 防止多进程同时启动
 global.singleInstance = require('./scripts/deploy_helper/single_instance');
-singleInstance.start(real_run);
 
 function exitHandler(options, err){
 	if(global.preventExit){
@@ -84,6 +83,8 @@ if(initfunc == 'config'){
 	require('./scripts/create_application.js');
 	return;
 }
+
+singleInstance.start(real_run);
 
 var command = process.argv[3];
 if(!command){

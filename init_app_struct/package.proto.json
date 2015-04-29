@@ -9,8 +9,8 @@
 	},
 	"main"           : "./main.js",
 	"repository"     : {
-		"type": "git",
-		"url" : "https://github.com/GongT/LEAN-G.git"
+		"type": "",
+		"url" : ""
 	},
 	"keywords"       : [
 		"lean", "leancloud", "avos", "avoscloud", "framework"
