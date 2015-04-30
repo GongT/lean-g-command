@@ -5,7 +5,7 @@ var path = require('path');
 var console = new AV.Logger('InspectCC');
 
 cc.process(function (){
-	var script = '', dup = {'AV': AV};
+	var script = 'var AV = {};\n', dup = {'AV': AV};
 	
 	dump('AV', AV);
 	
