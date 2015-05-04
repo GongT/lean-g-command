@@ -18,11 +18,6 @@ function prepareService(){
 	
 	process.env.LEANG_DEBUG = 'yes';
 	process.stdin.setEncoding('utf8');
-	if(!APP_CONFIG.isDebugEnv){
-		console.log('开启调试云代码函数');
-		APP_CONFIG.isDebugEnv = true;
-		reconfigure.function();
-	}
 }
 
 function startService(){
@@ -66,14 +61,20 @@ function shutdownService(cb){
 }
 
 var restarting;
-function restartService(){
-	console.log('调试重新启动...');
+function restartService(why){
+	if(restarting){
+		console.log('pending restart');
+		return;
+	}
+	console.info('调试重新启动(2s)...' + (why? '，因为：' + why : ''));
 	restarting = true;
 	self.emit('restarting');
 	shutdownService(function (){
-		restarting = false;
-		console.log('start...');
-		startService();
+		setTimeout(function (){
+			restarting = false;
+			console.log('start...');
+			startService();
+		}, 2000)
 	});
 }
 function terminateService(){
@@ -110,8 +111,7 @@ self.remoteCall = function (params){
 };
 
 filewatcher.on('change', function (file){
-	console.info('调试程序重启，因为检测到文件修改：', file);
-	setTimeout(restartService, 500);
+	restartService('检测到文件修改' + file);
 });
 self.on('started', function (){
 	filewatcher.start();

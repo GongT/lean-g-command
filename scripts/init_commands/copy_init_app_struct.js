@@ -1,6 +1,6 @@
 var fs = require('fs');
 var path = require('path');
-var avosrun = require('./avrun');
+var avosrun = require('../avrun');
 
 var xcopy_pending = [];
 var xcopy_count = 0;

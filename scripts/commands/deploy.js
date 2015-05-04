@@ -1,5 +1,6 @@
 /**
  * @title: 部署当前代码到测试和发布环境
+ * @windowTitle: 部署
  */
 var avosrun = require('../avrun.js');
 var fs = require('fs');

@@ -7,7 +7,7 @@ var PATH_TO_NODE = isWin? SAVE_FILE : SAVE_PATH + 'bin/node';
 
 module.exports = (function (){
 	var get_sub = /v\d+\.(\d+)\.\d+/;
-	console.error('nodejs version = ' + process.version);
+	// console.error('nodejs version = ' + process.version);
 	
 	var maths = get_sub.exec(process.version);
 	if(!maths){

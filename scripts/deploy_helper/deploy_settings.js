@@ -50,6 +50,10 @@ if(fs.existsSync(APPPATH + 'package.json')){
 	global.PackageJson = {};
 }
 
+module.exports.getApplicationName = function (){
+	return PackageJson.description;
+};
+
 module.exports.commit = function (){
 	fs.writeFileSync(APPPATH + '/.avoscloud/deploy.json', JSON.stringify(LeanParams, null, 8));
 	if(pkg){

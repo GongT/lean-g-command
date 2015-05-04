@@ -1,5 +1,6 @@
 /**
  * @title: 运行单元调试测试，后面再加一个参数，是要执行的测试
+ * @title: 单元测试
  */
 APP_CONFIG.isDebugEnv = true;
 global.unit = {

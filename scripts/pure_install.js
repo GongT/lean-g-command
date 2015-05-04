@@ -18,7 +18,7 @@ module.exports = function (){
 module.exports.confirm = function (req, pack){
 	try{
 		global.colors = require(req);
-		console.info('require %s ok', req);
+		// console.info('require %s ok', req);
 		return true;
 	} catch(e){
 		console.info('Cannot require %s becouse: %s\n\n正在安装依赖 %s...', req, e, pack || req);

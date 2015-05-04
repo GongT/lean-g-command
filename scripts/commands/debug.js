@@ -1,5 +1,6 @@
 /**
  * @title: 开启本地调试服务器，可以在本地浏览器里调试所有代码逻辑。
+ * @windowTitle: 调试
  */
 var controller = require('../debugger/bootstrap');
 var colors = global.colors = require('colors/safe');
@@ -7,8 +8,6 @@ var console = new LogPrepend('调试服务器管理');
 var reconfigure = require('../debugger/reconfigure');
 
 console.info('正在启动LeanCloud本地调试服务器……');
-
-process.stdout.write('\033]0;' + APP_CONFIG.applicationName + '（' + APP_CONFIG.envName + '）' + '\007');
 
 var shuttingDown = false;
 process.on('exit', function (code){

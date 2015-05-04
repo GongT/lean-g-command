@@ -7,9 +7,6 @@ var CGROOT = global.CGROOT;
 var GROOT = global.GROOT;
 
 var CLOUDROOT = global.CLOUDROOT;
-var APP_CONFIG = global.APP_CONFIG;
-var APP_NAME = global.APP_NAME;
-var APP_TYPE = global.APP_TYPE;
 var GENPATH = APPPATH + 'cloud/__gen/';
 var extend = require('util')._extend;
 
@@ -57,6 +54,9 @@ function map_back(name){
 
 /**/
 function update_avos_config(){
+	APP_CONFIG.load_server(module.exports.APP_SERVER, true);
+	var APP_NAME = 'LG-' + global.APP_ENVIRONMENT;
+	
 	console.log('更新配置...');
 	// CurrentApp
 	console.log('\t设置当前 app-id...');
@@ -85,7 +85,7 @@ function update_avos_config(){
 	var PUB_CONST = {
 		IS_DEBUG_ENV  : APP_CONFIG.isDebugEnv,
 		isDebugEnv    : APP_CONFIG.isDebugEnv,
-		ENVIRONMENT   : APP_TYPE,
+		ENVIRONMENT   : global.APP_ENVIRONMENT,
 		STATIC_URL    : APP_CONFIG.staticUrl,
 		BASE_URL      : APP_CONFIG.baseUrl,
 		STATIC_VERSION: APP_CONFIG.staticVersion
@@ -322,15 +322,6 @@ function update_avos_trigger(){
 	fs.writeFileSync(GENPATH + 'import.triggers.js', source.join("\n"));
 }
 
-function update_debug(){
-	console.log('更新代码补全...');
-	var scripts = '';
-	scripts += 'global.APP_CONFIG = ' + JSON.stringify(APP_CONFIG, null, 8);
-	scripts += 'global.APP_NAME = ' + JSON.stringify(APP_NAME, null, 8);
-	
-	fs.writeFileSync(GENPATH + 'debug.js', scripts);
-}
-
 function update_error_number(){
 	console.log('生成错误码js文件...');
 	var em = require(APPPATH + 'errormessage.json');
@@ -356,12 +347,9 @@ function update_error_number(){
 	fs.writeFileSync(GENPATH + 'error.js', script.join('\n'));
 }
 
-module.exports.debug = update_debug;
 module.exports.config = update_avos_config;
 module.exports.errno = update_error_number;
 module.exports.everything = function (){
-	module.exports.config();
-	module.exports.debug();
 	module.exports.errno();
 	// 所有载入器
 	module.exports.source();

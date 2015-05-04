@@ -1,5 +1,6 @@
 /**
  * @title: 部署当前代码到测试环境
+ * @title: 部署测试环境
  */
 var avosrun = require('../avrun.js');
 

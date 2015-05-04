@@ -13,7 +13,12 @@ function ProcessController(){
 }
 
 ProcessController.prototype.start = function (cb){
+	if(this.running){
+		console.error('试图启动已经启动的进程');
+		process.exit(0);
+	}
 	var self = this;
+	self.running = true;
 	this.remote = remoteCall.init(function (){
 		self.child = avrun.spawn(['-P', port.toString()],
 				{
@@ -35,6 +40,7 @@ ProcessController.prototype.shutdown = function (cb){
 		this.call('debug_shutdown(0);');
 	} else{
 		this.kill('SIGTERM');
+		this.running = false;
 	}
 };
 ProcessController.prototype.kill = function (){
@@ -43,8 +49,8 @@ ProcessController.prototype.kill = function (){
 		return;
 	}
 	if(this.child){
-		this.running = false;
 		this.child.kill('SIGTERM');
+		this.running = false;
 	}
 };
 ProcessController.prototype.call = function (params){
@@ -74,12 +80,10 @@ ProcessController.prototype.register_handlers = function (){
 	var em = require('./process_stdio')(this.child.stdout, this.child.stderr);
 	
 	em.on('success', function (){
-		self.running = true;
 		self.call('console.log("\\n\\t浏览器打开 http://127.0.0.1:' + port.toString() +
 		          '/ 进行调试\\n\\t这里是一个node自带的repl，相当于直接运行“node”之后出现的“>”可以查看变量内容等。\\n\\t输入rs强制重启服务器，help查看更多指令\\n");repl.displayPrompt();')
 	});
 	em.on('fail', function (){
-		self.running = false;
 		console.error('启动失败：调试服务器报告了一个错误');
 	});
 };
