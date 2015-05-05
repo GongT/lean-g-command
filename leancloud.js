@@ -17,8 +17,6 @@ console.assert(confirm_module('promise'), '安装失败，请尝试手动安装'
 
 var colors = global.colors = require('colors/safe');
 
-global.CAPPPATH = ''; // 项目路径
-
 var APPPATH = global.APPPATH = process.cwd().replace(/\\/g, '/') + '/'; // 项目路径 - 运行时
 global.CLOUDROOT = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
 
@@ -31,9 +29,13 @@ console.log('LEAN-G: APPPATH = %s', APPPATH);
 var config_exists = fs.existsSync(APPPATH + 'config');
 
 // 检查alias
-require('./scripts/back_comp');
-var alias = require('./scripts/command_alias');
-alias.load(process.argv[2]);
+if(process.argv.length == 3){
+	var alias = require('./scripts/init_commands/command_alias');
+	alias.load();
+}
+if(process.argv.length == 4){
+	require('./scripts/back_comp');
+}
 
 var action = assert_process_argument(2, usage, '缺少命令');
 
@@ -63,17 +65,21 @@ if(!config_exists){
 	usage("没有找到config文件夹 - 可能当前目录错误");
 }
 
-// 检查要运行的命令文件
-var command_file = CGROOT + 'scripts/commands/' + action + '.js';
-if(!fs.existsSync(command_file)){
-	usage_cmd("未知命令: " + action + ".");
-}
-
 // 预备运行文件夹和环境
-process.env.HOME = global.HOME = APPPATH + '.avoscloud';
+process.env.HOME = global.HOME = APPPATH + '.avoscloud/';
 process.chdir(APPPATH);
 if(!fs.existsSync('.avoscloud')){
 	fs.mkdirSync('.avoscloud');
+}
+
+if(action == 'alias'){
+	return require('./scripts/init_commands/command_alias').save();
+}
+
+// 检查要运行的命令文件
+var command_file = CGROOT + 'scripts/commands/' + action + '.js';
+if(!fs.existsSync(command_file)){
+	return usage_cmd("未知命令: " + action + ".");
 }
 
 // 读取avos配置

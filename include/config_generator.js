@@ -55,7 +55,7 @@ function map_back(name){
 /**/
 function update_avos_config(){
 	APP_CONFIG.load_server(module.exports.APP_SERVER, true);
-	var APP_NAME = 'LG-' + global.APP_ENVIRONMENT;
+	var APP_NAME = 'LG-' + global.APP_ENVIRONMENT + '-' + APP_CONFIG.environmentName;
 	
 	console.log('更新配置...');
 	// CurrentApp
@@ -350,6 +350,7 @@ function update_error_number(){
 module.exports.config = update_avos_config;
 module.exports.errno = update_error_number;
 module.exports.everything = function (){
+	module.exports.config();
 	module.exports.errno();
 	// 所有载入器
 	module.exports.source();

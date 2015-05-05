@@ -1,9 +1,11 @@
 var fs = require('fs');
 
 var args = process.argv.slice();
+var configfile = APPPATH + 'config/' + args[2] + '.json';
 var cmdfile = CGROOT + 'scripts/commands/' + args[3] + '.js';
 
-if(fs.existsSync(cmdfile)){
+if(fs.existsSync(cmdfile) && fs.existsSync(configfile)){
+	console.log('same as: leang %s %s %s', args[3], args[2], args[2]);
 	var cfgfile = APPPATH + 'config/' + args[2] + '.json';
 	
 	if(fs.existsSync(cfgfile)){
@@ -44,15 +46,17 @@ if(fs.existsSync(cmdfile)){
 			
 			fs.writeFileSync(dist_env, JSON.stringify(CONFIG, null, 8));
 			fs.writeFileSync(dist_ser, JSON.stringify(sConfig, null, 8));
+			fs.unlinkSync(source);
 		});
 	} else{
 		console.log('no file %s', cfgfile);
 	}
 	
 	setTimeout(function (){
-		console.log('===================================\n' +
-		            '\x1B[38;5;10mLEAN-G 更新了，请使用新方法调用\x1B[0m' +
-		            '\n===================================');
+		console.log('===================================');
+		console.log('\x1B[38;5;10mLEAN-G 更新了，请使用新方法调用\x1B[0m');
+		console.log('\x1B[38;5;10mleang %s %s %s\x1B[0m', args[3], args[2], args[2]);
+		console.log('===================================');
 	}, 5000);
 	
 	process.argv[3] = args[2];

@@ -16,6 +16,7 @@ ConfigLoader.prototype.load_environment = function (file, req){
 			return;
 		}
 	}
+	console.log('加载环境配置 [%s]', file);
 	deep_extend(this, JSON.parse(fs.readFileSync(fName)));
 };
 ConfigLoader.prototype.load_server = function (file, req){
@@ -28,6 +29,7 @@ ConfigLoader.prototype.load_server = function (file, req){
 			return;
 		}
 	}
+	console.log('加载服务器配置 [%s]', file);
 	deep_extend(this, JSON.parse(fs.readFileSync(fName)));
 };
 
