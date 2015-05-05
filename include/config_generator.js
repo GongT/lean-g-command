@@ -56,7 +56,7 @@ function map_back(name){
 function update_avos_config(){
 	APP_CONFIG.load_server('default', false);
 	APP_CONFIG.load_server(module.exports.APP_SERVER, true);
-	var APP_NAME = 'LG-' + global.APP_ENVIRONMENT + '-' + APP_CONFIG.environmentName;
+	var APP_NAME = 'LG-' + global.APP_ENVIRONMENT + '-' + global.APP_SERVER;
 	
 	console.log('更新配置...');
 	// CurrentApp

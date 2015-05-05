@@ -92,7 +92,7 @@ if(APP_ENVIRONMENT != 'default'){
 }
 
 global.update = require('./include/config_generator');
-global.update.APP_SERVER = assert_process_argument(4, usage_server, '缺少服务器定义文件');
+global.APP_SERVER =global.update.APP_SERVER = assert_process_argument(4, usage_server, '缺少服务器定义文件');
 APP_CONFIG.load_server(global.update.APP_SERVER, true);
 
 singleInstance.start(real_run);
