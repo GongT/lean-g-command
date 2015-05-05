@@ -29,8 +29,8 @@ console.log('LEAN-G: APPPATH = %s', APPPATH);
 var config_exists = fs.existsSync(APPPATH + 'config');
 
 // 检查alias
+var alias = require('./scripts/init_commands/command_alias');
 if(process.argv.length == 3){
-	var alias = require('./scripts/init_commands/command_alias');
 	alias.load();
 }
 if(process.argv.length == 4){

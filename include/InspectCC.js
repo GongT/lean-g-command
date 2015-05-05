@@ -19,7 +19,7 @@ cc.process(function (){
 			if(parseInt(name).toString() == name){
 				vname = pp + '[' + name + ']';
 			}
-			if(/[\-\s\/\\]/.test(name)){
+			if(/[\-\s\/\\\.]/.test(name)){
 				vname = pp + '[' + JSON.stringify(name) + ']';
 			}
 			if(isSkip(vname)){
