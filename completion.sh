@@ -37,11 +37,18 @@ _commands()
     name=${name##*/}
     echo ${name%.js}
     done
+    _alias
   else
     echo 'init'
   fi
   echo 'dependence'
   echo 'config'
+}
+
+_alias(){
+  if [[ -f ".avoscloud/alias.json" ]]; then
+    echo $(node -e "Object.keys(JSON.parse(require('fs').readFileSync('.avoscloud/alias.json'))).forEach(function(x){console.log(x)});")
+  fi
 }
 
 _leang()
