@@ -34,7 +34,7 @@ ServerCloud.prototype.run = function (name, data){
 			'Content-Type'                      : 'application/json'
 		},
 		json   : true,
-		body   : new Buffer(JSON.stringify(data))
+		body   : data
 	}).then(function (body){
 		try{
 			if(body.data.code){
