@@ -13,7 +13,7 @@ module.exports = function (){
 				resolve();
 			} else{
 				console.log("sub command failed with code " + code);
-				reject();
+				reject(code);
 			}
 		});
 	});
@@ -62,6 +62,46 @@ module.exports.external_stdout = function (cmd, args){
 				reject(stdout, stderr);
 			}
 		});
+	});
+};
+
+module.exports.external_stdout_eachline = function (args, cb){
+	return new Promise(function (resolve, reject){
+		var p = module.exports.spawn(args,
+				{
+					stdio: 'inherit',
+					env  : process.env
+				});
+		p.on("exit", function (code){
+			if(code == 0){
+				resolve();
+			} else{
+				console.log("sub command failed with code " + code);
+				reject(code);
+			}
+		});
+		var cache = {stdout: '', stderr: ''};
+		p.stdout.on('data', function (data){
+			cache.stdout += data.toString();
+			call_cb('stdout', true);
+		});
+		
+		p.stderr.on('data', function (data){
+			cache.stderr += data.toString();
+			call_cb('stderr', false);
+		});
+		
+		function call_cb(name, isout){
+			var lines = cache[name].split('\n');
+			if(lines[lines.length - 1]){
+				cache[name] = lines.pop();
+			} else{
+				cache[name] = '';
+			}
+			lines.forEach(function (line){
+				cb(line, isout);
+			});
+		}
 	});
 };
 
