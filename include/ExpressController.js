@@ -115,7 +115,7 @@ function export_express_router(config, _path){
 	sortedUrlKey.forEach(function (name){
 		var def = config[name];
 		if(typeof def === 'string'){
-			expressRoutersDebug += '/' + def + ':\n';
+			expressRoutersDebug += '\x1B[38;5;10m/' + def + ':\x1B[0m\n';
 			// console.debug('/' + def);
 			var cntl = require(def);
 			cntl.file = def;

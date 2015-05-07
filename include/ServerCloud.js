@@ -37,6 +37,10 @@ ServerCloud.prototype.run = function (name, data){
 		body   : new Buffer(JSON.stringify(data))
 	}).then(function (body){
 		try{
+			if(!body.data || body.data instanceof Buffer){
+				console.error('云代码[%s]请求失败，可能是函数名写错: %s', name, body.text);
+				return AV.Promise.error(AV.E.E_RPC.attach(body.text));
+			}
 			if(body.data.code){
 				return AV.Promise.error(AV.E.E_SERVER.attach(body.data));
 			}
@@ -48,6 +52,7 @@ ServerCloud.prototype.run = function (name, data){
 			}
 			return body.data.result;
 		} catch(e){
+			console.error('云代码[%s]请求失败，CATCHED!!!! - %s', name, e);
 			return AV.Promise.error(body);
 		}
 	}, function (response){
