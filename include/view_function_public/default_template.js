@@ -29,6 +29,10 @@ var replacer = function (template, data){
 				} else{
 					console.error('Unknown replace config %s in %s', config, r1);
 				}
+			} else if(typeof result === 'undefined'){
+				result = 'undefined';
+			} else if(typeof result === 'number'){
+				result = result.toString();
 			}
 		}
 		template = template.replace(r1, result);
@@ -41,7 +45,7 @@ var replacer = function (template, data){
 		name.every(function (name){
 			return itr = itr[name];
 		});
-		return itr || '';
+		return itr;
 	}
 }.toString();
 

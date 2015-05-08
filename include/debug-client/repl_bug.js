@@ -65,7 +65,7 @@ module.exports.eval = function notDefaultEval(code, context, file, cb){
 			err = e;
 			if(err.stack){
 				err.stack = err.stack.replace(/at REPLServer\.eval_handler[\S\s]+/, '').trim();
-			}else{
+			} else{
 				err.stack = err.toString();
 			}
 			if(err && process.domain){
@@ -77,15 +77,41 @@ module.exports.eval = function notDefaultEval(code, context, file, cb){
 	}
 	
 	if(AV.Promise.is(result)){
+		lastResult = '正在请求……';
 		result.done(function (data){
+			lastResult = data;
 			cb(undefined, data);
 		}, function (err){
+			lastResult = err;
 			cb(err, undefined);
 		});
 	} else{
+		lastResult = err || result;
 		cb(err, result);
 	}
 };
+
+var lastResult = undefined;
+Object.defineProperty(global, 'printlast', {
+	get: function (){
+		if(lastResult === undefined){
+			console.log('undefined');
+		} else{
+			console.log(lastResult);
+		}
+		var l =lastResult;
+		setImmediate(function (){
+			lastResult=l
+		});
+		return undefined;
+	}
+});
+Object.defineProperty(global, 'last', {
+	get: function (){
+		return lastResult;
+	}
+});
+
 function isRecoverableError(e){
 	return e &&
 	       e.name === 'SyntaxError' &&
