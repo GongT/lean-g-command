@@ -82,6 +82,7 @@ if(!AV.isDebugEnv){ // 正式环境不要info和debug
 })();
 
 function Logger(msg){
+	this._prepend_message = msg;
 	if(regist[msg]){
 		return regist[msg];
 	}
