@@ -10,6 +10,7 @@ module.exports = function (params, template, data, repeat){
 	options.init = params.__get('init', false);
 	options.tagName = params.__get('tag', 'DIV').toUpperCase();
 	options.pagerId = params.__get('pagerId');
+	options.createPagerAt = params.__get('createPagerAt');
 	options.totalPageKnown = params.__get('count');
 	if(options.totalPageKnown){
 		options.totalPageKnown = options.totalPageKnown/options.count;
@@ -74,7 +75,7 @@ var request_init = function ($, replacer){
 		options.tpl = $tpl.html();
 		options.currentPage = 0;
 		
-		if(options.pagerId !== false){
+		if(options.pagerId){
 			options.$pager = $('#' + options.pagerId);
 			if(!options.$pager.length){
 				options.$pager = build_pager_dom(options)
@@ -82,6 +83,8 @@ var request_init = function ($, replacer){
 			}
 			
 			create_pager(options.$pager, options.$container);
+		}else if(options.createPagerAt){
+			options.$pager = build_pager_dom(options).appendTo(options.createPagerAt);
 		}
 		var locked;
 		Object.defineProperty(options, 'lock', {
