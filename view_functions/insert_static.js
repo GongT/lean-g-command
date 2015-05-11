@@ -11,6 +11,7 @@ var isCss = /\.css$/;
 
 function insert_static(params, data){
 	var file = params.__get('file', '', 0);
+	var external = params.__get('external');
 	var library = params.__get('library');
 	if(file){
 		if(isJs.test(file)){
@@ -33,6 +34,15 @@ function insert_static(params, data){
 			return js_alert_error('未知的静态文件库：' + library);
 		}
 	}
+	if(external){
+		if(isJs.test(external)){
+			data._head.ascripts.push(wrapjs(external));
+		} else if(isCss.test(external)){
+			data._head.astyles.push(wrapcss(external));
+		} else{
+			return js_alert_error('没有找到引入的静态文件：' + external);
+		}
+	}
 	return '';
 }
 function use_library(list, data){
@@ -46,10 +56,12 @@ function use_library(list, data){
 }
 
 function wrapjs(file){
+	file = file.replace(/^\//g, '');
 	return '<script type="text/javascript" crossorigin="anonymous" src="' + CONSTANTS.STATIC_URL + file + '?v=' +
 	       CONSTANTS.STATIC_VERSION + '"></script>';
 }
 function wrapcss(file){
+	file = file.replace(/^\//g, '');
 	return '<link type="text/css" rel="stylesheet" href="' + CONSTANTS.STATIC_URL + file + '?v=' +
 	       CONSTANTS.STATIC_VERSION + '">';
 }
