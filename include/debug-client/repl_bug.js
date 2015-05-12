@@ -80,7 +80,15 @@ module.exports.eval = function notDefaultEval(code, context, file, cb){
 		lastResult = '正在请求……';
 		result.done(function (data){
 			lastResult = data;
-			cb(undefined, data);
+			if(data){
+				cb(undefined, data);
+			} else{
+				cb(undefined, {
+					inspect: function (){
+						return '1这个promise返回了“undefined”';
+					}
+				});
+			}
 		}, function (err){
 			lastResult = err;
 			cb(err, undefined);
@@ -99,9 +107,9 @@ Object.defineProperty(global, 'printlast', {
 		} else{
 			console.log(lastResult);
 		}
-		var l =lastResult;
+		var l = lastResult;
 		setImmediate(function (){
-			lastResult=l
+			lastResult = l
 		});
 		return undefined;
 	}

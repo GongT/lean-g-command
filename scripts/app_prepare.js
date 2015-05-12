@@ -87,6 +87,7 @@ function main(AV){
 	append_log('load library (controller cloudcode servercloud)...');
 	AV.ExpressController = require(GROOT + 'include/ExpressController.js');
 	AV.CloudCodeWrapper = require(GROOT + 'include/CloudCodeWrapper.js');
+	AV.CallbackList = AV.CloudCodeWrapper.CallbackList;
 	AV.ServerCloud = require(GROOT + 'include/ServerCloud.js');
 	require(GROOT + 'include/ExpressController.extra.js');
 	
