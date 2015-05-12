@@ -2,6 +2,12 @@ var http = require('http');
 var fs = require('fs');
 var realResponse = http.ServerResponse.prototype.end;
 
+var fullLog = false;
+
+global.fullLog = function (){
+	fullLog = arguments.length == 0? true : arguments[0];
+};
+
 global.startResponseLogging = function (){
 	http.ClientRequest.prototype.end =
 	http.OutgoingMessage.prototype.end =
@@ -91,5 +97,9 @@ function remove_extra(json){
 	delete data._InstallationId;
 	delete data._SessionToken;
 	
-	return JSON.stringify(data).substr(0, 26);
+	if(fullLog){
+		return '\n' + JSON.stringify(data, null, 4);
+	} else{
+		return JSON.stringify(data).substr(0, 26);
+	}
 }
