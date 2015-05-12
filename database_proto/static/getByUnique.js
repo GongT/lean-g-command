@@ -1,5 +1,6 @@
 module.exports = function (what, eqto, includes){
 	var query = new AV.Query(this);
+	query.equalTo(what, eqto);
 	if(includes){
 		query.include(includes);
 	}
