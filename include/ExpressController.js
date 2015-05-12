@@ -156,7 +156,7 @@ function InputHanler(rt, req, rsp){ // 输入与请求类型不符（比如get�
 	});
 }
 Object.defineProperties(InputHanler.prototype, {
-	post : {
+	post  : {
 		get: function (){
 			if(this.parent.method == 'POST' || this.parent.method == 'ALL' || this.parent.method == 'PUT'){
 				if(!this.__post){
@@ -169,7 +169,7 @@ Object.defineProperties(InputHanler.prototype, {
 			throw new ReferenceError('试图从GET请求中获取POST数据');
 		}
 	},
-	path : {
+	path  : {
 		get: function (){
 			if(this.__path){
 				return this.__path;
@@ -183,7 +183,7 @@ Object.defineProperties(InputHanler.prototype, {
 			this.__path = v;
 		}
 	},
-	pager: {
+	pager : {
 		value: function (minCount, maxCount){
 			if(this.__pager){
 				return this.__pager;
@@ -212,13 +212,18 @@ Object.defineProperties(InputHanler.prototype, {
 			return this.__pager = p;
 		}
 	},
-	
 	header: {
 		get: function (){
-			return {
-				method: this.__req.method,
-				url   : this.__req.url
-			}
+			return this.__header ||
+			       (this.__header = {
+				       method     : this.__req.method,
+				       ContentType: this.__req.headers['content-type'],
+				       Origin     : this.__req.headers['origin'],
+				       Referer    : this.__req.headers['referer'],
+				       UserAgent  : this.__req.headers['user-agent'],
+				       Host       : this.__req.headers['host'],
+				       url        : this.__req.url
+			       });
 		}
 	}
 });
