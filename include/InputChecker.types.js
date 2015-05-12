@@ -69,9 +69,9 @@ module.exports = {
 		}
 		if(typeof v == 'string'){
 			v = v.toLowerCase();
-			if(v == 'true' || v == 'on' || v == 'yes'){
+			if(v == 'true' || v == 'on' || v == '1' || v == 'yes'){
 				return true
-			} else if(v == 'false' || v == 'off' || v == 'no'){
+			} else if(v == 'false' || v == 'off' || v == '0' || v == 'no'){
 				return false
 			}
 		}

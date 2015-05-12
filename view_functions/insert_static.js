@@ -3,7 +3,8 @@ var CONSTANTS = AV.CONSTANTS;
 
 var librarys = {
 	'jquery'     : ['jquery' + (CONSTANTS.isDebugEnv? '' : '.min') + '.js', 'jquery.cookie.js'],
-	'jquery-only': ['jquery' + (CONSTANTS.isDebugEnv? '' : '.min') + '.js']
+	'jquery-only': ['jquery' + (CONSTANTS.isDebugEnv? '' : '.min') + '.js'],
+	'artDialog'  : ['artDialog.js', 'iframeTools.source.js', 'artdialog/default.css']
 };
 
 var isJs = /\.js$/;
