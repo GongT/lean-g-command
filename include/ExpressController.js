@@ -288,13 +288,15 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 		}
 		this.json();
 	} else{
-		this.assign('error', e);
 		if(e instanceof AV.ApiError){
+			this.assign('error', e.toStrongJSON());
 			this.display(template || AV.CONFIG.template.standardErrorPage || 'standard_error');
 		} else if(e instanceof Error){
 			console.error(e.stack);
+			this.assign('error', e);
 			this.display(template || AV.CONFIG.template.internalErrorPage || 'internal_error');
 		} else{
+			this.assign('error', e);
 			this.display(template || AV.CONFIG.template.userErrorPage || 'user_error');
 		}
 	}
