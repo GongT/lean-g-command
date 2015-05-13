@@ -83,7 +83,7 @@ var request_init = function ($, replacer){
 			}
 			
 			create_pager(options.$pager, options.$container);
-		}else if(options.createPagerAt){
+		} else if(options.createPagerAt){
 			options.$pager = build_pager_dom(options).appendTo(options.createPagerAt);
 		}
 		var locked;
@@ -102,6 +102,8 @@ var request_init = function ($, replacer){
 				}
 			}
 		});
+		
+		listen_total_page(options);
 		
 		options.$container.on('page', function (e, page){
 			if(options.lock){
@@ -216,11 +218,15 @@ var request_init = function ($, replacer){
 		$('<button class="btn btn-default" type="button" data-page="input">跳转</button>').appendTo($('<span class="input-group-btn">').appendTo(inp));
 		
 		$('<div class="col-xs-6 text-right">')
-				.append('<button class="btn btn-default btn-sm" data-page="prev">更早</button>')
-				.append('<button class="btn btn-default btn-sm" data-page="next">更晚</button>')
+				.append('<button class="btn btn-default btn-sm" data-page="prev">上一页</button>')
+				.append('<button class="btn btn-default btn-sm" data-page="next">下一页</button>')
 				.appendTo($page_parent);
 		
 		return $page_parent;
+	}
+	
+	function listen_total_page(options){
+		
 	}
 	
 	function handle_error(e){
