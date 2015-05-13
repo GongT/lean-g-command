@@ -223,8 +223,12 @@ CallbackList.prototype.getFunction = function (){
 	};
 };
 
-function CloudClodeWrapper(module){
-	this._call_list = new CallbackList();
+function CloudClodeWrapper(module, callbacklist){
+	if(callbacklist){
+		this._call_list = callbacklist;
+	} else{
+		this._call_list = new CallbackList();
+	}
 	this.fnList = this._call_list.fnList;
 	if(module && module.exports){
 		this.exports(module);

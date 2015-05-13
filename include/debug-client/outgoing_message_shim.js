@@ -70,7 +70,7 @@ function shimResponse(data, encoding){
 		
 		process.stdout.write('');
 		process.stdout.write('\r\x1B[K\x1B[38;5;244mO: ' + this.method + ' ' +
-		                     (this.path.length > 20? this.path.substr(0, 20) + '...' : this.path));
+		                     (this.path.length > 20 && !fullLog? this.path.substr(0, 20) + '...' : this.path));
 		if(this._hasBody){
 			var out = this.output.join('').replace(this._header, '');
 			if(out.substr(0, 1) == '{'){
