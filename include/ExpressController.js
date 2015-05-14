@@ -216,13 +216,14 @@ Object.defineProperties(InputHanler.prototype, {
 		get: function (){
 			return this.__header ||
 			       (this.__header = {
-				       method     : this.__req.method,
-				       ContentType: this.__req.headers['content-type'],
-				       Origin     : this.__req.headers['origin'],
-				       Referer    : this.__req.headers['referer'],
-				       UserAgent  : this.__req.headers['user-agent'],
-				       Host       : this.__req.headers['host'],
-				       url        : this.__req.url
+				       method       : this.__req.method,
+				       ContentType  : this.__req.headers['content-type'],
+				       Origin       : this.__req.headers['origin'],
+				       Referer      : this.__req.headers['referer'],
+				       UserAgent    : this.__req.headers['user-agent'],
+				       Host         : this.__req.headers['host'],
+				       url          : this.__req.url,
+				       remoteAddress: this.__req.headers['x-real-ip']
 			       });
 		}
 	}
