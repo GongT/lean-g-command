@@ -36,6 +36,25 @@ ExpressController.prototype.prepare = function (name){
 ExpressController.prototype.main = function (){
 	this.debug_send('<h1>Not implement</h1>');
 };
+ExpressController.prototype.__forceRun = function (req, rsp, finish){
+	var seq;
+	if(this._prepares.length){
+		seq = [init_runtime, runPrepare, runMain];
+	} else{
+		seq = [init_runtime, runMain];
+	}
+	var self = this;
+	next();
+	
+	function next(e){
+		if(e){
+			return rsp.runtime.displayError(e);
+		}
+		var cb = seq.shift();
+		var n = seq.length? next : finish;
+		cb.call(self, req, rsp, n)
+	}
+};
 
 /* 程序执行逻辑 */
 function runMain(req, rsp, next){
@@ -338,7 +357,7 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 		if(err){
 			console.error('模板错误：' + err.message);
 			self._tVar.error = err;
-			response.render('global/internal', self._tVar, function (err2, body){
+			response.render(AV.CONFIG.template.internalErrorPage || 'internal_error', self._tVar, function (err2, body){
 				if(err2){
 					console.error('致命错误：无法渲染并显示内部错误页面\n' + err2.stack);
 					response.send('<h1>' + err.message + '</h1>');

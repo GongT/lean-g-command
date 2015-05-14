@@ -89,14 +89,12 @@ function main(AV){
 	AV.CloudCodeWrapper = require(GROOT + 'include/CloudCodeWrapper.js');
 	AV.CallbackList = AV.CloudCodeWrapper.CallbackList;
 	
-	if(!AV.CONFIG.lean.disableExpress){
-		append_log('load library (controller cloudcode)...');
-		AV.ExpressController = require(GROOT + 'include/ExpressController.js');
-		require(GROOT + 'include/ExpressController.extra.js');
-		
-		append_log('load express app...');
-		var avosExpressCookieSession = require('avos-express-cookie-session');
-	}
+	append_log('load library (controller cloudcode)...');
+	AV.ExpressController = require(GROOT + 'include/ExpressController.js');
+	require(GROOT + 'include/ExpressController.extra.js');
+	
+	append_log('load express app...');
+	var avosExpressCookieSession = require('avos-express-cookie-session');
 	
 	append_log('load cloudcode functions...');
 	require(GROOT + 'include/global-functions.js');
@@ -117,11 +115,11 @@ function main(AV){
 		app.use(require('serve-favicon')('public/favicon.ico'));
 	}
 	
-	if(!AV.CONFIG.lean.disableExpress && !AV.CONFIG.lean.disableLess){
+	if(!AV.CONFIG.lean.disableExpress){
 		app.use(require('less-middleware')('public'));
 	}
 	
-	if(!AV.CONFIG.lean.disableExpress && !AV.CONFIG.lean.disableCookie){
+	if(!AV.CONFIG.lean.disableExpress){
 		parse_cookie_session_settings(CONFIG);
 		
 		app.use(express.cookieParser(CONFIG.cookie.signKey));
@@ -134,7 +132,7 @@ function main(AV){
 		var debug = require(GROOT + 'include/debug-client.js')(app);
 	}
 	
-	if(!AV.CONFIG.lean.disableExpress && !AV.CONFIG.lean.disableSmarty){
+	if(!AV.CONFIG.lean.disableExpress){
 		append_log('load express smarty template...');
 		AV.templatePlugin = require(GROOT + 'include/express-nsmarty-shim.js');
 		require(GENPATH + 'import.nsmarty.js').forEach(function (f){
@@ -184,17 +182,16 @@ function main(AV){
 		}
 		applisten.apply(app, arguments);
 		
-		var e404 = AV.CONFIG.template.notFoundErrorPage || 'not_found';
-		app.use(function (req, res, next){
-			res.status(404).render(e404, {}, function (err, body){
-				if(err){
-					console.error('404模板错误：' + err.message);
-					res.send('<h1>页面未找到，且没有找到404模板页面。</h1>');
-				} else{
-					res.send(body.trim());
-				}
-			});
-		});
+		if(!AV.CONFIG.lean.disableExpress){
+			var e404Controller;
+			if(AV.ExpressController.map['/404']){
+				e404Controller = AV.ExpressController.map['/404'];
+			} else{
+				var e404 = AV.CONFIG.template.notFoundErrorPage || 'not_found';
+				e404Controller = require(GROOT + 'include/default404controller.js')(e404);
+			}
+			app.use(e404Controller.__forceRun.bind(e404Controller));
+		}
 	};
 	return app;
 }
