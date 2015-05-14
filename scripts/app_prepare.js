@@ -125,7 +125,7 @@ function main(AV){
 		parse_cookie_session_settings(CONFIG);
 		
 		app.use(express.cookieParser(CONFIG.cookie.signKey));
-		app.use(express.cookieSession(CONFIG.session));
+		// app.use(express.cookieSession(CONFIG.session));
 		app.use(avosExpressCookieSession(CONFIG.avsession));
 	}
 	

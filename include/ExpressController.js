@@ -238,6 +238,7 @@ function init_runtime(req, rsp, next){ // 初始化 请求环境
 	}
 	rt.input.cookie = req.cookies;
 	rt.input.scookie = req.signedCookies || {};
+	// rt.input.session = req.session;
 	return next();
 }
 
