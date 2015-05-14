@@ -59,7 +59,9 @@ function shimResponse(data, encoding){
 				process.stdout.write('\r\x1B[38;5;14m');
 			}
 		}
-		process.stdout.write('I: ' + this.req.method + ' ' + decodeURI(this.req.url) + ' ' + this.statusCode);
+		var path = decodeURI(this.req.url);
+		path = (path.length > 20 && !fullLog? path.substr(0, 20) + '...' : path);
+		process.stdout.write('I: ' + this.req.method + ' ' + path + ' ' + this.statusCode);
 		if(this.runtime && this.runtime._tVar.status != 0){
 			process.stdout.write(' -> ' + this.runtime._tVar.status + ': ' + this.runtime._tVar.message);
 		}

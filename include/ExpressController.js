@@ -255,8 +255,8 @@ function init_runtime(req, rsp, next){ // 初始化 请求环境
 	if(this._paths.length){
 		rt.input.path = new AV.InputChecker(req.params);
 	}
-	rt.input.cookie = req.cookies;
-	rt.input.scookie = req.signedCookies || {};
+	rt.input.cookie = rt._tVar['COOKIE'] = req.cookies;
+	rt.input.scookie = rt._tVar['SCOOKIE'] = req.signedCookies || {};
 	// rt.input.session = req.session;
 	return next();
 }
