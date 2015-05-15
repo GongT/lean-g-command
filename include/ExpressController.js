@@ -359,6 +359,7 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 	self._tVar.runtime = this;
 	self._tVar['SCOOKIE'] = self.input.scookie;
 	self._tVar['COOKIE'] = self.input.cookie;
+	self._tVar['_beforeTemplate'] = Date.now();
 	
 	response.render(template, self._tVar, function (err, body){
 		if(err){
@@ -369,11 +370,11 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 					console.error('致命错误：无法渲染并显示内部错误页面\n' + err2.stack);
 					response.send('<h1>' + err.message + '</h1>');
 				} else{
-					response.send(404, body.trim());
+					response.send(404, body.trim().replace(/\[__reqEndTime__\]/, Date.now()));
 				}
 			});
 		} else{
-			response.send(body.trim());
+			response.send(body.trim().replace(/\[__reqEndTime__\]/, Date.now()));
 		}
 	});
 };
