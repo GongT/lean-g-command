@@ -255,8 +255,8 @@ function init_runtime(req, rsp, next){ // 初始化 请求环境
 	if(this._paths.length){
 		rt.input.path = new AV.InputChecker(req.params);
 	}
-	rt.input.cookie = rt._tVar['COOKIE'] = req.cookies;
-	rt.input.scookie = rt._tVar['SCOOKIE'] = req.signedCookies || {};
+	rt.input.cookie = req.cookies;
+	rt.input.scookie = req.signedCookies || {};
 	// rt.input.session = req.session;
 	return next();
 }
@@ -324,8 +324,12 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 };
 ExpressControllerRuntime.prototype.assign = function (name, value){ // 变量赋值
 	if(arguments.length == 1){
-		for(var n in name){
-			this.assign(n, name[n])
+		if(name instanceof AV.Object){
+			_._extend(this._tVar, name.toJSON());
+		} else{
+			for(var n in name){
+				this.assign(n, name[n])
+			}
 		}
 	} else{
 		if(value instanceof AV.Object){
@@ -352,6 +356,8 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 	var self = this;
 	var response = self.__rsp;
 	self._tVar.runtime = this;
+	self._tVar['SCOOKIE'] = self.input.scookie;
+	self._tVar['COOKIE'] = self.input.cookie;
 	
 	response.render(template, self._tVar, function (err, body){
 		if(err){
@@ -375,6 +381,7 @@ ExpressControllerRuntime.prototype.json = function (){
 	if(!this._tVar['status']){
 		this._tVar['status'] = 0;
 	}
+	console.log(this._tVar);
 	this.__rsp.send(this._tVar);
 	return this;
 };
