@@ -35,7 +35,6 @@ module.exports = function (params, template, data, repeat){
 	
 	var ret = '';
 	ret += replacer.getSingleInstance(data);
-	ret += '<script type="text/javascript" debug="ajax loading list">';
 	if(!data.__pllloaded){
 		data.__pllloaded = true;
 		ret += '<script type="text/javascript" title="ajax loading list init">"use strict";';
@@ -89,15 +88,6 @@ var request_init = function ($, replacer){
 		options.tpl = $tpl.html();
 		options.cursor = 0;
 		
-		if(options.type == 'pull'){
-			init_pull(options);
-		} else if(options.type == 'click'){
-			var $click = $(options.click);
-			
-		} else if(options.type == 'manual'){
-		} else{
-			throw new Error('Unknown ajax loading type: ' + options.type);
-		}
 		var locked;
 		Object.defineProperty(options, 'lock', {
 			get: function (){
@@ -107,9 +97,11 @@ var request_init = function ($, replacer){
 				locked = v;
 				if(locked){
 					options.$container.addClass('busy');
+					console.log('show')
 					this.$loading.show();
 				} else{
 					options.$container.removeClass('busy');
+					console.log('hide')
 					this.$loading.hide();
 				}
 			}
@@ -122,11 +114,11 @@ var request_init = function ($, replacer){
 			set: function (v){
 				nomore = v;
 				if(nomore){
-					this.lock = false;
 					options.$container.addClass('finished').removeClass('have-more');
 					this.$nomore.show();
 					var e = new $.Event('finish', {options: options});
 					options.$container.trigger(e);
+					options.lock = false;
 				} else{
 					options.$container.addClass('have-more');
 					this.$nomore.hide();
@@ -134,13 +126,40 @@ var request_init = function ($, replacer){
 			}
 		});
 		options.nomore = false;
+		
+		options.$container.on('ajax', function (){
+			init();
+		});
+		
 		options.$container.triggerHandler('ready', [options]);
+		
 		if(options.init){
+			init();
+		}
+		
+		function init(){
+			if(options.inited){
+				return;
+			}
+			options.inited = true;
+			
+			if(options.type == 'pull'){
+				init_pull(options);
+			} else if(options.type == 'click'){
+				var $click = $(options.click);
+				
+			} else if(options.type == 'manual'){
+			} else{
+				throw new Error('Unknown ajax loading type: ' + options.type);
+			}
 			ajax(options);
 		}
 	}
 	
 	function ajax(options){
+		if(options.nomore){
+			return;
+		}
 		var e = new $.Event('beforeAjax', {
 			ajax: {
 				type    : 'get',
@@ -178,7 +197,7 @@ var request_init = function ($, replacer){
 				} else{
 					options.$container.append(domarr);
 				}
-				options.cursor += options.pager;
+				options.cursor += options.count;
 			} else{
 				handle_error(json);
 			}

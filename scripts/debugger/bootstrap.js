@@ -20,7 +20,7 @@ function prepareService(){
 	process.stdin.setEncoding('utf8');
 }
 
-function startService(){
+function startService(cb, stopcb){
 	if(child && child.isRunning()){
 		return shutdownService();
 	}
@@ -28,14 +28,22 @@ function startService(){
 	self.emit('start');
 	child = new ProcessController;
 	handle(child);
-	reconfigure.config();
+	filewatcher.pause();
+	reconfigure('config');
 	child.start(function (){
 		console.success('调试服务器已启动...');
 		self.emit('started');
+		if(cb){
+			cb();
+		}
+		filewatcher.resume();
 	});
 	child.on('shutdown', function (c){
 		if(!restarting){ // finally end process
 			self.emit('shutdown', c);
+			if(stopcb){
+				stopcb();
+			}
 		}
 	});
 }
@@ -61,20 +69,28 @@ function shutdownService(cb){
 }
 
 var restarting;
-function restartService(why){
+function restartService(why, cb, wait){
 	if(restarting){
 		console.log('pending restart');
 		return;
 	}
-	console.info('调试重新启动(2s)...' + (why? '，因为：' + why : ''));
+	if(!wait){
+		if(typeof cb === 'number'){
+			wait = cb;
+			cb = null;
+		} else{
+			wait = 2;
+		}
+	}
+	console.info('调试重新启动(%ss)...%s', wait, why? '，因为：' + why : '');
 	restarting = true;
 	self.emit('restarting');
 	shutdownService(function (){
 		setTimeout(function (){
 			restarting = false;
 			console.log('start...');
-			startService();
-		}, 2000)
+			startService(cb);
+		}, wait*1000)
 	});
 }
 function terminateService(){
@@ -111,11 +127,18 @@ self.remoteCall = function (params){
 };
 
 filewatcher.on('change', function (file){
-	restartService('检测到文件修改' + file);
+	restartService('检测到文件修改' + file, child && child.isRunning()? 1 : 0);
 });
-self.on('started', function (){
+filewatcher.on('small-change', function (file){
+	if(child && !child.isRunning()){
+		console.info('试图恢复...%s', file);
+		filewatcher.pause();
+		startService();
+	}
+});
+self.once('started', function (){
 	filewatcher.start();
 });
 self.on('shuttingdown', function (){
-	filewatcher.stop();
+	filewatcher.pause();
 });

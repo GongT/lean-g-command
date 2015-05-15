@@ -1,42 +1,14 @@
-var _need_update = {};
-var updater = {
-	none: function (){
-		_need_update = {};
-	},
-	all : function (){
-		global.update.everything();
-	}
-};
+var need_update = {};
 
 function update_config(){
 	ppTir = false;
-	for(var n in _need_update){
-		if(_need_update[n] === true){
-			updater[n]();
+	for(var n in need_update){
+		if(need_update[n] === true){
+			global.update[n]();
+			need_update[n] = false;
 		}
 	}
 }
-
-Object.keys(global.update).forEach(function (i){
-	Object.defineProperty(updater, i, {
-		enumerable  : true,
-		configurable: false,
-		get         : function (){
-			return function (){
-				_need_update[i] = false;
-				return global.update[i]();
-			}
-		},
-		set         : function (v){
-			_need_update[i] = v;
-			if(v){
-				prepare_update();
-			}
-		}
-	});
-});
-
-updater.none();
 
 var ppTir;
 function prepare_update(){
@@ -46,4 +18,22 @@ function prepare_update(){
 	ppTir = setImmediate(update_config)
 }
 
-module.exports = updater;
+module.exports = function (name){
+	if(name == 'none'){
+		need_update = {};
+		return clearImmediate(ppTir);
+	}
+	if(name == 'all'){
+		name = 'everything';
+	}
+	
+	need_update[name] = true;
+	prepare_update();
+};
+
+module.exports.none = function (){
+	need_update = {};
+};
+module.exports.all = function (){
+	global.update.everything();
+};
