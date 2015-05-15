@@ -223,6 +223,7 @@ Object.defineProperties(InputHanler.prototype, {
 				assign: function (data){
 					data.cursor = this.cursor;
 					data.count = this.count;
+					return data;
 				}
 			};
 			if(p.count < minCount && p.count > maxCount){
