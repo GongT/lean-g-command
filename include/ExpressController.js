@@ -382,7 +382,6 @@ ExpressControllerRuntime.prototype.json = function (){
 	if(!this._tVar['status']){
 		this._tVar['status'] = 0;
 	}
-	console.log(this._tVar);
 	this.__rsp.send(this._tVar);
 	return this;
 };
