@@ -35,16 +35,16 @@ controller.on('started', remove_start_timeout);
 controller.on('shutdown', function (code){
 	switch(code){
 	case 0:
-		console.info('正常退出~');
+		console.info('正常退出~Bye~');
 		process.exit(0);
 		break;
 	case 100:
-		console.info('restarting...');
 		reconfigure.all();
-		controller.restartService();
+		console.info('restarting...');
+		controller.startService();
 		break;
 	default:
-		console.error('调试服务器启动失败');
+		console.error('服务器非正常退出，返回码为 [%s] ', code);
 	}
 });
 
