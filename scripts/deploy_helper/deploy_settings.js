@@ -54,6 +54,26 @@ module.exports.getApplicationName = function (){
 	return PackageJson.description;
 };
 
+module.exports.ensureDependence = function (incudeDevDep){
+	var deps = [];
+	if(PackageJson.dependencies){
+		deps = deps.concat(Object.keys(PackageJson.dependencies));
+	}
+	if(incudeDevDep && PackageJson.devDependencies){
+		deps = deps.concat(Object.keys(PackageJson.devDependencies));
+	}
+	
+	try{
+		deps.forEach(function (name){
+			require(name);
+		});
+	} catch(e){
+		console.error(e.message);
+		console.error('  运行 \x1B[38;5;14mleang dependence\x1B[0m 来安装缺少的依赖。\n  如果还是不行，说明package.json依赖定义有问题，检查后再试。');
+		process.exit(9);
+	}
+};
+
 module.exports.commit = function (){
 	fs.writeFileSync(APPPATH + '/.avoscloud/deploy.json', JSON.stringify(LeanParams, null, 8));
 	if(pkg){

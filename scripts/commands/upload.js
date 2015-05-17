@@ -9,7 +9,8 @@ if(APP_CONFIG.blockDeploy){
 	process.exit(9);
 }
 
-var watch = require('../deploy_helper/wait_success_logs');
+// var watch = require('../deploy_helper/wait_success_logs');
+global.deploySettings.ensureDependence(false);
 
 avosrun('app').then(function (){
 	require('../deploy_helper/modify_package');

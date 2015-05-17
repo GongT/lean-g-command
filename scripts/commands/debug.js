@@ -8,6 +8,7 @@ var console = new LogPrepend('调试服务器管理');
 var reconfigure = require('../debugger/reconfigure');
 
 console.info('正在启动LeanCloud本地调试服务器……');
+global.deploySettings.ensureDependence(true);
 
 var shuttingDown = false;
 process.on('exit', function (code){
