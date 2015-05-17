@@ -1,5 +1,7 @@
 var childProcess = require('child_process');
 var Promise = require('promise');
+var isWindows = /^win/.test(process.platform);
+
 module.exports = function (){
 	var args = Array.prototype.slice.call(arguments);
 	return new Promise(function (resolve, reject){
@@ -65,6 +67,11 @@ module.exports.external_stdout = function (cmd, args){
 	});
 };
 
+var platformExternalSpawnSync;
+module.exports.external_sync = function (command, args){
+	return platformExternalSpawnSync(command, args);
+};
+
 module.exports.external_stdout_eachline = function (args, cb){
 	return new Promise(function (resolve, reject){
 		var p = module.exports.spawn(args,
@@ -111,13 +118,15 @@ if(!module.exports.runner){
 	process.exit(-1);
 }
 
-if(process.env.comspec){
+if(isWindows){
 	module.exports.spawn = spawn_windows;
 	platformExternalSpawn = exec_windows;
+	platformExternalSpawnSync = exec_windows_sync;
 	process.isWindows = module.exports.isWindows = true;
 } else{
 	module.exports.spawn = spawn_linux;
 	platformExternalSpawn = exec_linux;
+	platformExternalSpawnSync = exec_linux_sync;
 	process.isWindows = module.exports.isWindows = false;
 }
 
@@ -131,9 +140,28 @@ function spawn_windows(args, options){
 	return childProcess.spawn(process.env.comspec, args, options);
 }
 
+function exec_windows_sync(command, args){
+	if(!args){
+		args = [];
+	}
+	args = ['/C', command].concat(args);
+	
+	console.log('exec external file sync - %s %s.', process.env.comspec, args.join(' '));
+	return childProcess.spawn(process.env.comspec, args, {
+		stdio: "inherit"
+	}).status;
+}
+
 function spawn_linux(args, options){
 	console.log('call lean-cloud script - %s %s.', module.exports.runner, args.join(' '));
 	return childProcess.spawn(module.exports.runner, args, options);
+}
+
+function exec_linux_sync(command, args){
+	console.log('exec external file sync - %s %s.', command, args.join(' '));
+	return childProcess.spawnSync(command, args, {
+		stdio: "inherit"
+	}).status;
 }
 
 function exec_windows(command, args, options){

@@ -1,6 +1,9 @@
+"use strict";
+
 var APPPATH = global.APPPATH;
-var pkg = false;
 var fs = require('fs');
+var extend = require('util')._extend;
+var require_missing = require(CGROOT + 'include/require_missing');
 
 /* settings json */
 if(fs.existsSync(APPPATH + 'settings.json')){
@@ -26,63 +29,72 @@ module.exports.upload = function (data){
 };
 
 /* package json */
+global.PackageJson = {};
 if(fs.existsSync(APPPATH + 'package.proto.json')){
-	pkg = fs.readFileSync(APPPATH + 'package.proto.json', 'utf-8');
+	var pkg = fs.readFileSync(APPPATH + 'package.proto.json', 'utf-8');
 	try{
-		eval('pkg=' + pkg);
+		eval('global.PackageJson=' + pkg);
 	} catch(e){
 		console.error('无法解析package.proto.json:\n\n' + e.stack);
 		process.exit(-1);
 	}
-	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(pkg, null, 8).replace(/^        /mg, '\t'));
-	pkg = true;
-}
-
-if(fs.existsSync(APPPATH + 'package.json')){
-	global.PackageJson = fs.readFileSync(APPPATH + 'package.json', 'utf-8');
+} else if(fs.existsSync(APPPATH + 'package.json')){
 	try{
-		eval('PackageJson=' + PackageJson);
+		global.PackageJson = JSON.parse(fs.readFileSync(APPPATH + 'package.json', 'utf-8'));
 	} catch(e){
 		console.error('无法解析package.json:\n\n' + e.stack);
 		process.exit(-1);
 	}
+	fs.writeFileSync(APPPATH + 'package.proto.json', butify_encode_json(global.PackageJson));
 } else{
-	global.PackageJson = {};
+	console.error('没有找到 package.proto.json \n');
 }
 
 module.exports.getApplicationName = function (){
 	return PackageJson.description;
 };
-
-module.exports.ensureDependence = function (incudeDevDep){
-	var deps = [];
+module.exports.readDependenceList = function (incudeDevDep){
+	var deps = {};
 	if(PackageJson.dependencies){
-		deps = deps.concat(Object.keys(PackageJson.dependencies));
+		extend(deps, PackageJson.dependencies);
 	}
 	if(incudeDevDep && PackageJson.devDependencies){
-		deps = deps.concat(Object.keys(PackageJson.devDependencies));
+		extend(deps, PackageJson.devDependencies);
 	}
+	return deps;
+};
+
+module.exports.ensureDependence = function (incudeDevDep){
+	var deps = module.exports.readDependenceList(incudeDevDep);
+	deps = Object.keys(deps);
 	
+	var traceLimit = Error.stackTraceLimit;
+	Error.stackTraceLimit = 5;
+	
+	var oklist = [];
 	try{
 		deps.forEach(function (name){
 			require(name);
+			oklist.push(name);
 		});
 	} catch(e){
-		console.error(e.message);
-		console.error('  运行 \x1B[38;5;14mleang dependence\x1B[0m 来安装缺少的依赖。\n  如果还是不行，说明package.json依赖定义有问题，检查后再试。');
+		console.log('\x1B[38;5;10m检查模块成功：%s.\x1B[0m', oklist.join(', '));
+		var recommend = require_missing.recommand_solutions(require_missing.parse_require_error_stack(e.stack));
+		if(!recommend){
+			console.error(e.stack);
+		}
 		process.exit(9);
 	}
+	Error.stackTraceLimit = traceLimit;
 };
 
 module.exports.commit = function (){
 	fs.writeFileSync(APPPATH + '/.avoscloud/deploy.json', JSON.stringify(LeanParams, null, 8));
-	if(pkg){
-		fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(PackageJson, null, 8).replace(/^        /mg, '\t'));
-	}
+	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(PackageJson, null, 8).replace(/^        /mg, '\t'));
 };
 
 module.exports.delete_package_json = function (){
-	if(pkg && fs.existsSync(APPPATH + 'package.json')){
+	if(fs.existsSync(APPPATH + 'package.json')){
 		fs.unlinkSync(APPPATH + 'package.json');
 	}
 };
@@ -91,3 +103,7 @@ module.exports.configure = function (config){
 	config.package = PackageJson;
 	config.lean = LeanParams;
 };
+
+function butify_encode_json(obj){
+	return JSON.stringify(obj, null, 8).replace(/^        /mg, '\t')
+}

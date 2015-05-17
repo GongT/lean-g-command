@@ -10,8 +10,16 @@ function init(app){
 	var port = process.env.LEANG_DEBUG_PORT;
 	global.AV = AV;
 	global.debug_shutdown = debug_shutdown;
-	
 	process.stdout.isTTY = true;
+	var d = new Date;
+	if(d.getHours() !== d.getUTCHours()){
+		setTimeout(function (){
+			console.log('\x1B[38;5;9m你的本地时区不是协调世界时（其实就是UTC），调试时运行结果可能与服务器上完全不同，强烈建议调整本地时区。\x1B[0m');
+			console.log('\x1B[38;5;9m现在开始使用伪装的Date对象，这个功能还没有完善，如果遇到问题，请务必报告。\x1B[0m');
+			repl.displayPrompt();
+		}, 2000);
+		require(AV.GROOT + 'include/debug-client/dummy_date');
+	}
 	
 	console.log('神经接续开始');
 	var replfix = require(AV.GROOT + 'include/debug-client/repl_bug');
@@ -34,7 +42,7 @@ function init(app){
 		setTimeout(function (){
 			console.log('\x1B[38;5;14m推荐使用repl.history，可以保存输入历史\x1B[0m');
 			repl.displayPrompt();
-		}, 2000)
+		}, 2000);
 	}
 	
 	require(AV.GROOT + 'include/debug-client/outgoing_message_shim');
@@ -49,7 +57,11 @@ function init(app){
 	require(AV.GROOT + 'include/debug-client/debugger_rpc')(port);
 	console.log('次元隧道启动，连接目标：', port);
 	
-	console.log('\x1B[38;5;10m启动成功，世界线变动率\x1B[38;5;14m1.048596\x1B[0m');
+	var longjohn = require('longjohn');
+	longjohn.async_trace_limit = -1;  // unlimited trace lines
+	console.log('Unlimited Trace Lines');
+	
+	console.log('\x1B[38;5;10m启动成功，世界线变动率\x1B[38;5;14m%s\x1B[0m', Math.random() + 1);
 }
 
 var shuting_down = false;
