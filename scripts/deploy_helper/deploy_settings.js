@@ -88,6 +88,28 @@ module.exports.ensureDependence = function (incudeDevDep){
 	Error.stackTraceLimit = traceLimit;
 };
 
+module.exports.checkUnusedDependence = function (){
+	var mdllist = fs.readdirSync(APPPATH + 'node_modules').filter(function (name){
+		if(name == '.bin'){
+			return false;
+		}
+		if(PackageJson.devDependencies && PackageJson.devDependencies[name]){
+			return false;
+		}
+		if(PackageJson.dependencies && PackageJson.dependencies[name]){
+			return false;
+		}
+		return true;
+	});
+	
+	if(mdllist.length == 0){
+		return true;
+	} else{
+		console.log('\n本地存在以下模块，在package.proto.json中没有定义\n如果确实使用了它们，则必须添加到package.proto.json中\n如果没有使用，就应该删除\n\n\t\x1B[38;5;9m%s\x1B[0m\n', mdllist.join(', '));
+		return false;
+	}
+};
+
 module.exports.commit = function (){
 	fs.writeFileSync(APPPATH + '/.avoscloud/deploy.json', JSON.stringify(LeanParams, null, 8));
 	fs.writeFileSync(APPPATH + 'package.json', JSON.stringify(PackageJson, null, 8).replace(/^        /mg, '\t'));

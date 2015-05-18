@@ -11,8 +11,10 @@ if(APP_CONFIG.blockDeploy){
 	process.exit(9);
 }
 
-// var watch = require('../deploy_helper/wait_success_logs');
 global.deploySettings.ensureDependence(false);
+if(!global.deploySettings.checkUnusedDependence()){
+	process.exit(9);
+}
 
 avosrun('app').then(function (){
 	return do_upload();
