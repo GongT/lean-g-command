@@ -1,7 +1,9 @@
 // var AV = Object.AV;
 var minjs = AV.CONSTANTS.isDebugEnv? 'js' : 'min.js';
+var mincss = AV.CONSTANTS.isDebugEnv? 'css' : 'min.css';
 var librarys = {
 	'jquery'     : ['jquery.' + minjs, 'jquery.cookie.js'],
+	'bootstrap'  : ['bootstrap.' + minjs, 'bootstrap.' + mincss],
 	'jquery-only': ['jquery.' + minjs],
 	'artDialog'  : ['artDialog.js', 'iframeTools.source.js', 'artdialog/default.css']
 };
@@ -9,13 +11,22 @@ var librarys = {
 var plugins = {
 	'artDialog' : {
 		root      : 'artdialog',
-		files     : ['ui-dialog.css', 'dialog.' + minjs, 'dialog-plus.' + minjs],
+		files     : ['ui-dialog.css', 'dialog.' + minjs, 'dialog-plus.' + minjs, 'artdialog.extend.js'],
 		dependence: ['jquery-only']
 	},
 	'dataTables': {
 		root      : 'datatable',
 		files     : ['jquery.dataTables.js', 'jquery.dataTables.css', 'jquery.dataTables.extend.js'],
-		dependence: ['jquery-only', 'ajax-form.js']
+		dependence: ['jquery-only', 'ajax-form.js', 'date.js', 'datePicker']
+	},
+	'datePicker': {
+		root      : 'datepicker',
+		files     : [
+			'bootstrap-datepicker.' + minjs,
+			'bootstrap-datepicker3.' + mincss,
+			'/locales/bootstrap-datepicker.zh-CN.min.js'
+		],
+		dependence: ['jquery-only', 'bootstrap']
 	}
 };
 
@@ -86,17 +97,7 @@ function insert_static(params, data){
 	}
 	if(plugin){
 		if(plugins[plugin]){
-			plugin = plugins[plugin];
-			use_plugin(plugin.root, plugin.files, data);
-			if(plugin.dependence){
-				plugin.dependence.forEach(function (library){
-					if(librarys[library]){
-						use_library(librarys[library], data);
-					} else if(isJs.test(library) || isCss.test(library)){
-						use_library([library], data);
-					}
-				});
-			}
+			use_plugin_dependence(plugins[plugin], data);
 		} else{
 			return js_alert_error('未知的插件：' + plugin);
 		}
@@ -122,13 +123,33 @@ function use_library(list, data){
 function use_plugin(name, list, data){
 	list.forEach(function (file){
 		var fp;
-		if(isJs.test(file)){
+		if(/^\//.test(file)){
+			if(isJs.test(file)){
+				fp = 'plugin/' + name + file;
+			} else{
+				fp = 'plugin/' + name + file;
+			}
+		} else if(isJs.test(file)){
 			fp = 'plugin/' + name + '/js/' + file;
 		} else{
 			fp = 'plugin/' + name + '/css/' + file;
 		}
 		no_duplicate_append(data, fp);
 	});
+}
+function use_plugin_dependence(plugin, data){
+	use_plugin(plugin.root, plugin.files, data);
+	if(plugin.dependence){
+		plugin.dependence.forEach(function (library){
+			if(librarys[library]){
+				use_library(librarys[library], data);
+			} else if(plugins[library]){
+				use_plugin_dependence(plugins[library], data);
+			} else if(isJs.test(library) || isCss.test(library)){
+				use_library([library], data);
+			}
+		});
+	}
 }
 
 function wrapjs(file){

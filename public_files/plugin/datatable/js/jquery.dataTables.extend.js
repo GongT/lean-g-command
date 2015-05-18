@@ -37,20 +37,29 @@ function DataTableInit(CONFIG){
 				return false;
 			}
 		});
-		var $clear = $('<button class="btn btn-info btn-sm" style="margin-right: 5px">').text('取消筛选').click(function (){
-			api.search('');
-			$sinput.val('');
-			
-			api.order(CONFIG.order);
-			
-			api.columns()[0].forEach(function (columnIndex){
-				var column = api.column(columnIndex);
-				column.search('');
-				$(column.footer()).find('input').val('');
-			});
-			api.draw();
-		});
-		$(dt.nTableWrapper).find('.dataTables_filter').prepend($clear);
+		
+		var controlArea = $('<div style="display: inline-block;">').prependTo($(dt.nTableWrapper).find('.dataTables_filter'));
+		
+		$('<button class="btn btn-primary btn-sm" style="margin-right: 5px">')
+				.text('刷新').click(function (){
+					api.draw();
+				}).prependTo(controlArea);
+		
+		$('<button class="btn btn-danger btn-sm" style="margin-right: 5px">')
+				.text('取消筛选').click(function (){
+					api.search('');
+					$sinput.val('');
+					
+					api.order(CONFIG.order);
+					
+					api.columns()[0].forEach(function (columnIndex){
+						var column = api.column(columnIndex);
+						column.search('');
+						$(column.footer()).find('input').val('');
+					});
+					api.draw();
+				}).appendTo(controlArea);
+		
 		$(dt.nTableWrapper).find('.dataTables_scrollFoot th> input').on('keyup', function (e){
 			var columnClass = '.' + $(this).data('key');
 			// console.debug('dataTable: search column %s value %s.', columnClass, this.value);
@@ -136,6 +145,10 @@ function DataTableInit(CONFIG){
 		if(config){
 			config = config.config;
 		}
+		if(!config.editable){
+			console.warn('这个字段“%s”禁止修改', key);
+			return;
+		}
 		
 		var e = new $.Event('edit', {
 			ajax    : url,
@@ -150,7 +163,7 @@ function DataTableInit(CONFIG){
 		if(e.isDefaultPrevented()){
 			return;
 		}
-		if(!config || !config.editable){
+		if(!config){
 			console.warn('双击的单元格“%s”没有数据类型', key);
 			return;
 		}
@@ -187,32 +200,30 @@ DataTableInit.renders = {
 			return '<a style="background:red;">错误: ' + value + '</a>';
 		}
 	},
-	'date'    : function (config, value){
+	'datetime': function (config, value){
 		if(!value){
 			return undefined;
 		}
 		if(!config){
-			config = 'Y-m-d H:i'
+			config = {};
+		}
+		if(!config.format){
+			config.format = 'Y-m-d H:i';
 		}
 		if(!(value instanceof Date)){
 			if(typeof value === 'string'){
 				value = new Date(value);
-			} else if(value && value.iso){
-				value = new Date(value.iso);
+			} else if(typeof value === 'number'){
+				value = new Date(value*1000);
 			} else{
 				return '<a style="background:red;">错误时间: ' + value + '</a>';
 			}
 		}
-		
-		var pad = function (v){
-			return v > 10? v : '0' + v;
-		};
-		return value.getFullYear() + '-' + pad(value.getMonth() + 1) + '-' + pad(value.getDate()) + ' ' +
-		       pad(value.getHours()) + ':' + pad(value.getMinutes());
+		return date(config.format, value);
 	},
 	'longtext': function (config, value, dis, row){
 		if(value){
-			return '<a href="javascript:showModalDialog(\'/engineer/popupeditor/' + row.objectId + '\')">查看</a>';
+			return '<a onclick="$(this).trigger(\'dblclick\')">查看</a>';
 		} else{
 			return '<a>未上传</a>';
 		}
@@ -221,13 +232,31 @@ DataTableInit.renders = {
 
 DataTableInit.editor = {
 	'image'   : function (url, typeConfig, config, objectId, key, lKeyName, value, rData){
+		var $html = $('<div class="text-center">');
+		$html.append('<img src="' + value + '" alt="preview" class="img-thumbnail">');
+		$html.append('<div>&nbsp;</div>');
 		
+		var $input = $('<input type="file">').attr({'name': key});
+		$html.append($input);
+		
+		__show_editor_dialog(url, {}, config, objectId, key, value, rData, $html);
 	},
 	'bool'    : function (url, typeConfig, config, objectId, key, lKeyName, value, rData){
+		var $html = $('<div class="radio">');
+		var $yes = $('<input type="radio">').attr({'name': key, 'id': 'dtedit_' + key, value: 'yes'});
+		$('<label>').text(typeConfig[0]).prepend($yes).appendTo($html);
 		
+		$html.append('<div>');
+		
+		var $no = $('<input type="radio">').attr({'name': key, 'id': 'dtedit_' + key, value: 'no'});
+		$('<label>').text(typeConfig[1]).prepend($no).appendTo($html);
+		
+		(value? $yes : $no).attr('checked', 'checked');
+		
+		__show_editor_dialog(url, {}, config, objectId, key, value, rData, $html);
 	},
 	'enum'    : function (url, typeConfig, config, objectId, key, lKeyName, value, rData){
-		var $sel = $('<select>').attr('name', key);
+		var $sel = $('<select class="form-control">').attr('name', key);
 		var maxWidth = 3;
 		for(var varVal in typeConfig){
 			var show = typeConfig[varVal];
@@ -236,11 +265,37 @@ DataTableInit.editor = {
 		}
 		__show_editor_dialog(url, typeConfig, config, objectId, key, value, rData, $sel, ( maxWidth + 2) + 'em', '2em');
 	},
-	'date'    : function (url, typeConfig, config, objectId, key, lKeyName, value, rData){
+	'datetime': function (url, typeConfig, config, objectId, key, lKeyName, value, rData){
+		var parsed = date(typeConfig.format, new Date(value*1000));
+		var $html = $('<div>');
+		var $picker = $('<div>').appendTo($html);
+		var $input = $('<input class="form-control" type="text">').attr('name', key).appendTo($html);
+		$input.val(parsed);
+		$picker = $picker.data('date', parsed).datepicker({
+			language   : 'zh-CN',
+			showOnFocus: false
+		});
 		
+		$picker.on('changeDate', function (e){
+			if(!$input.isFocus){
+				$input.val(date(typeConfig.format, e.date));
+			}
+		});
+		$input.on('blur change keyup', function (){
+			var d = new Date($(this).val());
+			$picker.datepicker('setDate', date(typeConfig.format, d));
+		}).on('blur', function (){
+			$input.isFocus = false;
+		}).on('focus', function (){
+			$input.isFocus = true;
+		});
+		
+		__show_editor_dialog(url, {}, config, objectId, key, value, rData, $html);
 	},
 	'longtext': function (url, typeConfig, config, objectId, key, lKeyName, value, rData){
-		var html = $();
+		var $sel = $('<textarea class="form-control" style="min-width:300px;min-height:100px;">').attr('name', key);
+		$sel.val(value);
+		__show_editor_dialog(url, {}, config, objectId, key, value, rData, $sel);
 	}
 };
 
@@ -253,6 +308,10 @@ function __show_editor_dialog(url, typeConfig, config, objectId, key, current, r
 			method: 'post',
 			action: url
 		});
+		$form.on('success.ajax-form', function (e, data){
+			console.log(data.message);
+			return false;
+		});
 		
 		$form.append($('<input>').attr({name: '_verify', type: 'hidden'}).val(current));
 		$form.append($('<input>').attr({name: 'objectId', type: 'hidden'}).val(objectId));
@@ -261,8 +320,8 @@ function __show_editor_dialog(url, typeConfig, config, objectId, key, current, r
 		var d = dialog({
 			title      : '修改 ' + rData['hName'] + ' 的 ' + config.title,
 			content    : $form,
-			height     : h || '320px',
-			width      : w || '480px',
+			height     : h,
+			width      : w,
 			okValue    : '确定',
 			ok         : function (){
 				$form.submit();
@@ -273,5 +332,7 @@ function __show_editor_dialog(url, typeConfig, config, objectId, key, current, r
 				d.remove();
 			}
 		}).showModal();
+		
+		$form.data('bind', d._$('button'));
 	}
 }

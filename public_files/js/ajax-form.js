@@ -6,6 +6,8 @@ $.fn.ajaxSubmit = function (){
 	
 	var that = this;
 	
+	var bindFormPart = this.data('bind');
+	
 	var target = this.attr('target');
 	if(target){
 		target = target == '_blank';
@@ -27,6 +29,10 @@ $.fn.ajaxSubmit = function (){
 	
 	var disabled_controls = this.on('click', $.fn.ajaxSubmit.mute_click_controls, mute)
 			.find($.fn.ajaxSubmit.mute_edit_controls).filter(':not(.disabled):not([disabled])').attr('disabled', 'disabled');
+	if(bindFormPart){
+		var disabled_controls_binding = bindFormPart.on('click', $.fn.ajaxSubmit.mute_click_controls, mute)
+				.find($.fn.ajaxSubmit.mute_edit_controls).filter(':not(.disabled):not([disabled])').attr('disabled', 'disabled');
+	}
 	
 	if(this.find('input[type=file]').length){
 		alert('has-file');
@@ -55,6 +61,12 @@ $.fn.ajaxSubmit = function (){
 	function finish(){
 		disabled_controls.removeAttr('disabled');
 		this.off('click', $.fn.ajaxSubmit.mute_click_controls, mute);
+		
+		if(bindFormPart){
+			disabled_controls_binding.removeAttr('disabled');
+			bindFormPart.off('click', $.fn.ajaxSubmit.mute_click_controls, mute);
+		}
+		
 		if(callback_error){
 			throw callback_error;
 		}
@@ -63,7 +75,7 @@ $.fn.ajaxSubmit = function (){
 	function handle_result_json(json){
 		var e = new $.Event(json.status == 0? 'success.ajax-form' : 'fail.ajax-form');
 		try{
-			that.trigger(e, json);
+			that.trigger(e, [json]);
 		} catch(e){
 			callback_error = e;
 			return;
@@ -80,8 +92,8 @@ $.fn.ajaxSubmit = function (){
 	}
 };
 
-$.fn.ajaxSubmit.mute_click_controls = 'a,input,button,textarea';
-$.fn.ajaxSubmit.mute_edit_controls = 'input,button,textarea';
+$.fn.ajaxSubmit.mute_click_controls = 'a,input,button,select,textarea';
+$.fn.ajaxSubmit.mute_edit_controls = 'input,button,select,textarea';
 
 $(function (){
 	if(window.disableAutoAjax){
