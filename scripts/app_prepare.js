@@ -113,7 +113,7 @@ function main(AV){
 	
 	if(fs.existsSync('public/favicon.ico')){
 		app.use(require('serve-favicon')('public/favicon.ico'));
-	} else{
+	} else if(fs.existsSync(AV.GROOT + 'public_files/favicon.ico')){
 		app.use(require('serve-favicon')(AV.GROOT + 'public_files/favicon.ico'));
 	}
 	
