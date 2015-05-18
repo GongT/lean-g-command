@@ -29,8 +29,9 @@ function collect_output(data){
 	var error = this.store.indexOf(SIG_ERROR);
 	if(error != -1){
 		console.error('发生错误：');
+		set_passed(this);
 		this.emitter.emit('fail', error);
-		return set_passed(this);
+		return;
 	}
 	
 	var success = this.store.indexOf(SIG_SUCCESS);
@@ -38,9 +39,8 @@ function collect_output(data){
 		console.success('接收到初始化完毕信号！');
 		this.store = this.store.substr(success + SIG_SUCCESS.length);
 		this.other.store = '';
+		set_passed(this);
 		this.emitter.emit('success');
-		
-		return set_passed(this);
 	}
 }
 
@@ -56,12 +56,7 @@ function _set_passed(stream){
 	delete stream.store;
 	
 	stream.on('data', function (data){
-		var colored = logparser(data);
-		if(colored){
-			stream.bind.write(colored);
-		} else{
-			stream.bind.write(data);
-		}
+		stream.bind.write(logparser(data));
 	});
 	
 	delete stream.other;

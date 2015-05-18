@@ -1,3 +1,10 @@
+var CGROOT;
+try{
+	CGROOT = AV.GROOT;
+} catch(e){
+	CGROOT = global.CGROOT;
+}
+
 module.exports.parse_require_error_stack = function (stack){
 	var missing_path = [];
 	var lines = stack.split("\n");

@@ -14,6 +14,7 @@ console.error('LEAN-G: nodejs.version = ' + process.version);
 var confirm_module = require('./scripts/pure_install').confirm;
 console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('promise'), '安装失败，请尝试手动安装');
+console.assert(confirm_module('longjohn'), '安装失败，请尝试手动安装');
 
 var colors = global.colors = require('colors/safe');
 
@@ -92,7 +93,7 @@ if(APP_ENVIRONMENT != 'default'){
 }
 
 global.update = require('./include/config_generator');
-global.APP_SERVER =global.update.APP_SERVER = assert_process_argument(4, usage_server, '缺少服务器定义文件');
+global.APP_SERVER = global.update.APP_SERVER = assert_process_argument(4, usage_server, '缺少服务器定义文件');
 APP_CONFIG.load_server(global.update.APP_SERVER, true);
 
 singleInstance.start(real_run);

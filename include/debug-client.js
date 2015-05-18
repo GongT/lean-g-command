@@ -61,6 +61,8 @@ function init(app){
 	longjohn.async_trace_limit = -1;  // unlimited trace lines
 	console.log('Unlimited Trace Lines');
 	
+	handling_error(app);
+	
 	console.log('\x1B[38;5;10m启动成功，世界线变动率\x1B[38;5;14m%s\x1B[0m', Math.random() + 1);
 }
 
@@ -71,4 +73,40 @@ function debug_shutdown(status){
 	}
 	shuting_down = true;
 	process.exit(status || 0);
+}
+
+function handling_error(app){
+	var require_missing = require(AV.GROOT + 'include/require_missing');
+	process.on('uncaughtException', function (e){
+		handler(e);
+	});
+	
+	app.use(function (req, res, next){
+		req.domain.on('error', function (err){
+			handler(err);
+		});
+		req.domain.run(next);
+	});
+	
+	function handler(e){
+		var missing = require_missing.parse_require_error_stack(e.stack);
+		if(missing.length == 0){
+			console.error(e.stack);
+			process.exit(7);
+		} else{
+			process.stderr.write('\r');
+			missing = missing[0];
+			var at = e.stack.split('\n')[5] || '';
+			console.error('\n\n[!!] 发现本地缺少的依赖：\x1B[38;5;9m%s\x1B[0m，它没有在package.proto.json中正确注册。请修改。', missing);
+			
+			var f = /\((.*):([0-9]+):([0-9]+)\)/.exec(at);
+			if(at && f){
+				console.error('     该模块在文件 %s 的第 %s 行第一次被使用', f[1], f[2]);
+			} else{
+				console.error('     该模块 require("%s"); 导致的错误的堆栈：', e.stack);
+			}
+			console.error('\n');
+			process.exit(201);
+		}
+	}
 }

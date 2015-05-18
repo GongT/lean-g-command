@@ -24,6 +24,9 @@ self.start = function (){
 				.on('add', on_struct_change)
 	});
 };
+self.noDelay = function (){
+	delayTimeoutDefault = 0;
+};
 self.pause = function (){
 	if(!self.paused){
 		console.info('paused');
@@ -35,6 +38,7 @@ self.resume = function (){
 		console.info('resumed');
 	}
 	self.paused = false;
+	delayTimeoutDefault = 5;
 };
 
 self.stop = function (){
@@ -56,11 +60,16 @@ function on_file_change(file){
 	if(self.paused){
 		return;
 	}
+	if(file == 'README.md'){
+		return; // fix fs bug
+	}
 	file = path.resolve(file);
 	file = file.replace(/\\/g, '/');
 	file = file.replace(/^.*\/lean-g\//, 'G/');
 	file = file.replace(global.APPPATH + 'cloud/', 'C/');
-	file = file.replace(global.APPPATH, 'R/');
+	if(global.APPPATH){
+		file = file.replace(global.APPPATH, 'R/');
+	}
 	
 	if(/(^C\/timers|\/trigger)\//.test(file)){
 		console.info('触发器和定时器需要部署才能生效！');
@@ -104,7 +113,9 @@ function on_struct_change(file){
 	file = file.replace(/\\/g, '/');
 	file = file.replace(/^.*\/lean-g\//, 'G/');
 	file = file.replace(global.APPPATH + 'cloud/', 'C/');
-	file = file.replace(global.APPPATH, 'R/');
+	if(global.APPPATH){
+		file = file.replace(global.APPPATH, 'R/');
+	}
 	
 	if(/^C\/database\//.test(file)){
 		console.info('更新数据库定义');
@@ -136,12 +147,19 @@ function on_struct_change(file){
 	deplay_emit(file);
 }
 
-var changeTimer, deplayedFiles = [], delayTimeout;
+var changeTimer, deplayedFiles = [], delayTimeout, delayTimeoutDefault;
 function deplay_emit(file){
 	if(deplayedFiles.indexOf(file) == -1){
 		deplayedFiles.push(file);
 	}
-	delayTimeout = 5;
+	if(!delayTimeoutDefault){
+		if(changeTimer){
+			clearInterval(changeTimer);
+		}
+		self.emit('change', '\n\t' + deplayedFiles.join('\n\t'));
+		return;
+	}
+	delayTimeout = delayTimeoutDefault;
 	if(changeTimer){
 		return;
 	}

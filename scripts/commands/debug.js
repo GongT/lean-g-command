@@ -23,10 +23,11 @@ process.on('SIGINT', function (){
 	shuttingDown = true;
 	controller.shutdownService();
 });
+process.removeAllListeners('uncaughtException');
 process.on('uncaughtException', function (e){
-	console.error(e);
+	console.error('调试父进程捕捉到未处理的异常，退出调试进程并等待结束。。', e.stack);
 	shuttingDown = true;
-	controller.terminateService();
+	controller.shutdownService();
 });
 
 controller.on('terminate', remove_start_timeout);
@@ -38,6 +39,13 @@ controller.on('shutdown', function (code){
 	case 0:
 		console.info('正常退出~Bye~');
 		process.exit(0);
+		break;
+	case 9:
+		console.info('错误退出~Bye~');
+		process.exit(9);
+		break;
+	case 201:
+		process.exit(201);
 		break;
 	case 100:
 		reconfigure.all();

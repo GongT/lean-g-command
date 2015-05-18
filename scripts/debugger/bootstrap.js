@@ -40,6 +40,7 @@ function startService(cb, stopcb){
 	});
 	child.on('shutdown', function (c){
 		if(!restarting){ // finally end process
+			filewatcher.noDelay();
 			self.emit('shutdown', c);
 			if(stopcb){
 				stopcb();
