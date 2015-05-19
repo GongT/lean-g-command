@@ -65,7 +65,7 @@ function main(AV){
 	
 	append_log('load library (libload prototype)...');
 	var LibraryLoader = AV.LibraryLoader = require(GROOT + 'include/library_loader.js');
-	AV.lib = AV.library = new LibraryLoader;
+	AV.library = new LibraryLoader;
 	AV.library.autoload(FS.read_source_tree('cloud/library/'));
 	
 	AV.CLS = require(GROOT + 'include/module.prototype.js');
@@ -275,7 +275,7 @@ function parse_cookie_session_settings(CONFIG){
 	}
 	
 	CONFIG.avsession = extend({}, SESSION);
-	CONFIG.avsession.key = 'AVOSSESSID';
+	CONFIG.avsession.key = CONFIG.avsession.userKey || 'AVOSSESSID';
 	
 	delete SESSION.fetchUser;
 }

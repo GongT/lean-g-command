@@ -5,11 +5,6 @@ __*
 node_modules
 config/global.json
 npm-debug.log
-.runlock
-cloud/library
-cloud/lean-g
-cloud/database
-node
 package.json
 *.bak
 *.css

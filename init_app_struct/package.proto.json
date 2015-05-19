@@ -5,9 +5,10 @@
 	"author"         : "Your Name <you@email.com>",
 	"scripts"        : {},
 	"bin"            : {
-		"debug": "./node_module/.bin/leang development debug"
+		"debug": "./node_module/.bin/leang debug development development",
+		"deploy": "./node_module/.bin/leang debug production production"
 	},
-	"main"           : "./main.js",
+	"main"           : "./cloud/main.js",
 	"repository"     : {
 		"type": "",
 		"url" : ""
@@ -16,7 +17,6 @@
 		"lean", "leancloud", "avos", "avoscloud", "framework"
 	],
 	"dependencies"   : {
-		/* "LEAN-G": "git://coding.net/GongT/lean-g.git", */
 		"less-middleware": "1.0.x",
 		"serve-favicon"  : "~2.2.0",
 		"nsmarty"        : "git://coding.net/GongT/nsmarty.git",
