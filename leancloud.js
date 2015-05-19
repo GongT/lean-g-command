@@ -14,7 +14,6 @@ console.error('LEAN-G: nodejs.version = ' + process.version);
 var confirm_module = require('./scripts/pure_install').confirm;
 console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('promise'), '安装失败，请尝试手动安装');
-console.assert(confirm_module('longjohn'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('chokidar'), '安装失败，请尝试手动安装');
 
 var colors = global.colors = require('colors/safe');

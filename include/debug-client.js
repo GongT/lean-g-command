@@ -6,6 +6,7 @@ function init(app){
 	if(!process.env.LEANG_DEBUG_PORT){
 		return;
 	}
+	var isWindows = /^win/.test(process.platform);
 	console.log('协调开始');
 	var port = process.env.LEANG_DEBUG_PORT;
 	global.AV = AV;
@@ -56,10 +57,6 @@ function init(app){
 	
 	require(AV.GROOT + 'include/debug-client/debugger_rpc')(port);
 	console.log('次元隧道启动，连接目标：', port);
-	
-	var longjohn = require('longjohn');
-	longjohn.async_trace_limit = -1;  // unlimited trace lines
-	console.log('Unlimited Trace Lines');
 	
 	handling_error(app);
 	
