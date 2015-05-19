@@ -87,19 +87,27 @@ module.exports.ensureDependence = function (incudeDevDep){
 	}
 	Error.stackTraceLimit = traceLimit;
 };
-
 module.exports.checkUnusedDependence = function (){
+	var internalModules = ['.bin',
+		'avoscloud-code',
+		'chokidar',
+		'colors',
+		'less-middleware',
+		'longjohn',
+		'nsmarty',
+		'phpjs',
+		'promise',
+		'repl.history',
+		'serve-favicon'
+	];
 	var mdllist = fs.readdirSync(APPPATH + 'node_modules').filter(function (name){
-		if(name == '.bin'){
-			return false;
-		}
 		if(PackageJson.devDependencies && PackageJson.devDependencies[name]){
 			return false;
 		}
 		if(PackageJson.dependencies && PackageJson.dependencies[name]){
 			return false;
 		}
-		return true;
+		return internalModules.indexOf(name) == -1;
 	});
 	
 	if(mdllist.length == 0){
