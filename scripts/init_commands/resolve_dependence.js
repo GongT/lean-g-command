@@ -7,6 +7,7 @@ var oklist = [], faillist = {};
 Object.keys(deps).forEach(function (name){
 	try{
 		require(name);
+		oklist.push(name);
 	} catch(e){
 		// var missings = require_missing.parse_require_error_stack(e.stack);
 		
@@ -14,7 +15,6 @@ Object.keys(deps).forEach(function (name){
 		faillist[name] = deps[name];
 		// }
 	}
-	oklist.push(name);
 });
 
 global.PackageJson = {
