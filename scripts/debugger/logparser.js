@@ -26,8 +26,8 @@ function colorful_error(s){
 	}
 	return s.replace(errorSign, '\x1B[38;5;' + COLOR_ERROR + 'm$1\x1B[0m')
 			.replace(/at (.*) \(native\)/mg, '\x1B[38;5;' + COLOR_NATIVE + 'mat $1\x1B[0m')
-			.replace(/at ([a-z\-_]+\.js[:0-9]*)/mg, '\x1B[38;5;' + COLOR_SYSTEM + 'mat $1\x1B[0m')
-			.replace(/at (.* \([a-z\-_]+\.js[:0-9]*\))/mg, '\x1B[38;5;' + COLOR_SYSTEM + 'mat $1\x1B[0m')
+			.replace(/at ([a-zA-Z\-_]+\.js[:0-9]*)/mg, '\x1B[38;5;' + COLOR_SYSTEM + 'mat $1\x1B[0m')
+			.replace(/at (.* \([a-zA-Z\-_]+\.js[:0-9]*\))/mg, '\x1B[38;5;' + COLOR_SYSTEM + 'mat $1\x1B[0m')
 			.replace(/at (.*) \(.+\/lean-g\/(.*[:0-9]*)\)/mg, '\x1B[38;5;' + COLOR_LEANG + 'mat $1 (LEANG/$2)\x1B[0m')
 			.replace(/at (.*) \(.+\/avoscloud-code\/node_modules\/(.*\.js[:0-9]*)\)/mg,
 			'\x1B[38;5;' + COLOR_MODULES + 'mat $1 (AV::$2)\x1B[0m')
@@ -37,7 +37,7 @@ function colorful_error(s){
 	                                                    COLOR_ERROR + 'm$3\x1B[0m)')
 			.replace(/at (.*) \((.*\/)?cloud\/(.*)\)/mg, 'at \x1B[38;5;' + COLOR_INTREST + 'm$1\x1B[0m (\x1B[38;5;' +
 	                                                     COLOR_SUCCESS + 'm$3\x1B[0m)')
-			.replace(/at ([a-z\-_\/]+\.js[:0-9]*)/mg, 'at \x1B[38;5;' + COLOR_SUCCESS + 'm$1\x1B[0m')
+			.replace(/at ([a-zA-Z\-_]+\/[a-zA-Z\-_\/]+\.js[:0-9]*)/mg, 'at \x1B[38;5;' + COLOR_SUCCESS + 'm$1\x1B[0m')
 			.replace(/\/node_modules\//g, '::')
 }
 
