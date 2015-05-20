@@ -1,0 +1,14 @@
+{
+	"session"       : {
+		"fetchUser": false,
+		"expire"   : 86400000,
+		"key"      : "NODESESSID",
+		"userKey"  : "NODEUSER"
+	},
+	"isDebugEnv"    : false,
+	"isTestEnv"     : false,
+	"styleConstant" : {},
+	"scriptConstant": {},
+	"template"      : {},
+	"staticVersion" : 1
+}

@@ -138,7 +138,7 @@ function export_express_router(config, _path){
 			// console.debug('/' + def);
 			var cntl = require(def);
 			cntl.file = def;
-			cntl.path = _path;
+			cntl.path = _path + name;
 			cntl.name = name;
 			if(cntl instanceof ExpressController){
 				if(name == 'index'){
@@ -312,14 +312,14 @@ ExpressControllerRuntime.prototype.displayError = function (e, template){ // 显
 	} else{
 		if(e instanceof AV.ApiError){
 			this.assign('error', e.toStrongJSON());
-			this.display(template || AV.CONFIG.template.standardErrorPage || 'standard_error');
+			this.display(template || AV.CONFIG.template.standardErrorPage);
 		} else if(e instanceof Error){
 			console.error(e.stack);
 			this.assign('error', e);
-			this.display(template || AV.CONFIG.template.internalErrorPage || 'internal_error');
+			this.display(template || AV.CONFIG.template.internalErrorPage);
 		} else{
 			this.assign('error', e);
-			this.display(template || AV.CONFIG.template.userErrorPage || 'user_error');
+			this.display(template || AV.CONFIG.template.userErrorPage);
 		}
 	}
 };
@@ -363,9 +363,9 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 	
 	response.render(template, self._tVar, function (err, body){
 		if(err){
-			console.error('模板错误：' + err.message);
+			console.error('模板错误：' + err.stack);
 			self._tVar.error = err;
-			response.render(AV.CONFIG.template.internalErrorPage || 'internal_error', self._tVar, function (err2, body){
+			response.render(AV.CONFIG.template.internalErrorPage, self._tVar, function (err2, body){
 				if(err2){
 					console.error('致命错误：无法渲染并显示内部错误页面\n' + err2.stack);
 					response.send('<h1>' + err.message + '</h1>');

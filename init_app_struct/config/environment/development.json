@@ -1,0 +1,10 @@
+{
+	"environmentName": "本地开发环境",
+	"staticUrl"      : "/",
+	"cookie"         : {
+		"domain": "127.0.0.1"
+	},
+	"baseUrl"        : "http://127.0.0.1:3000/",
+	"isDebugEnv"     : true,
+	"blockDeploy"    : true
+}

@@ -21,9 +21,9 @@ function replaced_save_function(){
 		clist.forEach(function (cb){
 			cb.apply(undefined, argument);
 		});
-		delete this.save;
-		delete this._after_save_cblist;
-		delete this._after_save_cblist_fail;
+		delete self.save;
+		delete self._after_save_cblist;
+		delete self._after_save_cblist_fail;
 	}
 	
 	ret.then(function (){

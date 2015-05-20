@@ -25,7 +25,7 @@ process.on('SIGINT', function (){
 });
 process.removeAllListeners('uncaughtException');
 process.on('uncaughtException', function (e){
-	console.error('调试父进程捕捉到未处理的异常，退出调试进程并等待结束。。', e.stack);
+	console.error('调试父进程捕捉到未处理的异常，退出调试进程并等待结束。。', require('util').inspect(e));
 	shuttingDown = true;
 	controller.shutdownService();
 });

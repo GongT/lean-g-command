@@ -1,6 +1,6 @@
 var local = false;
 var fs = require('fs'), path = require('path');
-var ABS_ROOT, CLOUDROOT, GROOT, APPPATH, GENPATH;
+var ABS_ROOT, CLOUDROOT, GROOT, CGROOT, INTERNAL_TEMPLATE, APPPATH, GENPATH;
 
 module.exports = DEPLOY;
 console.error('prepare deploy files');
@@ -11,6 +11,8 @@ function DEPLOY(AV, _require){
 		local = AV.localhost = true;
 		ABS_ROOT = AV.ABS_ROOT = path.resolve(process.cwd()) + '/';
 		GROOT = AV.GROOT = 'cloud/lean-g/';
+		CGROOT = AV.CGROOT = ABS_ROOT + 'cloud/lean-g/';
+		INTERNAL_TEMPLATE = AV.INTERNAL_TEMPLATE = AV.CGROOT + 'include/debug-client/html/';
 		CLOUDROOT = AV.CLOUDROOT = 'cloud/';
 		GENPATH = AV.GENPATH = CLOUDROOT + '__gen/';
 		APPPATH = AV.APPPATH = '';
@@ -19,6 +21,8 @@ function DEPLOY(AV, _require){
 		local = AV.localhost = false;
 		ABS_ROOT = AV.ABS_ROOT = path.resolve(__dirname, '..') + '/';
 		GROOT = AV.GROOT = 'cloud/lean-g/';
+		CGROOT = AV.CGROOT = ABS_ROOT + 'cloud/lean-g/';
+		INTERNAL_TEMPLATE = AV.INTERNAL_TEMPLATE = AV.CGROOT + 'include/debug-client/html/';
 		CLOUDROOT = AV.CLOUDROOT = 'cloud/';
 		GENPATH = AV.GENPATH = CLOUDROOT + '__gen/';
 		APPPATH = AV.APPPATH = '';
@@ -55,6 +59,18 @@ function main(AV){
 	AV.isTestEnv = CONFIG.isTestEnv;
 	if(!AV.CONFIG.template){
 		AV.CONFIG.template = {};
+	}
+	if(!AV.CONFIG.template.standardErrorPage){
+		AV.CONFIG.template.standardErrorPage = INTERNAL_TEMPLATE + 'error_page/standard_error.tpl';
+	}
+	if(!AV.CONFIG.template.internalErrorPage){
+		AV.CONFIG.template.internalErrorPage = INTERNAL_TEMPLATE + 'error_page/internal_error.tpl';
+	}
+	if(!AV.CONFIG.template.userErrorPage){
+		AV.CONFIG.template.userErrorPage = INTERNAL_TEMPLATE + 'error_page/user_error.tpl';
+	}
+	if(!AV.CONFIG.template.notFoundErrorPage){
+		AV.CONFIG.template.notFoundErrorPage = INTERNAL_TEMPLATE + 'error_page/404_not_found.tpl';
 	}
 	
 	var FS = AV.FS = require(GROOT + 'include/FileSystem.js');
@@ -184,6 +200,9 @@ function main(AV){
 		if(!arguments[0].static){
 			arguments[0].static = {maxAge: AV.isDebugEnv? 0 : 604800000}
 		}
+		if(local){
+			var debug = require(GROOT + 'include/debug-client.js').debuggerPages(app);
+		}
 		applisten.apply(app, arguments);
 		
 		if(!AV.CONFIG.lean.disableExpress){
@@ -191,7 +210,7 @@ function main(AV){
 			if(AV.ExpressController.map['/404']){
 				e404Controller = AV.ExpressController.map['/404'];
 			} else{
-				var e404 = AV.CONFIG.template.notFoundErrorPage || 'not_found';
+				var e404 = AV.CONFIG.template.notFoundErrorPage;
 				e404Controller = require(GROOT + 'include/default404controller.js')(e404);
 			}
 			app.use(e404Controller.__forceRun.bind(e404Controller));

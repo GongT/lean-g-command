@@ -9,6 +9,16 @@ var librarys = {
 };
 
 var plugins = {
+	'bootstrap' : {
+		root      : 'bootstrap',
+		files     : ['bootstrap.' + minjs, 'bootstrap.' + mincss],
+		dependence: ['jquery-only']
+	},
+	'bs-style' : {
+		root      : 'bootstrap',
+		files     : ['bootstrap.' + mincss],
+		dependence: []
+	},
 	'artDialog' : {
 		root      : 'artdialog',
 		files     : ['ui-dialog.css', 'dialog.' + minjs, 'dialog-plus.' + minjs, 'artdialog.extend.js'],

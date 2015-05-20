@@ -93,7 +93,6 @@ module.exports.checkUnusedDependence = function (){
 		'chokidar',
 		'colors',
 		'less-middleware',
-		'longjohn',
 		'nsmarty',
 		'phpjs',
 		'promise',

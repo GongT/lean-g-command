@@ -6,6 +6,7 @@ function init(app){
 	if(!process.env.LEANG_DEBUG_PORT){
 		return;
 	}
+	var isWindows = /^win/.test(process.platform);
 	console.log('协调开始');
 	var port = process.env.LEANG_DEBUG_PORT;
 	global.AV = AV;
@@ -57,14 +58,15 @@ function init(app){
 	require(AV.GROOT + 'include/debug-client/debugger_rpc')(port);
 	console.log('次元隧道启动，连接目标：', port);
 	
-	var longjohn = require('longjohn');
-	longjohn.async_trace_limit = -1;  // unlimited trace lines
-	console.log('Unlimited Trace Lines');
-	
 	handling_error(app);
 	
 	console.log('\x1B[38;5;10m启动成功，世界线变动率\x1B[38;5;14m%s\x1B[0m', Math.random() + 1);
 }
+
+module.exports.debuggerPages = function (app){
+	app.locals['INTERNAL_TEMPLATE'] = AV.INTERNAL_TEMPLATE;
+	require(AV.GROOT + 'include/debug-client/debug_page')(app);
+};
 
 var shuting_down = false;
 function debug_shutdown(status){
