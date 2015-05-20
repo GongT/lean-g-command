@@ -1,0 +1,7 @@
+{
+	"serverName"    : "正式数据库",
+	"applicationId" : "",
+	"applicationKey": "",
+	"masterKey"     : "",
+	"forceSSL"      : false
+}

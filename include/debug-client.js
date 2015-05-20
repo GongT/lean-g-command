@@ -63,6 +63,11 @@ function init(app){
 	console.log('\x1B[38;5;10m启动成功，世界线变动率\x1B[38;5;14m%s\x1B[0m', Math.random() + 1);
 }
 
+module.exports.debuggerPages = function (app){
+	app.locals['INTERNAL_TEMPLATE'] = AV.INTERNAL_TEMPLATE;
+	require(AV.GROOT + 'include/debug-client/debug_page')(app);
+};
+
 var shuting_down = false;
 function debug_shutdown(status){
 	if(shuting_down){
