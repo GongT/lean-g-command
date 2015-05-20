@@ -16,6 +16,9 @@ if(!fs.existsSync(APP_PATH)){
 if(!fs.existsSync(APP_PATH + 'node_modules')){
 	fs.mkdirSync(APP_PATH + 'node_modules');
 }
+if(!fs.existsSync(APP_PATH + 'node_modules/.bin')){
+	fs.mkdirSync(APP_PATH + 'node_modules/.bin');
+}
 process.chdir(APP_PATH);
 var initGit = false;
 if(!fs.existsSync(APP_PATH + '.git')){
@@ -29,10 +32,12 @@ var source = path.resolve(CGROOT + '/init_app_struct') + '/';
 console.log('复制文件 %s -> %s', source, APP_PATH);
 if(avosrun.isWindows){
 	avosrun.external_sync('xcopy', ['/E', '/I', '/H', '/Y', source, '.']);
-	avosrun.external_sync('mklink', ['/J', APP_PATH + '/cloud/lean-g', CGROOT]);
+	avosrun.external_sync('mklink', ['/S', APP_PATH + '/cloud/lean-g', CGROOT]);
+	avosrun.external_sync('mklink', ['/J', APP_PATH + 'node_modules/.bin/leang', CGROOT + 'leancloud.js']);
 } else{
 	avosrun.external_sync('cp', ['-r', '-v', '-f', source + '.', '.']);
 	avosrun.external_sync('ln', ['-s', CGROOT, APP_PATH + '/cloud/lean-g']);
+	avosrun.external_sync('ln', ['-s', CGROOT + 'leancloud.js', APP_PATH + 'node_modules/.bin/leang']);
 }
 
 avosrun.external_sync('git', ['add', '.']);

@@ -155,13 +155,19 @@ function usage_cmd(text){
 		title = title? title[1] : '???';
 		console.error('\t' + colors.green(path.basename(f, '.js')) + ' - ' + title);
 	});
+	console.error('');
+	console.error('\t' + colors.green('dependence') + ' - 解决依赖');
+	console.error('\t' + colors.green('config') + ' - 建立/调整配置文件');
+	console.error('');
 }
 function usage_environment(text){
 	if(text){
 		console.error('使用 leang 命令 环境文件名 服务器文件名');
 		console.error('\x1B[38;5;9mError:\n\t' + text + '\x1B[0m');
 	}
-	
+	if(!fs.existsSync(APPPATH + 'config/environment')){
+		fs.mkdirSync(APPPATH + 'config/environment');
+	}
 	console.error('可用环境:');
 	fs.readdirSync(APPPATH + 'config/environment').filter(function (n){
 		return n.substr(0, 1) != '.' && n != 'default.json';
@@ -177,6 +183,9 @@ function usage_environment(text){
 
 function usage_server(){
 	console.error('可用服务器:');
+	if(!fs.existsSync(APPPATH + 'config/server')){
+		fs.mkdirSync(APPPATH + 'config/server');
+	}
 	fs.readdirSync(APPPATH + 'config/server').filter(function (n){
 		return n.substr(0, 1) != '.';
 	}).forEach(function (f){
