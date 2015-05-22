@@ -2,6 +2,8 @@ var console = new AV.Logger('INPUT');
 var debug = console[AV.localhost? 'error' : 'debug'].bind(console);
 var warn = console[AV.localhost? 'warn' : 'debug'].bind(console);
 
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
 module.exports = Checker;
 var checker_types = {};
 
@@ -14,7 +16,7 @@ Checker.prototype.raw = function (){
 	return this[this._pname];
 };
 Checker.prototype.get = function (name, opt){
-	return this[this._pname].hasOwnProperty(name)? this[this._pname][name] : opt;
+	return hasOwnProperty.call(this[this._pname], name)? this[this._pname][name] : opt;
 };
 Checker.prototype.has = function (name){
 	return this[this._pname].hasOwnProperty(name);
