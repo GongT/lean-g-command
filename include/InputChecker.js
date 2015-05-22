@@ -19,7 +19,7 @@ Checker.prototype.get = function (name, opt){
 	return hasOwnProperty.call(this[this._pname], name)? this[this._pname][name] : opt;
 };
 Checker.prototype.has = function (name){
-	return this[this._pname].hasOwnProperty(name);
+	return hasOwnProperty.call(this[this._pname], name);
 };
 
 Checker.InputCheckFailError = InputCheckFailError;
