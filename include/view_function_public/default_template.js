@@ -53,11 +53,18 @@ if(!AV.isDebugEnv){
 	replacer = uglify(replacer);
 }
 
-module.exports.getSingleInstance = function (data){
-	if(data.__replacer_loaded){
-		return '';
+module.exports.getSingleInstance = function (data, name){
+	if(!name){
+		name = 'TPL_REPLACE_FUNCTION';
 	}
-	var name = 'TPL_REPLACE_FUNCTION';
+	if(data.__replacer_loaded){
+		if(name == data.__replacer_loaded){
+			return '';
+		} else{
+			return '<script type="text/javascript" title="TPL_REPLACE_FUNCTION">var ' + name + '= ' +
+			       data.__replacer_loaded + ';</script>';
+		}
+	}
 	data.__replacer_loaded = name;
 	return '<script type="text/javascript" title="TPL_REPLACE_FUNCTION">\n' +
 	       replacer.replace('function', 'function ' + name) + '\n</script>\n';

@@ -20,6 +20,26 @@
 	
 	{$_head.pscripts|join:"\n\t"}
 	{$_head.ascripts|join:"\n\t"}
+	
+	<script type="text/javascript" crossorigin="anonymous"> /* debug alert */
+		function show_alert(text, type){
+			var $e = $('#DebugAlert');
+			$e.attr('class', 'alert text-center alert-' + type).text(text).slideDown('fast');
+			$e.data('timeout', setTimeout(function (){
+				$e.slideUp('fast');
+				$(this).data('timeout', 0);
+			}, 2000));
+		}
+		$(document).on('click', '#DebugAlert', function (){
+			$e.slideUp('fast');
+			
+			var timer = $(this).data('timeout');
+			if(timer){
+				clearTimeout(timer);
+				$(this).data('timeout', 0);
+			}
+		});
+	</script>
 </head>
 <body>
 
@@ -54,4 +74,5 @@
 		</div>
 	</div>
 </nav>
+<div id="DebugAlert" class="alert" style="display:none;position:fixed;top:0;left:0;right:0;height:50px;z-index:1080;">aaaa</div>
 <div style="height:50px"></div>
