@@ -18,12 +18,11 @@ function replaced_save_function(){
 	var ret = this.__save.apply(this, arguments);
 	
 	function call_clean(clist, argument){
+		self._after_save_cblist = [];
+		self._after_save_cblist_fail = [];
 		clist.forEach(function (cb){
 			cb.apply(undefined, argument);
 		});
-		delete self.save;
-		delete self._after_save_cblist;
-		delete self._after_save_cblist_fail;
 	}
 	
 	ret.then(function (){
