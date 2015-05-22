@@ -25,7 +25,23 @@ $.fn.ajaxSubmit = function (){
 		return false;
 	}
 	
-	var data = this.serialize();
+	var data = this.serializeArray();
+	var e = new $.Event('beforeAjax.ajax-form', {
+		ajax: {
+			url     : act,
+			dataType: 'json',
+			method  : mtd,
+			data    : data,
+			context : this
+		}
+	});
+	this.trigger(e);
+	if(e.isDefaultPrevented()){
+		return;
+	}
+	if(Array.isArray(e.ajax.data)){
+		e.ajax.data = $.param(e.ajax.data);
+	}
 	
 	var disabled_controls = this.on('click', $.fn.ajaxSubmit.mute_click_controls, mute)
 			.find($.fn.ajaxSubmit.mute_edit_controls).filter(':not(.disabled):not([disabled])').attr('disabled', 'disabled');
@@ -37,30 +53,29 @@ $.fn.ajaxSubmit = function (){
 	if(this.find('input[type=file]').length){
 		alert('has-file');
 		return upload_file(this, function (err, data){
-			
 			handle_result_json(data);
 			finish();
 		});
 	}
 	
 	console.log('ajax form post: %O %s to %s', that[0], mtd, act);
-	var r = $.ajax({
-		url     : act,
-		dataType: 'json',
-		method  : mtd,
-		data    : data,
-		context : this
-	});
+	var r = $.ajax(e.ajax);
 	
 	var callback_error = null;
-	r.done(handle_result_json).fail(function (){
+	r.done(handle_result_json).fail(function (e){
 		alert('网络出错');
-	}).always(finish);
+		if(e.responseText && e.responseText.trim().substr(0, 1) == '<'){
+			console.error('请求返回了html而不是预期的json');
+		} else{
+			console.error(e);
+		}
+		finish();
+	});
 	return r;
 	
 	function finish(){
 		disabled_controls.removeAttr('disabled');
-		this.off('click', $.fn.ajaxSubmit.mute_click_controls, mute);
+		that.off('click', $.fn.ajaxSubmit.mute_click_controls, mute);
 		
 		if(bindFormPart){
 			disabled_controls_binding.removeAttr('disabled');
@@ -80,9 +95,14 @@ $.fn.ajaxSubmit = function (){
 			callback_error = e;
 			return;
 		}
-		if(e.isDefaultPrevented() || e.isPropagationStopped() || e.isImmediatePropagationStopped()){
+		if(!e.isDefaultPrevented()){
+			finish();
+		}
+		
+		if(e.isPropagationStopped() || e.isImmediatePropagationStopped()){
 			return;
 		}
+		
 		console.log('AjaxFormResult: ', json);
 		if(json.status == 0){
 			alert('请求成功' + (json.message? ': ' + json.message : ''));

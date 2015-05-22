@@ -1,4 +1,8 @@
 module.exports = function (app){
+	/*app.use(function (req,rsp,next){
+		console.log(req)
+		next();
+	});*/
 	var extraMenu = [];
 	for(var x in AV.ExpressController.map){
 		var d = AV.ExpressController.map[x];
@@ -11,6 +15,7 @@ module.exports = function (app){
 	}
 	
 	var ctl;
+	
 	// 首页信息展示
 	ctl = new AV.ExpressController;
 	ctl.method = 'GET';

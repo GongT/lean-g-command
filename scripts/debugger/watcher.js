@@ -5,6 +5,7 @@ var reconfigure = require('./reconfigure');
 
 var EventEmitter = require('events').EventEmitter;
 var self = module.exports = new EventEmitter;
+var isWindows = process.platform === 'win32';
 
 self.start = function (){
 	if(watch){
@@ -38,7 +39,11 @@ self.resume = function (){
 		console.info('resumed');
 	}
 	self.paused = false;
-	delayTimeoutDefault = 5;
+	if(isWindows){
+		delayTimeoutDefault = 5;
+	} else{
+		delayTimeoutDefault = 1;
+	}
 };
 
 self.stop = function (){
@@ -47,6 +52,10 @@ self.stop = function (){
 		return;
 	}
 	
+	if(changeTimer){
+		clearInterval(changeTimer);
+		changeTimer = 0;
+	}
 	console.trace('stop');
 	watch.removeAllListeners();
 	watch.close();

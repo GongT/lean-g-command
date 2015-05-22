@@ -200,6 +200,7 @@ function main(AV){
 		if(!arguments[0].static){
 			arguments[0].static = {maxAge: AV.isDebugEnv? 0 : 604800000}
 		}
+		app.locals['INTERNAL_TEMPLATE'] = AV.INTERNAL_TEMPLATE;
 		if(local){
 			var debug = require(GROOT + 'include/debug-client.js').debuggerPages(app);
 		}

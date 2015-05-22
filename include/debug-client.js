@@ -64,7 +64,6 @@ function init(app){
 }
 
 module.exports.debuggerPages = function (app){
-	app.locals['INTERNAL_TEMPLATE'] = AV.INTERNAL_TEMPLATE;
 	require(AV.GROOT + 'include/debug-client/debug_page')(app);
 };
 

@@ -6,11 +6,19 @@ var expressRoutersDebug = '';
 
 module.exports = ExpressController;
 
-function ExpressController(){
+function ExpressController(title){
 	this._paths = [];
 	this._prepares = [];
 	this.method = 'GET';
+	if(title){
+		this.setTitle(title);
+	}
 }
+ExpressController.prototype.setTitle = function (title){
+	this.title = title;
+	return this;
+};
+
 ExpressController.prototype.route = function (path, router){
 	var m = this.method.toLowerCase();
 	
@@ -62,7 +70,7 @@ function runMain(req, rsp, next){
 	try{
 		this.main.call(rsp.runtime, rsp.runtime, req);
 	} catch(e){
-		console.error('Main抛出异常: url=%s, error=%s', req.url, e.stack || e.message || e);
+		// console.error('Main抛出异常: url=%s, error=%s', req.url, e.stack || e.message || e);
 		rsp.runtime.displayError(e);
 	}
 }
@@ -236,6 +244,7 @@ Object.defineProperties(InputHanler.prototype, {
 		get: function (){
 			return this.__header ||
 			       (this.__header = {
+				       isXhr        : !!this.__req.xhr,
 				       method       : this.__req.method,
 				       ContentType  : this.__req.headers['content-type'],
 				       Origin       : this.__req.headers['origin'],
