@@ -372,12 +372,14 @@ ExpressControllerRuntime.prototype.display = function (template){ // 显示指�
 	
 	response.render(template, self._tVar, function (err, body){
 		if(err){
-			console.error('模板错误：' + err.stack);
+			console.error('无法模板：' + err.stack);
 			self._tVar.error = err;
 			response.render(AV.CONFIG.template.internalErrorPage, self._tVar, function (err2, body){
 				if(err2){
-					console.error('致命错误：无法渲染并显示内部错误页面\n' + err2.stack);
-					response.send('<h1>' + err.message + '</h1>');
+					console.error('无法渲染并显示内部错误页面\n' + err2.stack);
+					response.send('<h1>Error Occur: ' + err2.message + '</h1><div>when render ' +
+					              AV.CONFIG.template.internalErrorPage + '</div><h1>while original error is ' +
+					              err.message + '</h1>');
 				} else{
 					response.send(404, body.trim().replace(/\[__reqEndTime__\]/, Date.now()));
 				}

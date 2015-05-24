@@ -19,11 +19,11 @@ function init(app){
 			console.log('\x1B[38;5;9m现在开始使用伪装的Date对象，这个功能还没有完善，如果遇到问题，请务必报告。\x1B[0m');
 			repl.displayPrompt();
 		}, 2000);
-		require(AV.GROOT + 'include/debug-client/dummy_date');
+		require('../include/debug-client/dummy_date');
 	}
 	
 	console.log('神经接续开始');
-	var replfix = require(AV.GROOT + 'include/debug-client/repl_bug');
+	var replfix = require('../include/debug-client/repl_bug');
 	var repl = global.repl = require('repl').start({
 		prompt         : 'AVOS> ',
 		input          : process.stdin,
@@ -46,16 +46,16 @@ function init(app){
 		}, 2000);
 	}
 	
-	require(AV.GROOT + 'include/debug-client/outgoing_message_shim');
+	require('../include/debug-client/outgoing_message_shim');
 	console.log('星际显像工具启动');
 	
-	require(AV.GROOT + 'include/debug-client/debug_helper_functions');
+	require('../include/debug-client/debug_helper_functions');
 	console.log('超级指令就绪');
 	
-	require(AV.GROOT + 'include/debug-client/readline_bug')(repl);
+	require('../include/debug-client/readline_bug')(repl);
 	console.log('树状图设计者链接成功');
 	
-	require(AV.GROOT + 'include/debug-client/debugger_rpc')(port);
+	require('../include/debug-client/debugger_rpc')(port);
 	console.log('次元隧道启动，连接目标：', port);
 	
 	handling_error(app);
@@ -64,7 +64,7 @@ function init(app){
 }
 
 module.exports.debuggerPages = function (app){
-	require(AV.GROOT + 'include/debug-client/debug_page')(app);
+	require('../include/debug-client/debug_page')(app);
 };
 
 var shuting_down = false;
@@ -77,7 +77,7 @@ function debug_shutdown(status){
 }
 
 function handling_error(app){
-	var require_missing = require(AV.GROOT + 'include/require_missing');
+	var require_missing = require('../include/require_missing');
 	process.on('uncaughtException', function (e){
 		handler(e);
 	});

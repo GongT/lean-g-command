@@ -125,7 +125,7 @@ function untar(){
 	try{
 		var tar = require('tar');
 	} catch(e){
-		return install_tar();
+		return install_tar(untar);
 	}
 	var extractor = tar.Extract({
 		path : SAVE_PATH,
@@ -143,9 +143,34 @@ function untar(){
 			.pipe(extractor);
 }
 
-function install_tar(){
+function install_tar(cb){
 	stopAnimation();
-	console.assert(require('./pure_install.js').confirm('tar'), '缺少npm依赖：tar');
+	var isWindows = /^win/.test(process.platform);
+	var spawn = isWindows? exec_windows : exec_linux;
+	var child = spawn('npm', ['install', 'tar'], {stdio: 'inherit', env: process.env});
+	child.on('exit', function (code){
+		if(code){
+			console.error('Can\'t install node module "tar".');
+			process.exit(code);
+		} else{
+			cb();
+		}
+	});
+	
+	function exec_windows(command, args, options){
+		if(!args){
+			args = [];
+		}
+		args = ['/C', command].concat(args);
+		
+		console.log('exec external file - %s %s.', process.env.comspec, args.join(' '));
+		return require('child_process').spawn(process.env.comspec, args, options);
+	}
+	
+	function exec_linux(command, args, options){
+		console.log('exec external file - %s %s.', command, args.join(' '));
+		return require('child_process').spawn(command, args, options);
+	}
 }
 
 function error(msg){

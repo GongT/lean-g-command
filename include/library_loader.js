@@ -1,4 +1,3 @@
-// var AV = Object.AV;
 var console = new AV.Logger('LibraryLoader');
 
 function Library(){

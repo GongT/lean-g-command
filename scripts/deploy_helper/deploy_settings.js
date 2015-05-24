@@ -88,7 +88,9 @@ module.exports.ensureDependence = function (incudeDevDep){
 	Error.stackTraceLimit = traceLimit;
 };
 module.exports.checkUnusedDependence = function (){
-	var internalModules = ['.bin',
+	var internalModules = [
+		'.bin',
+		'lean-g',
 		'avoscloud-code',
 		'chokidar',
 		'colors',
@@ -113,7 +115,7 @@ module.exports.checkUnusedDependence = function (){
 		return true;
 	} else{
 		console.log('\n本地存在以下模块，在package.proto.json中没有定义\n如果确实使用了它们，则必须添加到package.proto.json中\n如果没有使用，就应该删除\n\n\t\x1B[38;5;9m%s\x1B[0m\n', mdllist.join(', '));
-		return false;
+		return true;
 	}
 };
 

@@ -1,4 +1,4 @@
-var uglify = require(AV.GROOT + 'include/view_function_public/uglify.js');
+var uglify = require('../../include/view_function_public/uglify');
 
 var replacer = function (template, data){
 	var n;

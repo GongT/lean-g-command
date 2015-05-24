@@ -1,4 +1,5 @@
 var childProcess = require('child_process');
+var fs = require('fs');
 var Promise = require('promise');
 var isWindows = /^win/.test(process.platform);
 
@@ -112,7 +113,7 @@ module.exports.external_stdout_eachline = function (args, cb){
 	});
 };
 
-module.exports.runner = require('path').resolve(APPPATH, 'node_modules/avoscloud-code/bin/run.js');
+module.exports.runner = require('path').resolve(CGROOT, 'node_modules/avoscloud-code/bin/run.js');
 if(!module.exports.runner){
 	console.error("Cannot find avoscloud-code.");
 	process.exit(-1);

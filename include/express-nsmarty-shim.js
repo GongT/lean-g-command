@@ -1,15 +1,26 @@
-var _ = require('util');
-// var AV = Object.AV;
+var extend = require('util')._extend;
+var fs = require('fs');
+var AV = global.AV;
 var nsmarty = AV.nsmarty = require('nsmarty');
 var basename = require('path').basename;
 
 delete nsmarty.tpl_path;
-nsmarty.tpl_path = AV.ABS_ROOT + AV.server.get('views') + '/';
+nsmarty.tpl_path = AV.APP_PATH + AV.server.get('views') + '/';
 AV.server.engine('.tpl', parse);
 console.log('template path set to ', nsmarty.tpl_path);
 
 module.exports.parse = register;
-module.exports.parseFile = function (file){
+module.exports.loadViewFunctions = function (APP_PATH, GROOT){
+	var vflist = {};
+	extend(vflist, readdir(APP_PATH + 'cloud/view_functions/'));
+	extend(vflist, readdir(GROOT + 'view_functions/'));
+	AV.nsmarty.viewFunctionList = vflist;
+	Object.keys(vflist).forEach(function (k){
+		register_file(vflist[k]);
+	});
+};
+
+function register_file(file){
 	var name = basename(file, '.js');
 	var fn = require(file);
 	if(typeof fn === 'function'){
@@ -33,7 +44,19 @@ module.exports.parseFile = function (file){
 			console.error('template function ' + name + ' define error');
 		}
 	}
-};
+}
+
+function readdir(DIR){
+	var vflist = {};
+	if(fs.existsSync(DIR)){
+		fs.readdirSync(DIR).filter(function isJsFile(f){
+			return /\.js$/.test(f);
+		}).forEach(function (f){
+			vflist[basename(f, '.js')] = DIR + f;
+		});
+	}
+	return vflist;
+}
 
 function registerBlock(name, fn){
 	register('block', name, fn);

@@ -275,8 +275,8 @@ var request_init = function ($, replacer){
 	}
 }.toString();
 
-var replacer = require(AV.GROOT + 'include/view_function_public/default_template.js');
-var uglify = require(AV.GROOT + 'include/view_function_public/uglify.js');
+var replacer = require('../include/view_function_public/default_template.js');
+var uglify = require('../include/view_function_public/uglify.js');
 if(!AV.isDebugEnv){
 	request_init = uglify(request_init);
 }

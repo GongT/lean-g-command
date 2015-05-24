@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 "use strict";
-module.paths.push(process.cwd() + "/node_modules");
-
 var path = require('path'),
 		fs = require('fs'),
 		extend = require('util')._extend;
@@ -10,6 +8,7 @@ if(!require('./scripts/check_version.js')){
 	return;
 }
 console.error('LEAN-G: nodejs.version = ' + process.version);
+process.env.LEANG_LOCALHOST = 'yes';
 
 var confirm_module = require('./scripts/pure_install').confirm;
 console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
@@ -22,7 +21,7 @@ var APPPATH = global.APPPATH = process.cwd().replace(/\\/g, '/') + '/'; // 项�
 global.CLOUDROOT = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
 
 var CGROOT = global.CGROOT = __dirname.replace(/\\/g, '/') + '/'; // 框架存放路径
-global.GROOT = 'cloud/lean-g/'; // 框架存放路径 - 运行时
+global.GROOT = 'node_modules/lean-g/'; // 框架存放路径 - 运行时
 
 console.log('LEAN-G: CGROOT = %s', CGROOT);
 console.log('LEAN-G: APPPATH = %s', APPPATH);
@@ -71,6 +70,16 @@ process.env.HOME = global.HOME = APPPATH + '.avoscloud/';
 process.chdir(APPPATH);
 if(!fs.existsSync('.avoscloud')){
 	fs.mkdirSync('.avoscloud');
+}
+process.env.TMPDIR = path.resolve(APPPATH, '.avoscloud/deploy_packages');
+if(!fs.existsSync(process.env.TMPDIR)){
+	fs.mkdirSync(process.env.TMPDIR);
+} else{
+	fs.readdirSync(process.env.TMPDIR).forEach(function (file){
+		if(/[0-9]+\.zip/.test(file)){
+			fs.unlinkSync(process.env.TMPDIR + '/' + file);
+		}
+	});
 }
 
 if(action == 'alias'){

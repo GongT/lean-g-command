@@ -1,4 +1,4 @@
-// var AV = Object.AV;
+var AV = global.AV;
 module.exports = Logger;
 var remoteLogger = AV.CONFIG.remoteLogger, loggerSocket;
 var format = require('util').format;
@@ -25,7 +25,7 @@ var levels_color = {
 var regist = [];
 var noLocal = [];
 
-if(!AV.isDebugEnv){ // 正式环境不要info和debug
+if(!AV.CONFIG.isDebugEnv){ // 正式环境不要info和debug
 	noLocal.push('debug');
 	noLocal.push('info');
 }

@@ -104,19 +104,6 @@ function update_avos_config(){
 	fs.writeFileSync(APPPATH + 'public/less-constants.less', lc);
 }
 
-function read_proto_folder(){
-	var data = {};
-	['static', 'property'].forEach(function (type){
-		var path = GROOT + 'database_proto/' + type;
-		data[type] = {};
-		fs.readdirSync(path).filter(isJsFile).forEach(function (f){
-			var n = basename(f, '.js');
-			data[type][n] = GROOT + 'database_proto/' + type + '/' + f;
-		});
-	});
-	return data;
-}
-
 function deepReadDirSync(dir){
 	var result = [];
 	if(!fs.existsSync(dir)){
@@ -159,39 +146,9 @@ function read_module_folder(basepath, types){
 
 function update_avos_module(){
 	console.log('生成数据模型载入文件...');
-	var source = [];
+	/*var source = [];
 	
-	var prototype = read_proto_folder();
-	if(Object.keys(prototype).length){
-		source.push('AV.CLS._prototype.extend(' + JSON.stringify(prototype, null, 8) + ');');
-	}
-	
-	/* 数据模型、基本组件 */
-	if(fs.existsSync(APPPATH + 'cloud/database/_proto_') &&
-	   fs.lstatSync(APPPATH + 'cloud/database/_proto_').isDirectory()){
-		prototype = read_module_folder('cloud/database/_proto_/', ['static', 'property']);
-		if(Object.keys(prototype).length){
-			source.push('AV.CLS._prototype.extend(' + JSON.stringify(prototype, null, 8) + ');');
-		}
-	}
-	
-	fs.readdirSync(APPPATH + 'cloud/database').forEach(function (f){
-		var base = APPPATH + 'cloud/database/' + f + '/';
-		var basepath = 'cloud/database/' + f + '/';
-		if(/^(\.|_)/.test(f) || !fs.existsSync(base) || !fs.lstatSync(base).isDirectory()){
-			return;
-		}
-		var database = class_name(basename(f));
-		console.log('\t模型：' + database);
-		var datadef = read_module_folder(basepath, ['static', 'property']);
-		if(fs.existsSync(base + f + '.js') && fs.lstatSync(base + f + '.js').size > 3){
-			datadef.constants = basepath + f + '.js';
-		}
-		source.push('AV.CLS.' + map_back(database) + ' = AV.CLS("' + database + '", "' + basepath +
-		            '", ' + JSON.stringify(datadef, null, 8) + ');');
-	});
-	
-	fs.writeFileSync(GENPATH + 'import.modules.js', source.join("\n"));
+	fs.writeFileSync(GENPATH + 'import.modules.js', source.join("\n"));*/
 }
 
 function update_avos_express(){
@@ -201,20 +158,6 @@ function update_avos_express(){
 	var controllers = read_tree('cloud/controllers/');
 	source.push('AV.ExpressController.parse(' + JSON.stringify(controllers, null, 8) + ');');
 	fs.writeFileSync(GENPATH + 'import.express.js', source.join("\n"));
-	
-	var vflist = {};
-	fs.readdirSync(CGROOT + 'view_functions').filter(isJsFile).forEach(function (f){
-		vflist[basename(f, '.js')] = GROOT + 'view_functions/' + f;
-	});
-	if(fs.existsSync(CLOUDROOT + 'view_functions')){
-		fs.readdirSync(CLOUDROOT + 'view_functions').filter(isJsFile).forEach(function (f){
-			vflist[basename(f, '.js')] = CLOUDROOT + 'view_functions/' + f;
-		});
-	}
-	var arr = Object.keys(vflist).map(function (k){
-		return vflist[k];
-	});
-	fs.writeFileSync(GENPATH + 'import.nsmarty.js', 'module.exports = ' + JSON.stringify(arr, null, 8) + ';');
 }
 
 function update_avos_library(){
@@ -327,28 +270,6 @@ function update_avos_trigger(){
 }
 
 function update_error_number(){
-	console.log('生成错误码js文件...');
-	var em = require(APPPATH + 'errormessage.json');
-	var last_code = -1;
-	var script = [];
-	em.forEach(function (item){
-		var code, name, message;
-		if(typeof item[0] == 'number'){
-			if(last_code >= code){
-				throw new Error('错误的错误码顺序');
-			}
-			last_code = code = item.shift();
-		} else{
-			code = ++last_code;
-		}
-		name = item[0];
-		message = item[1];
-		
-		script.push('module.exports.' + name + ' = AV.ApiError.create(' + code + ',' + JSON.stringify(name) +
-		            ',' + JSON.stringify(message) + ');');
-	});
-	
-	fs.writeFileSync(GENPATH + 'error.js', script.join('\n'));
 }
 
 module.exports.config = update_avos_config;
