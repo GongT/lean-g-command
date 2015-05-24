@@ -1,9 +1,4 @@
-var CGROOT;
-try{
-	CGROOT = AV.GROOT;
-} catch(e){
-	CGROOT = global.CGROOT;
-}
+var LEANG_PATH = global.LEANG_PATH;
 
 module.exports.parse_require_error_stack = function (stack){
 	var missing_path = [];
@@ -18,7 +13,7 @@ module.exports.parse_require_error_stack = function (stack){
 	missingModule = miss[1];
 	missing_path.push(missingModule);
 	
-	if(requiredAt.indexOf(CGROOT) >= 0){ // direct dependece missing
+	if(requiredAt.indexOf(LEANG_PATH) >= 0){ // direct dependece missing
 		return missing_path;
 	}
 	

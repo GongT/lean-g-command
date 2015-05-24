@@ -81,18 +81,14 @@ function bindAll(name, data, _pt){
 }
 
 module.exports.parseDatabaseDefine = function (){
-	var prototype = AV.FS.read_core_source_tree('database_proto');
-	for(var type in prototype){
-		for(var name in prototype[type]){
-			prototype[type][name] = AV.APP_PATH + prototype[type][name];
-		}
-	}
-	AV.CLS._prototype.extend(prototype);
+	global.appLoaderLog += '\tbase proto...\n';
+	AV.CLS._prototype.extend(AV.FS.read_core_source_tree('database_proto'));
 	
 	/* 数据模型、基本组件 */
 	var databases = AV.FS.read_source_tree('cloud/database');
-	// console.log(databases)
+	
 	if(databases._proto_){
+		global.appLoaderLog += '\tuser proto...\n';
 		AV.CLS._prototype.extend(databases._proto_);
 		delete databases._proto_;
 	}
@@ -100,7 +96,7 @@ module.exports.parseDatabaseDefine = function (){
 	Object.keys(databases).forEach(function (dbname){
 		var basepath = 'cloud/database/' + dbname + '/';
 		var database = class_name(dbname);
-		console.log('\t模型：' + database);
+		global.appLoaderLog += '\tdatabase：' + database+'\n';
 		var datadef = databases[dbname];
 		if(datadef[dbname]){
 			datadef.constants = datadef[dbname];
@@ -108,34 +104,6 @@ module.exports.parseDatabaseDefine = function (){
 		DatabaseModel[map_back(database)] = DatabaseModel(database, basepath, datadef);
 	});
 };
-
-function read_proto_folder(){
-	var data = {};
-	['static', 'property'].forEach(function (type){
-		var path = GROOT + 'database_proto/' + type;
-		data[type] = {};
-		fs.readdirSync(path).filter(isJsFile).forEach(function (f){
-			var n = basename(f, '.js');
-			data[type][n] = GROOT + 'database_proto/' + type + '/' + f;
-		});
-	});
-	return data;
-}
-
-function read_module_folder(basepath, types){
-	var data = {};
-	for(var i in types){
-		var type = types[i];
-		if(fs.existsSync(APPPATH + basepath + type) && fs.lstatSync(APPPATH + basepath + type).isDirectory()){
-			data[type] = {};
-			fs.readdirSync(APPPATH + basepath + type).filter(isJsFile).forEach(function (f){
-				var n = basename(f, '.js');
-				data[type][n] = basepath + type + '/' + f;
-			});
-		}
-	}
-	return data;
-}
 
 var avosInternalDataBase = ['user', 'cloudlog', 'file', 'followee', 'follower', 'installation', 'notification', 'role'];
 var avosInternalDataBaseMap = {'cloudlog': 'cloud_log'};

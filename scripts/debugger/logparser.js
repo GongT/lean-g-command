@@ -2,9 +2,9 @@ var console = new LogPrepend('错误高亮');
 
 var APPPATH;
 try{
-	APPPATH = AV.APPPATH;
+	APPPATH = AV.APP_PATH;
 } catch(e){
-	APPPATH = global.APPPATH;
+	APPPATH = global.APP_PATH;
 }
 
 var server_root = new RegExp(APPPATH, 'g');

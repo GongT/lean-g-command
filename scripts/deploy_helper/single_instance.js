@@ -3,10 +3,10 @@ var fs = require('fs');
 var avrun = require('../avrun');
 var Promise = require('promise');
 
-var lockFile = global.APPPATH + '/.avoscloud/runlock';
+var lockFile = global.APP_PATH + '/.avoscloud/runlock';
 
-if(!fs.existsSync(global.APPPATH + '/.avoscloud')){
-	fs.mkdirSync(global.APPPATH + '/.avoscloud', 0777);
+if(!fs.existsSync(global.APP_PATH + '/.avoscloud')){
+	fs.mkdirSync(global.APP_PATH + '/.avoscloud', 0777);
 }
 
 var started = false;

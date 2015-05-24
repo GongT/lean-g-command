@@ -17,16 +17,15 @@ console.assert(confirm_module('chokidar'), '安装失败，请尝试手动安装
 
 var colors = global.colors = require('colors/safe');
 
-var APPPATH = global.APPPATH = process.cwd().replace(/\\/g, '/') + '/'; // 项目路径 - 运行时
-global.CLOUDROOT = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
+var APP_PATH = global.APP_PATH = process.cwd().replace(/\\/g, '/') + '/'; // 项目路径 - 运行时
+global.CLOUD_DIR = 'cloud/'; // 云代码带AV对象的路径（就是 cloud/）
 
-var CGROOT = global.CGROOT = __dirname.replace(/\\/g, '/') + '/'; // 框架存放路径
-global.GROOT = 'node_modules/lean-g/'; // 框架存放路径 - 运行时
+var LEANG_PATH = global.LEANG_PATH = __dirname.replace(/\\/g, '/') + '/'; // 框架存放路径
 
-console.log('LEAN-G: CGROOT = %s', CGROOT);
-console.log('LEAN-G: APPPATH = %s', APPPATH);
+console.log('LEAN-G: LEANG_PATH = %s', LEANG_PATH);
+console.log('LEAN-G: APP_PATH = %s', APP_PATH);
 
-var config_exists = fs.existsSync(APPPATH + 'config');
+var config_exists = fs.existsSync(APP_PATH + 'config');
 
 // 检查alias
 var alias = require('./scripts/init_commands/command_alias');
@@ -66,20 +65,20 @@ if(!config_exists){
 }
 
 // 预备运行文件夹和环境
-process.env.HOME = global.HOME = APPPATH + '.avoscloud/';
-process.chdir(APPPATH);
+process.env.HOME = global.HOME = APP_PATH + '.avoscloud/';
+process.chdir(APP_PATH);
 if(!fs.existsSync('.avoscloud')){
 	fs.mkdirSync('.avoscloud');
 }
-process.env.TMPDIR = path.resolve(APPPATH, '.avoscloud/deploy_packages');
-if(!fs.existsSync(process.env.TMPDIR)){
-	fs.mkdirSync(process.env.TMPDIR);
-} else{
+process.env.TMPDIR = path.resolve(APP_PATH, '.avoscloud/deploy_packages');
+if(fs.existsSync(process.env.TMPDIR)){
 	fs.readdirSync(process.env.TMPDIR).forEach(function (file){
 		if(/[0-9]+\.zip/.test(file)){
 			fs.unlinkSync(process.env.TMPDIR + '/' + file);
 		}
 	});
+} else{
+	fs.mkdirSync(process.env.TMPDIR);
 }
 
 if(action == 'alias'){
@@ -87,13 +86,13 @@ if(action == 'alias'){
 }
 
 // 检查要运行的命令文件
-var command_file = CGROOT + 'scripts/commands/' + action + '.js';
+var command_file = LEANG_PATH + 'scripts/commands/' + action + '.js';
 if(!fs.existsSync(command_file)){
 	return usage_cmd("未知命令: " + action + ".");
 }
 
 // 读取avos配置
-global.APP_CONFIG = new (require('./include/ConfigLoader'));
+global.APP_CONFIG = new (require('./include/ConfigLoader'))(APP_PATH + 'config/');
 APP_CONFIG.load_environment('default', false);
 
 global.APP_ENVIRONMENT = assert_process_argument(3, usage_environment, '缺少环境定义文件');
@@ -102,8 +101,8 @@ if(APP_ENVIRONMENT != 'default'){
 }
 
 global.update = require('./include/config_generator');
-global.APP_SERVER = global.update.APP_SERVER = assert_process_argument(4, usage_server, '缺少服务器定义文件');
-APP_CONFIG.load_server(global.update.APP_SERVER, true);
+global.APP_SERVER = assert_process_argument(4, usage_server, '缺少服务器定义文件');
+APP_CONFIG.load_server(global.APP_SERVER, true);
 
 singleInstance.start(real_run);
 
@@ -155,10 +154,10 @@ function usage_cmd(text){
 	}
 	
 	console.error('命令列表:');
-	require('fs').readdirSync(CGROOT + 'scripts/commands').filter(function (n){
+	require('fs').readdirSync(LEANG_PATH + 'scripts/commands').filter(function (n){
 		return n.substr(0, 1) != '.';
 	}).map(function (f){
-		var content = fs.readFileSync(CGROOT + 'scripts/commands/' + f);
+		var content = fs.readFileSync(LEANG_PATH + 'scripts/commands/' + f);
 		var title = /@title: (.*)/.exec(content);
 		title = title? title[1] : '???';
 		console.error('\t' + colors.green(path.basename(f, '.js')) + ' - ' + title);
@@ -173,15 +172,15 @@ function usage_environment(text){
 		console.error('使用 leang 命令 环境文件名 服务器文件名');
 		console.error('\x1B[38;5;9mError:\n\t' + text + '\x1B[0m');
 	}
-	if(!fs.existsSync(APPPATH + 'config/environment')){
-		fs.mkdirSync(APPPATH + 'config/environment');
+	if(!fs.existsSync(APP_PATH + 'config/environment')){
+		fs.mkdirSync(APP_PATH + 'config/environment');
 	}
 	console.error('可用环境:');
-	fs.readdirSync(APPPATH + 'config/environment').filter(function (n){
+	fs.readdirSync(APP_PATH + 'config/environment').filter(function (n){
 		return n.substr(0, 1) != '.' && n != 'default.json';
 	}).forEach(function (f){
 		try{
-			var envName = JSON.parse(fs.readFileSync(APPPATH + 'config/environment/' + f)).environmentName;
+			var envName = JSON.parse(fs.readFileSync(APP_PATH + 'config/environment/' + f)).environmentName;
 		} catch(e){
 			envName = '配置文件无法解析 - ' + e.message;
 		}
@@ -191,14 +190,14 @@ function usage_environment(text){
 
 function usage_server(){
 	console.error('可用服务器:');
-	if(!fs.existsSync(APPPATH + 'config/server')){
-		fs.mkdirSync(APPPATH + 'config/server');
+	if(!fs.existsSync(APP_PATH + 'config/server')){
+		fs.mkdirSync(APP_PATH + 'config/server');
 	}
-	fs.readdirSync(APPPATH + 'config/server').filter(function (n){
+	fs.readdirSync(APP_PATH + 'config/server').filter(function (n){
 		return n.substr(0, 1) != '.';
 	}).forEach(function (f){
 		try{
-			var serverName = JSON.parse(fs.readFileSync(APPPATH + 'config/server/' + f)).serverName;
+			var serverName = JSON.parse(fs.readFileSync(APP_PATH + 'config/server/' + f)).serverName;
 		} catch(e){
 			serverName = '配置文件无法解析 - ' + e.message;
 		}

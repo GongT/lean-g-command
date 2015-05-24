@@ -1,6 +1,6 @@
 // var AV = Object.AV;
-var minjs = AV.CONSTANTS.isDebugEnv? 'js' : 'min.js';
-var mincss = AV.CONSTANTS.isDebugEnv? 'css' : 'min.css';
+var minjs = AV.isDebugEnv? 'js' : 'min.js';
+var mincss = AV.isDebugEnv? 'css' : 'min.css';
 var librarys = {
 	'jquery'     : ['jquery.' + minjs, 'jquery.cookie.js'],
 	'bootstrap'  : ['bootstrap.' + minjs, 'bootstrap.' + mincss],

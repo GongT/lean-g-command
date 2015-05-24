@@ -2,11 +2,8 @@ var fs = require('fs');
 var path = require('path');
 var basename = require('path').basename;
 
-var APPPATH = global.APPPATH;
-var CGROOT = global.CGROOT;
-var GROOT = global.GROOT;
+var APPPATH = global.APP_PATH;
 
-var CLOUDROOT = global.CLOUDROOT;
 var GENPATH = APPPATH + 'cloud/__gen/';
 var extend = require('util')._extend;
 
@@ -54,54 +51,6 @@ function map_back(name){
 
 /**/
 function update_avos_config(){
-	APP_CONFIG.load_environment('default', false);
-	APP_CONFIG.load_environment(APP_ENVIRONMENT, true);
-	
-	APP_CONFIG.load_server('default', false);
-	APP_CONFIG.load_server(module.exports.APP_SERVER, true);
-	var APP_NAME = 'LG-' + global.APP_ENVIRONMENT + '-' + global.APP_SERVER;
-	
-	console.log('更新配置...');
-	// CurrentApp
-	console.log('\t设置当前 app-id...');
-	fs.writeFileSync(APPPATH + '.avoscloud/curr_app', APP_NAME);
-	
-	// 配置文件
-	console.log('\t复制配置文件...');
-	fs.writeFileSync(APPPATH + 'config/global.json', JSON.stringify(APP_CONFIG));
-	global.deploySettings.configure(APP_CONFIG);
-	fs.writeFileSync(GENPATH + 'config.js', 'module.exports = ' + JSON.stringify(APP_CONFIG));
-	
-	// 应用列表
-	var appList = {};
-	appList[APP_NAME] = APP_CONFIG['applicationId'];
-	console.log('\t写入app list...');
-	fs.writeFileSync(APPPATH + '.avoscloud/apps.json', JSON.stringify(appList));
-	
-	// MasterKey
-	var keyConf = {};
-	keyConf[APP_CONFIG['applicationId']] = APP_CONFIG['masterKey'];
-	console.log('\t写入app key...');
-	fs.writeFileSync(APPPATH + '.avoscloud/.avoscloud_keys', JSON.stringify(keyConf));
-	
-	// less-constants
-	
-	var PUB_CONST = {
-		IS_DEBUG_ENV  : APP_CONFIG.isDebugEnv,
-		isDebugEnv    : APP_CONFIG.isDebugEnv,
-		ENVIRONMENT   : global.APP_ENVIRONMENT,
-		STATIC_URL    : APP_CONFIG.staticUrl,
-		BASE_URL      : APP_CONFIG.baseUrl,
-		STATIC_VERSION: APP_CONFIG.staticVersion
-	};
-	var LESS_CONST = extend(APP_CONFIG.styleConstant || {}, PUB_CONST);
-	var JS_CONST = extend(APP_CONFIG.scriptConstant || {}, PUB_CONST);
-	var lc = '';
-	Object.keys(LESS_CONST).forEach(function (key){
-		lc += '@' + key + ': "' + LESS_CONST[key] + '";\n';
-	});
-	fs.writeFileSync(GENPATH + 'import.jsconst.js', 'module.exports = ' + JSON.stringify(JS_CONST) + ';');
-	fs.writeFileSync(APPPATH + 'public/less-constants.less', lc);
 }
 
 function deepReadDirSync(dir){
@@ -145,19 +94,41 @@ function read_module_folder(basepath, types){
 }
 
 function update_avos_module(){
-	console.log('生成数据模型载入文件...');
-	/*var source = [];
+	console.log('更新配置...');
+	var APP_CONFIG = global.APP_CONFIG;
+	APP_CONFIG.APP_ENVIRONMENT = APP_ENVIRONMENT;
+	APP_CONFIG.APP_SERVER = global.APP_SERVER;
 	
-	fs.writeFileSync(GENPATH + 'import.modules.js', source.join("\n"));*/
+	APP_CONFIG.load_environment('default', false);
+	APP_CONFIG.load_environment(APP_ENVIRONMENT, true);
+	
+	APP_CONFIG.load_server('default', false);
+	APP_CONFIG.load_server(global.APP_SERVER, true);
+	var APP_NAME = 'LG-' + APP_ENVIRONMENT + '-' + global.APP_SERVER;
+
+// 配置文件
+	console.log('\t复制配置文件...');
+	global.deploySettings.configure(APP_CONFIG);
+	APP_CONFIG.write_global();
+
+// CurrentApp
+	console.log('\t设置当前 app-id...');
+	fs.writeFileSync(APPPATH + '.avoscloud/curr_app', APP_NAME);
+
+// 应用列表
+	var appList = {};
+	appList[APP_NAME] = APP_CONFIG['applicationId'];
+	console.log('\t写入app list...');
+	fs.writeFileSync(APPPATH + '.avoscloud/apps.json', JSON.stringify(appList));
+
+// MasterKey
+	var keyConf = {};
+	keyConf[APP_CONFIG['applicationId']] = APP_CONFIG['masterKey'];
+	console.log('\t写入app key...');
+	fs.writeFileSync(APPPATH + '.avoscloud/.avoscloud_keys', JSON.stringify(keyConf));
 }
 
 function update_avos_express(){
-	console.log('生成HTTP服务文件...');
-	var source = [];
-	
-	var controllers = read_tree('cloud/controllers/');
-	source.push('AV.ExpressController.parse(' + JSON.stringify(controllers, null, 8) + ');');
-	fs.writeFileSync(GENPATH + 'import.express.js', source.join("\n"));
 }
 
 function update_avos_library(){
@@ -183,90 +154,9 @@ function read_tree(dir){
 }
 
 function update_avos_function(){
-	console.log('生成云代码载入文件...');
-	var source = [];
-	
-	/* 客户端用的云代码 */
-	deepReadDirSync(APPPATH + 'cloud/functions').filter(isJsFile).forEach(function (f){
-		var base = f.replace(/\.js$/, '');
-		var internal = base.replace(/\/|\\/g, '_');
-		var name = base.replace(/\/|\\/g, '::');
-		if(base == name){
-			console.log('\t云代码：%s', name);
-		} else{
-			console.log('\t云代码：%s -> %s', base, name);
-		}
-		source.push('AV.Cloud.define("' + name + '", AV.Cloud.' + internal + ' = require("cloud/functions/' + f +
-		            '"));');
-	});
-	
-	/* 调试用的云代码 */
-	if(APP_CONFIG['isDebugEnv']){
-		if(fs.existsSync((APPPATH + 'cloud/functions-debug'))){
-			fs.readdirSync(APPPATH + 'cloud/functions-debug').filter(isJsFile).forEach(function (f){
-				console.log('\t测试函数：' + f);
-				source.push('AV.Cloud.define("__' + basename(f, '.js') + '", AV.Cloud.__' + basename(f, '.js') +
-				            ' = require("cloud/functions-debug/' + f + '"));');
-			});
-		}
-	}
-	
-	fs.writeFileSync(GENPATH + 'import.functions.js', source.join("\n"));
 }
 
 function update_avos_trigger(){
-	console.log('生成触发器载入文件...');
-	var source = [];
-	
-	/* 触发器 */
-	var triggers = {};
-	fs.readdirSync(APPPATH + 'cloud/database').forEach(function (f){
-		var base = APPPATH + 'cloud/database/' + f + '/';
-		var basepath = 'cloud/database/' + f + '/';
-		if(!fs.existsSync(base) || !fs.lstatSync(base).isDirectory() || f.indexOf('_') == 0){
-			return;
-		}
-		var database = class_name(basename(f));
-		var datadef = read_module_folder(basepath, ['trigger']).trigger;
-		if(!datadef){
-			return;
-		}
-		var result = {};
-		var map = {
-			afterSave  : 'post-insert',
-			afterUpdate: 'post-update',
-			beforeSave : 'before-insert'
-		};
-		for(var fn in map){
-			var dn = map[fn];
-			if(datadef[dn]){
-				result[fn] = datadef[dn];
-				delete datadef[dn];
-			}
-		}
-		if(Object.keys(datadef).length){
-			console.error('未知触发器类型：', Object.keys(datadef).join(''));
-			console.log(map);
-			throw new Error('未知触发器类型：', Object.keys(datadef).join(''));
-		}
-		
-		if(Object.keys(result).join('')){
-			console.log('\t触发器：%s -- %s', database, Object.keys(result).join(','));
-			source.push('AV.CLS.' + map_back(database) + '.registerTrigger(' + JSON.stringify(result, null, 8) + ');');
-		}
-	});
-	
-	if(fs.existsSync(APPPATH + 'cloud/timers')){
-		/* 定时器 */
-		source.push('AV.Timer = {};');
-		fs.readdirSync(APPPATH + 'cloud/timers').filter(isJsFile).forEach(function (f){
-			console.log('\t定时器：' + basename(f, '.js'));
-			source.push('AV.Cloud.define("' + basename(f, '.js') + '", AV.Timer.' + basename(f, '.js') +
-			            ' = require("cloud/timers/' + f + '"));');
-		});
-	}
-	
-	fs.writeFileSync(GENPATH + 'import.triggers.js', source.join("\n"));
 }
 
 function update_error_number(){

@@ -28,7 +28,7 @@ function DEPLOY(AV, _require, mainjs_dirname){
 		global._require = _require;
 		global.AV = AV;
 	} catch(e){
-		throw new Error('Can\'t access global variable');
+		fatal('Can\'t access global variable');
 	}
 	
 	AV.APP_PATH = path.resolve(mainjs_dirname, '..') + '/';
@@ -38,52 +38,72 @@ function DEPLOY(AV, _require, mainjs_dirname){
 	AV.LEANG_PATH = path.resolve(__dirname, '..') + '/';
 	AV.CLOUD_DIR = 'cloud/';
 	AV.CLOUD_PATH = AV.APP_PATH + 'cloud/';
-	// CGROOT => LEANG_PATH
 	AV.INTERNAL_TEMPLATE_PATH = AV.LEANG_PATH + 'include/debug-client/html/';
 	AV.GEN_PATH = AV.CLOUD_PATH + '__gen/';
 	
-	global.fatal = function (errormessage){
-		errormessage = errormessage || '';
-		if(local){
-			process.stderr.write('部署失败:\n' + errormessage.trim() + '\n');
-			process.exit(10);
-		} else{
-			throw new Error('部署失败:\n' + errormessage.trim());
-		}
-	};
-	
-	/*var vm = require('vm');
-	 var sandbox = {
-	 AV      : AV,
-	 require : masked_require,
-	 _require: _require
-	 };
-	 sandbox.global = sandbox;*/
+	global.appLoaderLog = '';
 	try{
-		/*var app = vm.runInNewContext('masked_require()', sandbox, {
-		 filename: 'deploy-init'
-		 });
-		 delete AV.fatal;*/
-		global.appLoaderLog = '';
-		return require('./app_init.js');
+		var app = require('./app_init.js');
+		var listen = app.listen;
+		var call_listen = setTimeout(function (){
+			fatal('app.listen() never beem called.');
+		}, 0);
+		app.listen = function (){
+			clearTimeout(call_listen);
+			try{
+				listen.call(app);
+			} catch(e){
+				fatal(e.stack || e.message || e);
+			}
+			AV.loaded = true;
+			flush(true);
+		};
+		return app;
 	} catch(e){
-		console.error(global.appLoaderLog);
-		console.error(e.stack);
-		throw e;
-	} finally{
-		if(AV.isTestEnv || AV.isDebugEnv){
+		fatal(e.stack || e.message || e);
+	}
+}
+
+function flush(success){
+	if(flush.ok){
+		return;
+	}
+	flush.ok = true;
+	if(success){
+		if(AV.isDebugEnv || AV.isTestEnv){
 			console.log(global.appLoaderLog);
 		}
-		delete global.appLoaderLog;
+	} else{
+		console.error(global.appLoaderLog);
+	}
+	delete global.appLoaderLog;
+	Object.defineProperty(global, 'appLoaderLog', {
+		get: function (){
+			return '';
+		},
+		set: function (v){
+			console.error(v.trim());
+		}
+	});
+}
+
+function fatal(errormessage){
+	flush(false);
+	errormessage = errormessage || '';
+	if(local){
+		process.stderr.write('调试启动失败:\n' + errormessage.trim() + '\n');
+		process.exit(10);
+	} else{
+		throw new Error('部署失败:\n' + errormessage.trim());
 	}
 }
 
 /*function masked_require(request){
-	var Module = module.constructor;
-	var filename = Module._resolveFilename(request, module);
-	module.paths = Module._nodeModulePaths(path.dirname(filename));
-	module.require(request);
-}*/
+ var Module = module.constructor;
+ var filename = Module._resolveFilename(request, module);
+ module.paths = Module._nodeModulePaths(path.dirname(filename));
+ module.require(request);
+ }*/
 function masked_requirexx(request){
 	var filename = Module._resolveFilename(request, module);
 	var cachedModule = Module._cache[filename];

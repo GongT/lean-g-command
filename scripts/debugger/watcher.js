@@ -75,9 +75,9 @@ function on_file_change(file){
 	file = path.resolve(file);
 	file = file.replace(/\\/g, '/');
 	file = file.replace(/^.*\/lean-g\//, 'G/');
-	file = file.replace(global.APPPATH + 'cloud/', 'C/');
-	if(global.APPPATH){
-		file = file.replace(global.APPPATH, 'R/');
+	file = file.replace(global.APP_PATH + 'cloud/', 'C/');
+	if(global.APP_PATH){
+		file = file.replace(global.APP_PATH, 'R/');
 	}
 	
 	if(/(^C\/timers|\/trigger)\//.test(file)){
@@ -121,9 +121,9 @@ function on_struct_change(file){
 	file = path.resolve(file);
 	file = file.replace(/\\/g, '/');
 	file = file.replace(/^.*\/lean-g\//, 'G/');
-	file = file.replace(global.APPPATH + 'cloud/', 'C/');
-	if(global.APPPATH){
-		file = file.replace(global.APPPATH, 'R/');
+	file = file.replace(global.APP_PATH + 'cloud/', 'C/');
+	if(global.APP_PATH){
+		file = file.replace(global.APP_PATH, 'R/');
 	}
 	
 	if(/^C\/database\//.test(file)){

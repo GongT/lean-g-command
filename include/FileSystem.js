@@ -2,30 +2,41 @@ var fs = require('fs');
 var path = require('path');
 var basename = require('path').basename;
 
+var debug = function (msg){
+	if(AV.loaded){
+		console.error(msg);
+	} else{
+		global.appLoaderLog += msg + '\n';
+	}
+};
+
 var jsJsFile = /\.js$/;
 
-module.exports.read_source_tree = read_source_tree;
+module.exports.read_source_tree = function (dir){
+	return read_source_tree(AV.APP_PATH + dir);
+};
+module.exports.read_cloud_source_tree = read_cloud_source_tree;
 module.exports.read_core_source_tree = function (dir){
-	return read_source_tree('node_modules/lean-g/' + dir);
+	return read_source_tree(AV.LEANG_PATH + dir);
 };
 
-module.exports.read_source_deep_each = read_cloud_source_deep_each;
-module.exports.read_source_each = read_cloud_source_flat_each;
-module.exports.read_cloud_source_deep_each = function (f, callback){
-	return read_cloud_source_deep_each(f, function (mdl, abs, rel){
-		return callback.call(this, mdl, abs, 'cloud/' + rel);
-	}, AV.CLOUD_PATH);
+module.exports.read_source_tree_foreach = function (f, callback){
+	return read_source_deep_each(AV.APP_PATH + f, callback);
 };
-module.exports.read_cloud_source_each = function (f, callback){
-	return read_cloud_source_flat_each(f, function (mdl, abs, rel){
-		return callback.call(this, mdl, abs, 'cloud/' + rel);
-	}, AV.CLOUD_PATH);
+module.exports.read_source_foreach = function (f, callback){
+	return read_source_flat_each(AV.APP_PATH + f, callback);
 };
-module.exports.read_core_source_deep_each = function (f, callback){
-	return read_cloud_source_deep_each(f, callback, AV.LEANG_PATH);
+module.exports.read_cloud_source_tree_foreach = function (f, callback){
+	return read_source_deep_each(AV.CLOUD_PATH, callback, f, 'cloud');
 };
-module.exports.read_core_source_each = function (f, callback){
-	return read_cloud_source_flat_each(f, callback, AV.LEANG_PATH);
+module.exports.read_cloud_source_foreach = function (f, callback){
+	return read_source_flat_each(AV.CLOUD_PATH, callback, f, 'cloud');
+};
+module.exports.read_core_source_tree_foreach = function (f, callback){
+	return read_source_deep_each(AV.LEANG_PATH + f, callback);
+};
+module.exports.read_core_source_foreach = function (f, callback){
+	return read_source_flat_each(AV.LEANG_PATH + f, callback);
 };
 
 module.exports.read_dir = readDirSync;
@@ -44,18 +55,15 @@ function read_source_tree(dir){
 	if(!/[\/\\]$/.test(dir)){
 		dir += '/';
 	}
-	var APP_PATH = AV.APP_PATH;
-	// console.log('APP_PATH=%s, dir=%s', APP_PATH, dir);
-	
-	if(!fs.existsSync(APP_PATH + dir)){
-		console.log('Warn: folder NOT exists: ' + APP_PATH + dir);
+	if(!fs.existsSync(dir)){
+		debug('Warn: folder NOT exists: ' + dir);
 		return {};
 	}
-	fs.readdirSync(APP_PATH + dir).forEach(function (f){
+	fs.readdirSync(dir).forEach(function (f){
 		if(hidden.test(f)){
 			return;
 		}
-		if(fs.lstatSync(APP_PATH + dir + f).isDirectory()){
+		if(fs.lstatSync(dir + f).isDirectory()){
 			ret[basename(f, '.js')] = read_source_tree(dir + f + '/');
 		} else if(jsJsFile.test(f)){
 			ret[basename(f, '.js')] = dir + f;
@@ -63,51 +71,88 @@ function read_source_tree(dir){
 	});
 	return ret;
 }
-function read_cloud_source_flat_each(ccdir, callback){
+function read_cloud_source_tree(dir){
+	var ret = {};
+	var hidden = /^\./;
+	
+	if(!/[\/\\]$/.test(dir)){
+		dir += '/';
+	}
+	var path = AV.CLOUD_PATH + dir;
+	if(!fs.existsSync(path)){
+		debug('Warn: folder NOT exists: ' + path);
+		return {};
+	}
+	fs.readdirSync(path).forEach(function (f){
+		if(hidden.test(f)){
+			return;
+		}
+		if(fs.lstatSync(path + f).isDirectory()){
+			ret[basename(f, '.js')] = read_source_tree(dir + f + '/');
+		} else if(jsJsFile.test(f)){
+			ret[basename(f, '.js')] = 'cloud/' + dir + f;
+		}
+	});
+	return ret;
+}
+function read_source_flat_each(ccdir, callback, relRoot, relInput){
 	var hidden = /^\./;
 	
 	if(!/[\/\\]$/.test(ccdir)){
 		ccdir += '/';
 	}
-	var CLOUD_PATH = AV.CLOUD_PATH;
+	if(!relRoot){
+		relRoot = '';
+	} else if(!/[\/\\]$/.test(relRoot)){
+		relRoot += '/';
+	}
+	ccdir += relRoot;
 	
-	if(!fs.existsSync(CLOUD_PATH + ccdir)){
-		console.log('Warn: folder NOT exists: ' + CLOUD_PATH + ccdir);
+	if(!fs.existsSync(ccdir)){
+		debug('Warn: folder NOT exists: ' + ccdir);
 		return {};
 	}
-	fs.readdirSync(CLOUD_PATH + ccdir).forEach(function (f){
+	fs.readdirSync(ccdir).forEach(function (f){
 		if(hidden.test(f)){
 			return;
 		}
 		if(jsJsFile.test(f)){
-			callback(basename(f, '.js'), CLOUD_PATH + ccdir + f, ccdir + f);
+			callback(basename(f, '.js'), ccdir + f, relRoot + f, relInput + relRoot + f);
 		}
 	});
 }
 
-function read_cloud_source_deep_each(ccdir, callback, ROOT){
+function read_source_deep_each(ccdir, callback, relRoot, relInput){
 	var hidden = /^\./;
 	
 	if(!/[\/\\]$/.test(ccdir)){
 		ccdir += '/';
 	}
-	
-	if(!ROOT){
-		ROOT = AV.APP_PATH;
+	if(!relRoot){
+		relRoot = '';
+	} else if(!/[\/\\]$/.test(relRoot)){
+		relRoot += '/';
 	}
 	
-	if(!fs.existsSync(ROOT + ccdir)){
-		console.log('Warn: folder NOT exists: ' + ROOT + ccdir);
+	var path = ccdir + relRoot;
+	
+	if(!relInput){
+		relInput = path;
+	} else if(!/[\/\\]$/.test(relInput)){
+		relInput += '/';
+	}
+	
+	if(!fs.existsSync(path)){
 		return {};
 	}
-	fs.readdirSync(ROOT + ccdir).forEach(function (f){
+	fs.readdirSync(path).forEach(function (f){
 		if(hidden.test(f)){
 			return;
 		}
-		if(fs.lstatSync(ROOT + ccdir + f).isDirectory()){
-			read_source_tree(ccdir + f + '/', callback);
+		if(fs.lstatSync(path + f).isDirectory()){
+			read_source_deep_each(ccdir, callback, relRoot + f + '/', relInput + relRoot + f + '/');
 		} else if(jsJsFile.test(f)){
-			callback(basename(f, '.js'), ROOT + ccdir + f, ccdir + f);
+			callback(basename(f, '.js'), path + f, relRoot + f, relInput + relRoot + f);
 		}
 	});
 }
@@ -118,7 +163,7 @@ function readDirSync(dir, ROOT){
 	}
 	var hidden = /^\./;
 	if(!fs.existsSync(ROOT + dir)){
-		console.log('Warn: folder NOT exists: ' + ROOT + dir);
+		debug('Warn: folder NOT exists: ' + ROOT + dir);
 		return [];
 	}
 	return fs.readdirSync(ROOT + dir).filter(function (f){
@@ -135,7 +180,7 @@ function readDirDeepSync(dir, ret, ROOT){
 	}
 	var hidden = /^\./;
 	if(!fs.existsSync(ROOT + dir)){
-		console.log('Warn: folder NOT exists: ' + ROOT + dir);
+		debug('Warn: folder NOT exists: ' + ROOT + dir);
 		return [];
 	}
 	fs.readdirSync(ROOT + dir).forEach(function (f){

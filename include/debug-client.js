@@ -35,16 +35,8 @@ function init(app){
 	});
 	replfix.ctrl_c();
 	
-	try{
-		require('repl.history')(repl, AV.APPPATH + '.avoscloud/repl_history');
-		console.log('同步率100%');
-	} catch(e){
-		console.log('同步率90%');
-		setTimeout(function (){
-			console.log('\x1B[38;5;14m推荐使用repl.history，可以保存输入历史\x1B[0m');
-			repl.displayPrompt();
-		}, 2000);
-	}
+	require('repl.history')(repl, AV.APP_PATH + '.avoscloud/repl_history');
+	console.log('同步率100%');
 	
 	require('../include/debug-client/outgoing_message_shim');
 	console.log('星际显像工具启动');
