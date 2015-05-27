@@ -1,9 +1,0 @@
-{
-	"environmentName": "测试环境",
-	"staticUrl"      : "/",
-	"cookie"         : {
-		"domain": ".xxxxxxx.avosapps.com"
-	},
-	"baseUrl"        : "http://xxxxxxx.avosapps.com/",
-	"isTestEnv"      : false
-}
