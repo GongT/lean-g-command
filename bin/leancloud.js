@@ -75,7 +75,7 @@ process.chdir(APP_PATH); // <<--
 if(!fs.existsSync('.avoscloud')){
 	fs.mkdirSync('.avoscloud');
 }
-if(true && !fs.existsSync('.avoscloud/inspect.core.js')){
+if(true || !fs.existsSync('.avoscloud/inspect.core.js')){
 	fs.writeFileSync('.avoscloud/inspect.core.js', CORE.createInspect('global.CORE'), 'utf-8');
 	// console.log('inspection file saved..');
 }
