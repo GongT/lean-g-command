@@ -1,35 +1,27 @@
 {
-	"name"           : "lean-g",
-	"version"        : "0.2.0",
-	"description"    : "application framework for leancloud",
+	"name"           : "lean-g-command",
+	"version"        : "1.0.0",
+	"description"    : "command line tools for lean-g framework",
 	"author"         : "GongT <gongteng524702837@gmail.com>",
 	"scripts"        : {},
 	"bin"            : {
-		"leang": "./leancloud.js"
+		"leang": "./bin/leang"
 	},
-	"main"           : "appldr/gloader.js",
+	"engines"        : {
+		"node": ">=0.12.0"
+	},
 	"repository"     : {
 		"type": "git",
-		"url" : "https://github.com/GongT/LEAN-G.git"
+		"url" : "https://coding.net/gfx/lean-g-command.git"
 	},
 	"keywords"       : [
 		"lean", "leancloud", "avos", "avoscloud", "framework"
 	],
 	"dependencies"   : {
-		"less-middleware": "1.0.x",
-		"serve-favicon"  : "~2.2.0",
-		"nsmarty"        : "git://coding.net/GongT/nsmarty.git",
-		"phpjs"          : "~1.3.0",
-		"request"        : "~2.0.0"
+		"lean-g-loader": "git://git.coding.net/gfx/lean-g-loader.git"
 	},
+	"devDependencies": {},
 	"preferGlobal"   : true,
-	"devDependencies": {
-		"avoscloud-code": "git://coding.net/gfx/avoscloud-code-command.git#upload-more",
-		"tar"           : "*",
-		"chokidar"      : "~0.12.0",
-		"promise"       : "~6.1.0",
-		"repl.history"  : "*"
-	},
 	"analyze"        : true,
 	"license"        : "MIT"
 }
