@@ -3,7 +3,7 @@ var path = require('path'),
 		fs = require('fs'),
 		extend = require('util')._extend;
 
-process.env.LEANG_LOCALHOST = 'true';
+global.localhost = true;
 
 if(!require('../lib/check_version')){
 	console.error('LEAN-G: current nodejs.version = ' + process.version);
