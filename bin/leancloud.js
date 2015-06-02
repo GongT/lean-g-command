@@ -25,6 +25,7 @@ global.CORE_PATH = CORE.path;
 var colors = global.colors = require('colors/safe');
 
 var APP_PATH = global.APP_PATH = process.cwd().replace(/\\/g, '/') + '/'; // 项目路径 - 运行时
+global.TEMP_PATH = APP_PATH + '.avoscloud/';
 var LEANG_PATH = global.LEANG_PATH = path.resolve(__dirname.replace(/\\/g, '/'), '..') + '/'; // 框架存放路径
 var CONFIG_PATH = global.CONFIG_PATH = APP_PATH + 'include/config/';
 
@@ -76,20 +77,23 @@ process.chdir(APP_PATH); // <<--
 if(!fs.existsSync('.avoscloud')){
 	fs.mkdirSync('.avoscloud');
 }
-if(!fs.existsSync('.avoscloud/inspect.core.js')){
-	fs.writeFileSync('.avoscloud/inspect.core.js', CORE.createInspect('global.CORE'), 'utf-8');
-	// console.log('inspection file saved..');
-}
-process.env.TMPDIR = path.resolve(APP_PATH, '.avoscloud/deploy_packages');
-if(fs.existsSync(process.env.TMPDIR)){
-	fs.readdirSync(process.env.TMPDIR).forEach(function (file){
-		if(/[0-9]+\.zip/.test(file)){
-			fs.unlinkSync(process.env.TMPDIR + '/' + file);
-		}
-	});
-} else{
-	fs.mkdirSync(process.env.TMPDIR);
-}
+/* FIXME
+ if(!fs.existsSync('.avoscloud/inspect.core.js')){
+ fs.writeFileSync('.avoscloud/inspect.core.js', CORE.createInspect('global.CORE'), 'utf-8');
+ // console.log('inspection file saved..');
+ }*/
+/* TODO
+ process.env.TMPDIR = path.resolve(APP_PATH, '.avoscloud/deploy_packages');
+ if(fs.existsSync(process.env.TMPDIR)){
+ fs.readdirSync(process.env.TMPDIR).forEach(function (file){
+ if(/[0-9]+\.zip/.test(file)){
+ fs.unlinkSync(process.env.TMPDIR + '/' + file);
+ }
+ });
+ } else{
+ fs.mkdirSync(process.env.TMPDIR);
+ }
+ */
 
 if(action == 'alias'){
 	return require('./command_alias').save();
