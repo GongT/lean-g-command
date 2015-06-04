@@ -82,18 +82,17 @@ if(!fs.existsSync('.avoscloud')){
  fs.writeFileSync('.avoscloud/inspect.core.js', CORE.createInspect('global.CORE'), 'utf-8');
  // console.log('inspection file saved..');
  }*/
-/* TODO
- process.env.TMPDIR = path.resolve(APP_PATH, '.avoscloud/deploy_packages');
- if(fs.existsSync(process.env.TMPDIR)){
- fs.readdirSync(process.env.TMPDIR).forEach(function (file){
- if(/[0-9]+\.zip/.test(file)){
- fs.unlinkSync(process.env.TMPDIR + '/' + file);
- }
- });
- } else{
- fs.mkdirSync(process.env.TMPDIR);
- }
- */
+
+process.env.TMPDIR = process.env.TEMP = path.resolve(APP_PATH, '.avoscloud/deploy_packages');
+if(fs.existsSync(process.env.TMPDIR)){
+	fs.readdirSync(process.env.TMPDIR).forEach(function (file){
+		if(/[0-9]+\.zip/.test(file)){
+			fs.unlinkSync(process.env.TMPDIR + '/' + file);
+		}
+	});
+} else{
+	fs.mkdirSync(process.env.TMPDIR);
+}
 
 if(action == 'alias'){
 	return require('./command_alias').save();
