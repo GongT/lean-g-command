@@ -12,13 +12,13 @@
 	},
 	"repository"     : {
 		"type": "git",
-		"url" : "https://coding.net/gfx/lean-g-command.git"
+		"url" : "http://git.coding.net/GongT/lean-g-command.git"
 	},
 	"keywords"       : [
 		"lean", "leancloud", "avos", "avoscloud", "framework"
 	],
 	"dependencies"   : {
-		"lean-g-loader": "git://git.coding.net/gfx/lean-g-loader.git"
+		"lean-g-loader": "http://git.coding.net/GongT/lean-g-loader.git"
 	},
 	"devDependencies": {},
 	"preferGlobal"   : true,
