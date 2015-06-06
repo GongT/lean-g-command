@@ -1,5 +1,5 @@
 console.log('Lean-G: resolve dependence -> run npm install');
-var require_missing = require(CGROOT + 'include/require_missing');
+var require_missing = CORE.debug.require_missing;
 
 var deps = global.deploySettings.readDependenceList(true);
 
@@ -32,13 +32,16 @@ console.log('\x1B[38;5;9m错误模块%s个：%s\x1B[0m', flst.length, flst.join(
 
 if(!flst.length){
 	console.log('\x1B[38;5;10mNothing To Do\x1B[0m');
-	return;
-}
-
-var ret = require('../avrun').external_sync('npm', ['install']);
-
-if(ret == 0){
-	console.log('\x1B[38;5;10mnpm install 返回了 %s.\x1B[0m', ret);
 } else{
-	console.log('\x1B[38;5;9mnpm install 返回了 %s.\x1B[0m', ret);
+	var args = flst.map(function (name){
+		return name + '@' + faillist[name];
+	});
+	args.unshift('install');
+	var ret = LeanFork.external_sync('npm', args);
+	
+	if(ret == 0){
+		console.log('\x1B[38;5;10mnpm install 返回了 %s.\x1B[0m', ret);
+	} else{
+		console.log('\x1B[38;5;9mnpm install 返回了 %s.\x1B[0m', ret);
+	}
 }
