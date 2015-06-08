@@ -83,11 +83,11 @@ if(!fs.existsSync('.avoscloud')){
  // console.log('inspection file saved..');
  }*/
 
-process.env.TMPDIR = process.env.TEMP = path.resolve(APP_PATH, '.avoscloud/deploy_packages');
+process.env.TMPDIR = process.env.TEMP = global.TEMP_PATH = path.resolve(APP_PATH, '.avoscloud') + '/';
 if(fs.existsSync(process.env.TMPDIR)){
 	fs.readdirSync(process.env.TMPDIR).forEach(function (file){
 		if(/[0-9]+\.zip/.test(file)){
-			fs.unlinkSync(process.env.TMPDIR + '/' + file);
+			fs.unlinkSync(process.env.TMPDIR + file);
 		}
 	});
 } else{
