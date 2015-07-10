@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<div id="ReferenceMenu">
+	<h2>目录</h2>
+	<ul class="outerList">
+		<li>
+			<div class="title">核心类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/FileSystem.html">FileSystem</a>
+				</li>
+				<li>
+					<a href="/reference/core/LibraryLoader.html">LibraryLoader</a>
+				</li>
+				<li>
+					<a href="/reference/core/ApiError.html">ApiError</a>
+				</li>
+				<li>
+					<a href="/reference/core/InputChecker.html">InputChecker</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/InputCheckerTypes.html">内置类型</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">应用类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/CloudCodeWrapper.html">CloudCodeWrapper</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/CloudCodeWrapperRuntime.html">CloudCodeWrapperRuntime</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/reference/core/DatabaseModel.html">DatabaseModel</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/DatabaseModelExtend.html">内置扩展方法</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/reference/core/ExpressController/index.html">ExpressController</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/ExpressController/ExpressControllerRuntime.html">ExpressControllerRuntime</a>
+						</li>
+						<li>
+							<a href="/reference/core/ExpressController/InputHandler.html">InputHandler</a>
+						</li>
+						<li>
+							<a href="/reference/core/ExpressController/PrepareFunction.html">PrepareFunction</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">工具类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/Logger.html">Logger</a>
+				</li>
+				<li>
+					<a href="/reference/core/ServerCloud.html">ServerCloud</a>
+				</li>
+				<li>
+					<a href="/reference/core/InspectCC.html">InspectCC</a>
+				</li>
+				<li>
+					<a href="/reference/core/require_missing.html">require_missing</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">辅助类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/CallbackList.html">CallbackList</a>
+				</li>
+				<li>
+					<a href="/reference/core/ConfigLoader.html">ConfigLoader</a>
+				</li>
+				<li>
+					<a href="/reference/core/ConfigGenerator.html">ConfigGenerator</a>
+				</li>
+				<li>
+					<a href="/reference/core/DeploySettings.html">DeploySettings</a>
+				</li>
+				<li>
+					<a href="/reference/core/PackageJson.html">PackageJson</a>
+				</li>
+				<li>
+					<a href="/reference/core/single_instance.html">single_instance</a>
+				</li>
+				<li>
+					<a href="/reference/core/source_code_stream.html">source_code_stream</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">模板引擎</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/view/index.html">基础语法</a>
+				</li>
+				<li>
+					<a href="/reference/view/functions.html">扩展函数列表</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">通用函数库</div>
+			<ul class="innerList">
+			</ul>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$('#ReferenceMenu').on('click', '.outerList > li > .title', function (){
+		var $rf = $(this).parent().parent();
+		var last = $rf.data('last');
+		
+		var self = $(this).parent();
+		if(last){
+			if(last[0] === self[0]){
+				return;
+			}
+			last.removeClass('active').find('ul').hide();
+		}
+		self.addClass('active').find('ul').show();
+		
+		$rf.data('last', self);
+	})
+		.find('[href="' + location.pathname + '"]')
+		.addClass('current')
+		.parentsUntil('.outerList').find('>.title')
+		.click();
+
+</script> 
+
+<h2>目的</h2>
+“lazy load”
+自动化模块加载，强制函数名与文件名统一
+
+<h2>注意</h2>
+定义模块时，<code class="var">module.parent</code> 永远等于 <code class="ref">LibraryLoader</code>，而不是首次使用它的父模块
+
+<h2>使用方法</h2>
+假如在应用根目录有个文件夹 test<br/>
+文件 test/xxx/yyy.js 导出了一个函数。<br/>
+自动加载器初始化时可以用<br/>
+<code class="javascript">	var lib = new LibraryLoader();
+	lib.autoload(FS.read_application_source_tree('test'));</code>
+通过下面的代码即可调用这个函数<br/>
+<code class="javascript">lib.xxx.yyy();</code>
+
+<h2>API</h2>
+<h3>autoload(Object data)</h3>
+data 是 <code class="ref">FileSystem</code> 类 read_<code class="var">[Type]</code>_source_tree 的返回值。<br/>
+自动加载指定目录的内容为模块库<br/>
+可以重复调用，其为将后加载的树复制到已有的树上，覆盖所有已经存在的节点，并添加新节点。<br/>
+例如 test 和 test1 目录下都有 abc.js，那么调用
+<code class="javascript">	lib.autoload(FS.read_application_source_tree('test'))
+	lib.autoload(FS.read_application_source_tree('test1'))</code>
+后 <code class="var">lib.abc</code> 是定义在test1目录下的那个
+
+<h3>extract()</h3>
+立即加载所有在 autoload 中，但尚未载入的模块
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<div id="ReferenceMenu">
+	<h2>目录</h2>
+	<ul class="outerList">
+		<li>
+			<div class="title">核心类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/FileSystem.html">FileSystem</a>
+				</li>
+				<li>
+					<a href="/reference/core/LibraryLoader.html">LibraryLoader</a>
+				</li>
+				<li>
+					<a href="/reference/core/ApiError.html">ApiError</a>
+				</li>
+				<li>
+					<a href="/reference/core/InputChecker.html">InputChecker</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/InputCheckerTypes.html">内置类型</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">应用类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/CloudCodeWrapper.html">CloudCodeWrapper</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/CloudCodeWrapperRuntime.html">CloudCodeWrapperRuntime</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/reference/core/DatabaseModel.html">DatabaseModel</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/DatabaseModelExtend.html">内置扩展方法</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/reference/core/ExpressController/index.html">ExpressController</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/reference/core/ExpressController/ExpressControllerRuntime.html">ExpressControllerRuntime</a>
+						</li>
+						<li>
+							<a href="/reference/core/ExpressController/InputHandler.html">InputHandler</a>
+						</li>
+						<li>
+							<a href="/reference/core/ExpressController/PrepareFunction.html">PrepareFunction</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">工具类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/Logger.html">Logger</a>
+				</li>
+				<li>
+					<a href="/reference/core/ServerCloud.html">ServerCloud</a>
+				</li>
+				<li>
+					<a href="/reference/core/InspectCC.html">InspectCC</a>
+				</li>
+				<li>
+					<a href="/reference/core/require_missing.html">require_missing</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">辅助类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/core/CallbackList.html">CallbackList</a>
+				</li>
+				<li>
+					<a href="/reference/core/ConfigLoader.html">ConfigLoader</a>
+				</li>
+				<li>
+					<a href="/reference/core/ConfigGenerator.html">ConfigGenerator</a>
+				</li>
+				<li>
+					<a href="/reference/core/DeploySettings.html">DeploySettings</a>
+				</li>
+				<li>
+					<a href="/reference/core/PackageJson.html">PackageJson</a>
+				</li>
+				<li>
+					<a href="/reference/core/single_instance.html">single_instance</a>
+				</li>
+				<li>
+					<a href="/reference/core/source_code_stream.html">source_code_stream</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">模板引擎</div>
+			<ul class="innerList">
+				<li>
+					<a href="/reference/view/index.html">基础语法</a>
+				</li>
+				<li>
+					<a href="/reference/view/functions.html">扩展函数列表</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">通用函数库</div>
+			<ul class="innerList">
+			</ul>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$('#ReferenceMenu').on('click', '.outerList > li > .title', function (){
+		var $rf = $(this).parent().parent();
+		var last = $rf.data('last');
+		
+		var self = $(this).parent();
+		if(last){
+			if(last[0] === self[0]){
+				return;
+			}
+			last.removeClass('active').find('ul').hide();
+		}
+		self.addClass('active').find('ul').show();
+		
+		$rf.data('last', self);
+	})
+		.find('[href="' + location.pathname + '"]')
+		.addClass('current')
+		.parentsUntil('.outerList').find('>.title')
+		.click();
+
+</script> 
+
+<h2>静态方法</h2>
+<h3>empty(String objectId)</h3>
+<p>
+	快捷方式：<br/>
+	<code class="javascript">	return AV.Object.createWithoutData(DatabaseName, objectId)</code>
+</p>
+
+<h3>getById(String objectId, Array includes)</h3>
+<p>
+	快捷方式：<br/>
+	<code class="javascript">	var q = new AV.Query(DatabaseName);
+	q.include(includes);
+	return q.get(objectId);</code>
+</p>
+
+<h3>getByUnique(String field, Any value, Array includes)</h3>
+<p>
+	查询 field 字段等于 value 的第一个结果，如果没有这一行，则reject，类似get方法。<br/>
+	如果预期field=value的一行确实存在，则使用这个方法。例如查询指定订单信息，没有故意修改请求的用户总是能查到这个订单。<br/>
+	如果预期大部分时候不存在这一行，则不要用（性能差）。例如如果用户不存在则提示。<br/>
+</p>
+
+<h3>firstByUnique(String field, Any value, Array includes)</h3>
+<p>
+	快捷方式：<br/>
+	<code class="javascript">	var q = new AV.Query(DatabaseName);
+	q.include(includes);
+	q.equalTo(key, value);
+	return q.first();</code>
+</p>
+
+<h2>实例方法</h2>
+<h3>trySave(Number retry)</h3>
+<p>
+	调用save，如果失败，则再试 retry 次<br/>
+	retry不填默认=CONFIG.database.tryTimes=3次<br/>
+	不论最终成功与否，每次失败都在 console.error 记录一行<br/>
+</p>
+
+<h2>afterSave(Function success, Function fail)</h2>
+<p>
+	hook当前对象的save方法，如果成功，在调用then前先调用success（失败同理）。<br/>
+	两个函数的行为不能影响之后调用then的方式：即then回调函数的结果不会因为用了afterSave而改变，但也没有办法强制它改变。<br/>
+	但如果抛了异常，则then回调没有机会执行。<br/>
+	通常作用是记录修改、更新日志。<br/>
+	每次afterSave后的第一次save有效，再次save不会再次调用success或fail
+</p>
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>
