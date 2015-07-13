@@ -8,7 +8,7 @@ delete global.nsmarty.templatePath;
 global.nsmarty.templatePath = ['./documents/'];
 
 var data = {
-	ABSURL: '/lean-g-command'
+	ABSURL: '/lean-g-command/doc'
 }, files;
 
 process.chdir('documents');

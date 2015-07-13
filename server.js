@@ -6,12 +6,12 @@ var isWindows = process.platform === 'win32';
 
 var app = express();
 
-app.use('/lean-g-command', require('serve-static')('./doc'));
-app.use('/lean-g-command', require('serve-static')('./'));
-app.get('/', function (req, rsp){
-	rsp.location('/lean-g-command');
+app.use('/lean-g-command/doc', require('serve-static')('./doc'));
+app.use('/lean-g-command/doc', require('serve-static')('./'));
+app.get(/^\/$|^\/lean-g-command\/?$/, function (req, rsp){
+	rsp.location('/lean-g-command/doc');
 	// 302=temp  301=perma
-	rsp.status(302).send('<h1>redirect to <a href="/lean-g-command">/lean-g-command</a></h1>');
+	rsp.status(302).send('<h1>redirect to <a href="/lean-g-command/doc">/lean-g-command/doc</a></h1>');
 });
 var port = parseInt(process.argv[2]) || 8080;
 
