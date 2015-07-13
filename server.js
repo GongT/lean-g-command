@@ -7,7 +7,7 @@ var isWindows = process.platform === 'win32';
 var app = express();
 
 app.use('/lean-g-command/doc', require('serve-static')('./doc'));
-app.use('/lean-g-command/doc', require('serve-static')('./'));
+app.use('/lean-g-command', require('serve-static')('./'));
 app.get(/^\/$|^\/lean-g-command\/?$/, function (req, rsp){
 	rsp.location('/lean-g-command/doc');
 	// 302=temp  301=perma

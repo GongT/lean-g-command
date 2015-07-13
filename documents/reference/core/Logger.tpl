@@ -81,7 +81,7 @@
 		);
 	}, new Logger('测试'));
 </code>
-<img src="{$ABSURL}/images/screenshot/console-log.png" alt="screenshot of example"/>
+<img src="{$PUBURL}/images/screenshot/console-log.png" alt="screenshot of example"/>
 
 <h2>对象序列化表</h2>
 <table>
