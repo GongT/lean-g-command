@@ -2,7 +2,7 @@
 
 {include file="../../include/reference_menu.tpl"}
 
-<h2>目的</h2>
+<h2>作用</h2>
 <p>
 	统一所有用户级的错误信息，能被客户端轻松的使用。<br/>
 	防止代码中使用魔数<br/>

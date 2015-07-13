@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/lean-g-command/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<div id="ReferenceMenu">
+	<h2>目录</h2>
+	<ul class="outerList">
+		<li>
+			<div class="title">核心类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/FileSystem.html">FileSystem</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/LibraryLoader.html">LibraryLoader</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ApiError.html">ApiError</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/InputChecker.html">InputChecker</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/InputCheckerTypes.html">内置类型</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">应用类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/CloudCodeWrapper.html">CloudCodeWrapper</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/CloudCodeWrapperRuntime.html">CloudCodeWrapperRuntime</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/DatabaseModel.html">DatabaseModel</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/DatabaseModelExtend.html">内置扩展方法</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ExpressController/index.html">ExpressController</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/ExpressControllerRuntime.html">ExpressControllerRuntime</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/InputHandler.html">InputHandler</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/FilesHandler.html">FilesHandler</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/PrepareFunction.html">PrepareFunction</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">工具类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/Logger.html">Logger</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ServerCloud.html">ServerCloud</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/InspectCC.html">InspectCC</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/require_missing.html">require_missing</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">辅助类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/CallbackList.html">CallbackList</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ConfigLoader.html">ConfigLoader</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ConfigGenerator.html">ConfigGenerator</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/DeploySettings.html">DeploySettings</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/PackageJson.html">PackageJson</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/single_instance.html">single_instance</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/source_code_stream.html">source_code_stream</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">模板引擎</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/view/index.html">基础语法</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/view/functions.html">扩展函数列表</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">通用函数库</div>
+			<ul class="innerList">
+			</ul>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$('#ReferenceMenu').on('click', '.outerList > li > .title', function (){
+		var $rf = $(this).parent().parent();
+		var last = $rf.data('last');
+		
+		var self = $(this).parent();
+		if(last){
+			if(last[0] === self[0]){
+				return;
+			}
+			last.removeClass('active').find('ul').hide();
+		}
+		self.addClass('active').find('ul').show();
+		
+		$rf.data('last', self);
+	})
+		.find('[href="' + location.pathname + '"]')
+		.addClass('current')
+		.parentsUntil('.outerList').find('>.title')
+		.click();
+
+</script> 
+
+<h2>作用</h2>
+提供运行时对象<br/>
+一定程度的纠错能力
+
+<h2>API</h2>
+<h3>属性 input</h3>
+是一个 <code class="ref">InputHandler</code>
+
+<h3>assign(String name, Any value)</h3>
+在返回中添加 name，值为 value<br/>
+如果 value 是个 <code class="ref">AV.Object</code> 或是它的数组，则会调用
+<code class="inlinejs">avObj.toJSON()</code>。返回这个对象的内容，但这将丢失任何pointer类型的字段内容（只留下pointer的
+<code class="var">objectId</code>）。
+
+<h3>assign(Object value)</h3>
+把 value 和当前已有的返回值合并（extend）<br/>
+因为合并过程通过 <code class="inlinejs">this.assign(name, value)</code> 所以也有序列化 <code class="ref">AV.Object</code> 的能力<br/>
+如果 value 不是一个对象，或者是个数组，则会抛异常
+
+<h3>display(String templateFileName)</h3>
+渲染一个模板
+
+<h3>displayError(ApiError e, String templateFileName)</h3>
+渲染一个错误，如果是 ajax，则返回 json<br/>
+在模板中，变量 error = 参数e<br/>
+此前assign的值在模板中继续可用（ajax不会返回）<br/>
+通常不传第二个参数，使用配置中指定的错误模板
+<code class="javascript">	this.assign("a", 1);
+	this.displayError(new Error("WOW"));
+	// if in template, a=1 & error=Error("WOW").
+	// if ajax, return { status:-1, message:"Error: WOW" }
+</code>
+
+<h3>属性 defaultError</h3>
+只能get，返回默认的错误处理函数，它简单地调用displayError<br/>
+通过将其传入Promise的reject-callback中实现简单错误处理
+
+<h3>http(Number code)</h3>
+设置http status值，默认200
+
+<h3>debug_send(String|Buffer data, String contentType)</h3>
+直接发送数据，并制定类型<br/>
+如名字所说的，它应该用于调试，而不是任何正式接口
+
+<h3>json()</h3>
+输出 <code class="ref">assign</code> 的变量为 json，如果没有 <code class="ref">status</code>，则附加一个 status=0
+
+<h3>next()</h3>
+跳过当前 controller（于是就到了404处理器，显示一个“页面未找到”，当然，你也可以添加其他路由做其他事情）
+
+<h3>redirect(String url, Number status)</h3>
+重定向，status默认是302 - 临时重定向，也可以设置为 301 - 永久重定向<br/>
+如果url是 http:// 、https:// 开头，则不特殊处理<br/>
+否则转换为相对 <code class="var">CONFIG.BASE_URL</code> 的绝对路径（通过 <code class="ref">site_url()</code>）
+
+<h3>setCookie(name, value, expire, path, domain, secure, httponly)</h3>
+<p>
+	设置cookie<br/>
+	参考cookie相关信息<br/>
+	只有name和value是必须的<br/>
+	要注意的是 <code class="var">expire</code>：<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;如果 &lt; <code class="var">0</code>，则删除这个cookie<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;如果 === <code class="var">0</code>，则创建会话cookie<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;如果 &lt; <code class="var">1000</code>，则为保留天数<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;如果 &lt; <code class="var">9000000000</code>，则为到期unix时间戳（最大32位时间戳为
+	<code class="var">2147483647</code>）<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;如果 &gt; <code class="var">9000000000</code>，则为到期java时间戳（毫秒）<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;如果是 <code class="var">Date</code>，则认为是准确的到期时间对象
+</p>
+
+<h3>setSecureCookie(name, value, expire, path, domain, secure, httponly)</h3>
+同上，但设置的是签名cookie
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>

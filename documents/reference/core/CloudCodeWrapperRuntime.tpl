@@ -2,7 +2,7 @@
 
 {include file="../../include/reference_menu.tpl"}
 
-<h2>目的</h2>
+<h2>作用</h2>
 每个请求是在执行一个 <code class="ref">CallbackList</code>，因此都有一个this对象<br/>
 云代码中this对象就是一个 <code class="ref">CloudCodeRuntime</code> 实例<br/>
 它通过 <code class="ref">CloudCodeWrapper.call</code> 和 <code class="ref">CloudCodeWrapper.runner</code> 自动创建，没有手动创建的必要。

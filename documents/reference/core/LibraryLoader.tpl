@@ -2,7 +2,7 @@
 
 {include file="../../include/reference_menu.tpl"}
 
-<h2>目的</h2>
+<h2>作用</h2>
 “lazy load”
 自动化模块加载，强制函数名与文件名统一
 

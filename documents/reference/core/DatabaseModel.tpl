@@ -2,7 +2,7 @@
 
 {include file="../../include/reference_menu.tpl"}
 
-<h2>目的</h2>
+<h2>作用</h2>
 作为数据库访问对象的简单封装，使数据库操作可以和CallbackList配合起来。<br/>
 并拆分文件。
 
@@ -30,33 +30,5 @@ definePath是符合文件结构的路径。<br/>
 	<li>将 static 和 property 赋值给 mdl 和 mdl.prototype。</li>
 	<li>绑定 static 方法的 this 为 mdl。这使得 cl.next(CLS.XXX.GetById) 成为可能。</li>
 </ol>
-
-# 内置扩展
-静态：
-* empty(String objectId)
-包装
-return AV.Object.createWithoutData(DatabaseName, objectId)
-
-* getById(String objectId, Array includes)
-包装
-var q = new AV.Query(DatabaseName);
-q.include(includes);
-return q.get(objectId);
-
-* getByUnique(String field, Any value, Array includes)
-查询 field 字段等于 value 的第一个结果，如果没有这一行，则reject，类似get方法。
-如果预期field=value的一行确实存在，则使用这个方法。例如查询指定订单信息，没有故意修改请求的用户总是能查到这个订单。
-如果预期大部分时候不存在这一行，则不要用（性能差）。例如如果用户不存在则提示。
-
-实例：
-* trySave(Number retry)
-调用save，如果失败，则再试 retry 次
-retry不填默认=CONFIG.database.tryTimes=3次
-每次失败都记录一个error
-
-* afterSave(Function success, Function fail);
-hook对象的save方法，如果成功，在调用then前先调用success或fail。
-其中不能影响之后调用then的方式，通常此处可以记录日志。
-每次afterSave后的第一次save有效，再次save不会再次调用success或fail
 
 {include file="../../include/public-footer.tpl"}

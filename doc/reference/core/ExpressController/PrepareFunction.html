@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/lean-g-command/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<div id="ReferenceMenu">
+	<h2>目录</h2>
+	<ul class="outerList">
+		<li>
+			<div class="title">核心类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/FileSystem.html">FileSystem</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/LibraryLoader.html">LibraryLoader</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ApiError.html">ApiError</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/InputChecker.html">InputChecker</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/InputCheckerTypes.html">内置类型</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">应用类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/CloudCodeWrapper.html">CloudCodeWrapper</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/CloudCodeWrapperRuntime.html">CloudCodeWrapperRuntime</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/DatabaseModel.html">DatabaseModel</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/DatabaseModelExtend.html">内置扩展方法</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ExpressController/index.html">ExpressController</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/ExpressControllerRuntime.html">ExpressControllerRuntime</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/InputHandler.html">InputHandler</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/FilesHandler.html">FilesHandler</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/reference/core/ExpressController/PrepareFunction.html">PrepareFunction</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">工具类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/Logger.html">Logger</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ServerCloud.html">ServerCloud</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/InspectCC.html">InspectCC</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/require_missing.html">require_missing</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">辅助类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/core/CallbackList.html">CallbackList</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ConfigLoader.html">ConfigLoader</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/ConfigGenerator.html">ConfigGenerator</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/DeploySettings.html">DeploySettings</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/PackageJson.html">PackageJson</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/single_instance.html">single_instance</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/core/source_code_stream.html">source_code_stream</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">模板引擎</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/reference/view/index.html">基础语法</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/reference/view/functions.html">扩展函数列表</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">通用函数库</div>
+			<ul class="innerList">
+			</ul>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$('#ReferenceMenu').on('click', '.outerList > li > .title', function (){
+		var $rf = $(this).parent().parent();
+		var last = $rf.data('last');
+		
+		var self = $(this).parent();
+		if(last){
+			if(last[0] === self[0]){
+				return;
+			}
+			last.removeClass('active').find('ul').hide();
+		}
+		self.addClass('active').find('ul').show();
+		
+		$rf.data('last', self);
+	})
+		.find('[href="' + location.pathname + '"]')
+		.addClass('current')
+		.parentsUntil('.outerList').find('>.title')
+		.click();
+
+</script> 
+
+<h2>作用</h2>
+抽象通用的参数处理操作，减少重复劳动
+
+<h2>概念</h2>
+<h5>原始参数</h5>
+用户输入的参数（与最终参数相比，它没有经过处理，所以称为原始的）
+
+<h5>最终参数</h5>
+通过这个类处理过的，可以直接使用的参数
+
+<h2>API</h2>
+<div style="font-style:italic;">所有方法都是连贯操作</div>
+<h3>from(String where, String name, String Type)</h3>
+<code class="var">where</code>：指定从哪里获取原始参数，可以选择：
+<ul>
+	<li>cookie</li>
+	<li>scookie</li>
+	<li>session</li>
+	<li>path</li>
+	<li>get</li>
+	<li>post</li>
+</ul>
+<i style="font-style:italic">* 指定为path时，每个 <code class="ref">controller.prepare()</code> 之间的顺序决定它们在path中的位置</i>
+<br/>
+
+<code class="var">name</code>：原始参数的名字<br/>
+<code class="var">Type</code>：原始参数的类型<br/>
+当 where = session、scookie 时，Type 不起作用，这个方法相当于：<br/>
+<code class="javascript">	return runtime.input[where][name];</code>
+其他时候，这个方法相当于：<br/>
+<code class="javascript">	return runtime.input[where]['require' + Type](name);</code>
+
+<h3>by(Function cb)</h3>
+处理原始参数的函数<br/>
+cb函数的声明为：
+<code class="javascript">	function (orignalInputValue){
+		// "this" is runtime
+	}
+</code>
+可以返回：
+<ol>
+	<li><code class="ref">ApiError</code>：中断处理，直接展示错误</li>
+	<li><code class="var">thenable</code>：resolve的结果作为最终参数，如果reject则展示错误</li>
+	<li><code class="">其他类型</code>：返回值作为最终参数</li>
+</ol>
+
+<h3>els(Function fn)</h3>
+如果出错将被调用<br/>
+可以返回一个值，作为“默认值”，用该值继续程序，而不是停止并提示“数据不存在”<br/>
+* 注意这个“默认值”不能是 <code class="var">thenable</code> 或 <code class="red">ApiError</code> 等，它们都被认为是最终参数<br/>
+或者显示一个自定义页面代替默认的“数据不存在”（此时不应该return任何东西）<br/>
+<br/>
+但不可以既不显示页面又不返回数据，这样会挂起请求。<br/>
+也不可以在这个函数中使用异步操作（会导致不可控的问题）。
+
+<h3>process(Function fn)</h3>
+最终参数产生后，可以通过fn函数再次过滤<br/>
+<b>它</b>的参数是之前通过by获得的最终参数（对els产生的无效）<br/>
+返回值作为最终参数
+
+<h2>例：</h2>
+<code class="javascript">handler.prepare("userName")
+	.from("get", "userId", "objectId")
+	.by(CLS.User.getById)
+	.process(function(user){
+		return user.get("username");
+	}).els(function(){
+		this.redirect('/login?location=' + this.input.header.url);
+	});
+	
+handler.main = function(rt){
+	// rt.userName = the user's username field
+};
+</code>
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>

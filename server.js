@@ -6,7 +6,13 @@ var isWindows = process.platform === 'win32';
 
 var app = express();
 
-app.use(require('serve-static')('./'));
+app.use('/lean-g-command', require('serve-static')('./doc'));
+app.use('/lean-g-command', require('serve-static')('./'));
+app.get('/', function (req, rsp){
+	rsp.location('/lean-g-command');
+	// 302=temp  301=perma
+	rsp.status(302).send('<h1>redirect to <a href="/lean-g-command">/lean-g-command</a></h1>');
+});
 var port = parseInt(process.argv[2]) || 8080;
 
 spawn_build();
@@ -24,7 +30,11 @@ watch
 			file = file.replace(root, '.');
 			file = file.replace(/\\/g, '/');
 			
-			spawn_build(file);
+			if(/^\.\/include\//.test(file)){
+				spawn_build();
+			} else{
+				spawn_build(file);
+			}
 		});
 
 function spawn_build(file){

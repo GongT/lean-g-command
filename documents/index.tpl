@@ -30,19 +30,19 @@
 <h2>文档</h2>
 
 <p>
-	<a href="starter/index.html">从零开始建立一个应用</a>
+	<a href="{$ABSURL}/starter/index.html">从零开始建立一个应用</a>
 </p>
 
 <p>
-	<a href="reference/index.html">引用文档</a>
+	<a href="{$ABSURL}/reference/index.html">引用文档</a>
 </p>
 
 <p>
-	<a href="howto/debug.html">如何进行本地调试</a>
+	<a href="{$ABSURL}/howto/debug.html">如何进行本地调试</a>
 </p>
 
 <p>
-	<a href="starter/faq.html">常见问题</a>
+	<a href="{$ABSURL}/starter/faq.html">常见问题</a>
 </p>
 
 {include file="./include/public-footer.tpl"}

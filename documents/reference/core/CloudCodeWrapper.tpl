@@ -2,7 +2,7 @@
 
 {include file="../../include/reference_menu.tpl"}
 
-<h2>目的</h2>
+<h2>作用</h2>
 LeanCloud云代码的包装，包含一些额外操作，例如错误处理、请求返回的包装。<br/>
 它派生于 <code class="ref">CallbackList</code>
 

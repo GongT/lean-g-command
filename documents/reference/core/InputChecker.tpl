@@ -2,7 +2,7 @@
 
 {include file="../../include/reference_menu.tpl"}
 
-<h2>目的</h2>
+<h2>作用</h2>
 统一输入方式<br/>
 检测输入是否有问题并给出一定的信息
 

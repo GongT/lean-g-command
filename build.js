@@ -7,7 +7,9 @@ var fs = require('fs'), path = require('path');
 delete global.nsmarty.templatePath;
 global.nsmarty.templatePath = ['./documents/'];
 
-var data = {}, files;
+var data = {
+	ABSURL: '/lean-g-command'
+}, files;
 
 process.chdir('documents');
 if(process.argv[2]){
@@ -21,12 +23,15 @@ if(process.argv[2]){
 	files = loop_dir_each('.');
 }
 process.chdir('..');
+if(!fs.existsSync('doc')){
+	fs.mkdirSync('doc');
+}
 
 var length = files.length;
 
 files.forEach(function (f){
 	var templateFile = f.replace(/^\.\//g, '');
-	var resultFile = templateFile.replace(/\.tpl$/, '.html');
+	var resultFile = 'doc/' + templateFile.replace(/\.tpl$/, '.html');
 	// data.baseUri = path.dirname(resultFile);
 	parser(templateFile, data, function (err, body){
 		if(err){
