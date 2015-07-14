@@ -1,0 +1,12 @@
+{
+	"applicationName": "我的应用",
+	"debug"          : 3000,
+	"template"       : {
+		"engine"           : "smarty",
+		"standardErrorPage": "",
+		"internalErrorPage": "",
+		"userErrorPage"    : "",
+		"notFoundErrorPage": ""
+	},
+	"source"         : 0
+}

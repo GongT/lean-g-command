@@ -1,0 +1,7 @@
+{
+	"environmentName"   : "开发环境",
+	"baseUrl"           : "http://127.0.0.1:3000/",
+	"isDebugEnv"        : true,
+	"CompressJavascript": false,
+	"CompressCss"       : false
+}

@@ -1,0 +1,7 @@
+{
+	"environmentName"   : "生产环境",
+	"baseUrl"           : "http://xxxxxxxxxxxxxx.avosapps.com/",
+	"isDebugEnv"        : false,
+	"CompressJavascript": true,
+	"CompressCss"       : true
+}

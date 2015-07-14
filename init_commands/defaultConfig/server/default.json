@@ -1,0 +1,7 @@
+{
+	"serverName"     : "应用名称，如“我的应用”",
+	"applicationId"  : "-- app id --",
+	"applicationKey" : "-- app key --",
+	"masterKey"      : "-- master key --",
+	"LogDatabaseName": ""
+}

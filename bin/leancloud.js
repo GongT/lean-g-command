@@ -14,7 +14,7 @@ console.log('LEAN-G: nodejs.version = ' + process.version);
 
 global.LEAN_G_INSTALL_FROM = 'git@git.coding.net/GongT/';
 var confirm_module = require('../lib/npm_installer').confirm;
-console.assert(confirm_module('lean-g-core-classes', 'lean-g-core-classes.git'), '安装失败，请尝试手动安装');
+console.assert(confirm_module('lean-g-core-classes'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('promise'), '安装失败，请尝试手动安装');
 console.assert(confirm_module('chokidar'), '安装失败，请尝试手动安装');
@@ -54,17 +54,14 @@ global.singleInstance = CORE.helper.single_instance;
 require('../lib/error_handler.js');
 
 global.LeanFork = require('../lib/avoscloud_runner');
+console.log('---\n\n');
 
 // 处理特殊命令（这些命令没有环境）
 if(action == 'init'){
-	return require('../init_commands/copy_init_app_struct');
+	return require('../init_commands/init_app_struct');
 }
 if(action == 'dependence'){
 	return require('../init_commands/resolve_dependence');
-}
-if(action == 'config'){
-	console.error('this command has not been written.');
-	return;// require('./scripts/init_commands/create_application.js');
 }
 
 // 确定运行过init
@@ -95,7 +92,7 @@ if(!fs.existsSync(command_file)){
 }
 
 // 读取avos配置
-global.APP_CONFIG = new (CORE.helper.ConfigLoader)(CONFIG_PATH + '/');
+global.APP_CONFIG = new (CORE.helper.ConfigLoader)(CONFIG_PATH);
 APP_CONFIG.load_environment('default', false);
 
 global.APP_ENVIRONMENT = assert_process_argument(3, usage_environment, '缺少环境定义文件');
@@ -117,7 +114,8 @@ function real_run(){
 	var action = /@windowTitle: (.*)/.exec(content);
 	action = action? action[1] : '不知作甚';
 	
-	process.stdout.write('\x1B]0;正在' + action + '：' + deploySettings.getApplicationName() + '（' +
+	process.stdout.write('\x1B]0;正在' + action + '：' +
+	                     deploySettings.getApplicationName() + '（' +
 	                     APP_CONFIG.environmentName + '@' + APP_CONFIG.serverName + '）' + '\x07');
 	global.config.everything();
 	require(command_file);

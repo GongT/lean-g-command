@@ -1,0 +1,12 @@
+{
+	"staticVersion" : 0,
+	"cookie"        : {
+		"signKey": "===========please edit this, any string is ok=============="
+	},
+	"session"       : {
+		"cookie": {
+		}
+	},
+	"scriptConstant": {},
+	"styleConstant" : {}
+}
