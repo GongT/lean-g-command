@@ -300,6 +300,21 @@ Full-Width Styles
 	border-bottom-right-radius: 2px;
 }
 
+#homepage_banner {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 10px;
+	z-index: 10;
+	padding: 10px 10px 10px 10px;
+	color: #fff;
+	font-weight: 700;
+	background: #4F4F4F no-repeat 95% 50%;
+	box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+}
+
 #header_wrap {
 	background: #212121;
 	background: -moz-linear-gradient(top, #373737, #212121);
@@ -458,8 +473,21 @@ custom
 }
 
 code {
+	&.block {
+		display: block;
+		white-space: pre;
+	}
 	&.js, &.javascript, &.json {
 		white-space: pre;
 		display: inline-block;
+	}
+}
+
+body {
+	&:not(.windows) .windows {
+		display: none;
+	}
+	&:not(.unix) .unix {
+		display: none;
 	}
 }

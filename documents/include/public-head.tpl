@@ -9,6 +9,13 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="{$PUBURL}/stylesheets/stylesheet.css">
 	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
 	<title>the Leancloud framework G</title>
+	
+	<script type="text/javascript">
+		var isWindows = navigator.appVersion.indexOf("Win") != -1;
+		$(function (){
+			$('body').addClass(isWindows? 'windows' : 'unix');
+		});
+	</script>
 </head>
 
 <body>
@@ -16,6 +23,7 @@
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
 	<header class="inner">
+		<a id="homepage_banner" href="{$ABSURL}">Home Page</a>
 		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
 		
 		<h1 id="project_title">the Leancloud framework G</h1>

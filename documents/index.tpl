@@ -38,11 +38,15 @@
 </p>
 
 <p>
-	<a href="{$ABSURL}/howto/debug.html">如何进行本地调试</a>
+	<a href="{$ABSURL}/howto/debug.html" class="important">如何进行本地调试</a>
 </p>
 
 <p>
-	<a href="{$ABSURL}/starter/faq.html">常见问题</a>
+	<a href="{$ABSURL}/starter/faq.html" class="important">常见问题</a>
+</p>
+
+<p>
+	<a href="{$ABSURL}/research/index.html" class="important">原理研究</a>
 </p>
 
 {include file="./include/public-footer.tpl"}

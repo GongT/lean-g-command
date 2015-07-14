@@ -9,6 +9,13 @@
 	<link rel="stylesheet" type="text/css" media="screen" href="/lean-g-command/stylesheets/stylesheet.css">
 	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
 	<title>the Leancloud framework G</title>
+	
+	<script type="text/javascript">
+		var isWindows = navigator.appVersion.indexOf("Win") != -1;
+		$(function (){
+			$('body').addClass(isWindows? 'windows' : 'unix');
+		});
+	</script>
 </head>
 
 <body>
@@ -16,6 +23,7 @@
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
 	<header class="inner">
+		<a id="homepage_banner" href="/lean-g-command/doc">Home Page</a>
 		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
 		
 		<h1 id="project_title">the Leancloud framework G</h1>
@@ -66,11 +74,15 @@
 </p>
 
 <p>
-	<a href="/lean-g-command/doc/howto/debug.html">如何进行本地调试</a>
+	<a href="/lean-g-command/doc/howto/debug.html" class="important">如何进行本地调试</a>
 </p>
 
 <p>
-	<a href="/lean-g-command/doc/starter/faq.html">常见问题</a>
+	<a href="/lean-g-command/doc/starter/faq.html" class="important">常见问题</a>
+</p>
+
+<p>
+	<a href="/lean-g-command/doc/research/index.html" class="important">原理研究</a>
 </p>
 
 </section>
