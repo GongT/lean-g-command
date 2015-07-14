@@ -46,7 +46,7 @@ mkdirp('include/config/environment');
 mkdirp('include/config/server');
 touchJSON('include/config/settings.json');
 
-touchJSON('include/ErrorMessageDefine.json');
+touch('include/ErrorMessageDefine.json', '[\n\t\n]');
 
 mkdirp('include/database/User');
 touch('include/database/User/User.js');
