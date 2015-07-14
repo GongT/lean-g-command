@@ -1,6 +1,6 @@
 {
 	"name"           : "lean-g-command",
-	"version"        : "1.0.7",
+	"version"        : "1.0.10",
 	"description"    : "command line tools for lean-g framework",
 	"author"         : "GongT <gongteng524702837@gmail.com>",
 	"scripts"        : {},
@@ -18,7 +18,12 @@
 		"lean", "leancloud", "avos", "avoscloud", "framework"
 	],
 	"dependencies"   : {
-		"lean-g-loader": "git://git.coding.net/GongT/lean-g-loader.git"
+		"lean-g-core-classes"   : "*",
+		"avoscloud-code"        : "*",
+		"lean-g-debugger-client": "*",
+		"colors"                : "*",
+		"promise"               : "*",
+		"chokidar"              : "*"
 	},
 	"devDependencies": {},
 	"preferGlobal"   : true,
