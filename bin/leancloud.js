@@ -12,22 +12,21 @@ if(!require('../lib/check_version')){
 }
 console.log('LEAN-G: nodejs.version = ' + process.version);
 
-global.LEAN_G_INSTALL_FROM = 'git@git.coding.net/GongT/';
-var confirm_module = require('../lib/npm_installer').confirm;
-console.assert(confirm_module('lean-g-core-classes'), '安装失败，请尝试手动安装');
-console.assert(confirm_module('colors/safe', 'colors'), '安装失败，请尝试手动安装');
-console.assert(confirm_module('promise'), '安装失败，请尝试手动安装');
-console.assert(confirm_module('chokidar'), '安装失败，请尝试手动安装');
-
 global.CORE = require('lean-g-core-classes');
 global.CORE_PATH = CORE.path;
+
+var installer = global.installer = require('../lib/npm_installer');
+installer.clear();
+console.assert(installer.confirm('lean-g-loader'), '安装失败，请尝试手动安装');
+console.assert(installer.confirm('lean-g-debugger-client'), '安装失败，请尝试手动安装');
+installer.restore();
 
 var colors = global.colors = require('colors/safe');
 
 var APP_PATH = global.APP_PATH = process.cwd().replace(/\\/g, '/') + '/'; // 项目路径 - 运行时
 global.TEMP_PATH = APP_PATH + '.avoscloud/';
 var LEANG_PATH = global.LEANG_PATH = path.resolve(__dirname.replace(/\\/g, '/'), '..') + '/'; // 框架存放路径
-var LOADER_PATH = global.LOADER_PATH = require('lean-g-loader').path; // loader 存放路径
+var LOADER_PATH = global.LOADER_PATH = installer.require('lean-g-loader').path; // loader 存放路径
 var CONFIG_PATH = global.CONFIG_PATH = APP_PATH + 'include/config/';
 
 console.log('LEAN-G: APP_PATH = %s', APP_PATH);
