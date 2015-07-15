@@ -1,3 +1,5 @@
+[![LeanCloud](https://img.shields.io/badge/Awesome-LeanCloud-47615d.svg)](http://leancloud.sexy)
+
 # LEAN-G
 
 （几乎可以认为是）第一个基于leancloud的应用开发框架！
