@@ -60,6 +60,7 @@ mkdirp('include/library');
 mkdirp('include/middlewares');
 
 mkdirp('express/controllers');
+touch('express/controllers/index.js', fs.readFileSync(__dirname + '/hello_world_controller.js'));
 mkdirp('express/public/css');
 mkdirp('express/public/js');
 mkdirp('express/public/scripts');
