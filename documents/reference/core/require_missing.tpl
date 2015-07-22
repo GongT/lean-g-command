@@ -1,6 +1,6 @@
 {include file="../../include/public-head.tpl"}
 
-{include file="../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>作用</h2>
 创建代码补全文件，用于给IDE插件进行静态分析

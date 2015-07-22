@@ -1,6 +1,6 @@
 {include file="../../include/public-head.tpl"}
 
-{include file="../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>作用</h2>
 LeanCloud云代码的包装，包含一些额外操作，例如错误处理、请求返回的包装。<br/>

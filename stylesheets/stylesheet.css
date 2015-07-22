@@ -434,21 +434,10 @@ Small Device Styles
 /*******************************************************************************
 custom
 *******************************************************************************/
-#ReferenceMenu {
-  position: fixed;
-  top: 223px;
-  right: 15px;
-  z-index: 999;
-}
-#ReferenceMenu > h2 {
-  display: none;
-}
 #ReferenceMenu .outerList {
   list-style: none;
 }
 #ReferenceMenu .outerList > li > .title {
-  text-align: right;
-  cursor: pointer;
   font-weight: bold;
 }
 #ReferenceMenu .outerList > li > .title:after {
@@ -456,7 +445,6 @@ custom
   display: inline-block;
 }
 #ReferenceMenu .outerList > li > .innerList {
-  display: none;
   overflow: hidden;
 }
 #ReferenceMenu .innerList {
@@ -469,20 +457,6 @@ custom
 }
 #main_content {
   min-height: 600px;
-}
-@media screen and (max-width: 800px) {
-  #ReferenceMenu {
-    position: static;
-  }
-  #ReferenceMenu > h2 {
-    display: block;
-  }
-  #ReferenceMenu .outerList > li > .title {
-    text-align: left;
-  }
-  #ReferenceMenu .innerList {
-    display: block !important;
-  }
 }
 code.block {
   display: block;

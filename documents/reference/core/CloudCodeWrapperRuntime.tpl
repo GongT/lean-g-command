@@ -1,6 +1,6 @@
 {include file="../../include/public-head.tpl"}
 
-{include file="../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>作用</h2>
 每个请求是在执行一个 <code class="ref">CallbackList</code>，因此都有一个this对象<br/>

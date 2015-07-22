@@ -1,6 +1,6 @@
 {include file="../../../include/public-head.tpl"}
 
-{include file="../../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>作用</h2>
 提供运行时对象<br/>

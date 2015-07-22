@@ -161,26 +161,7 @@
 	</ul>
 </div>
 <script type="text/javascript">
-	$('#ReferenceMenu').on('click', '.outerList > li > .title', function (){
-		var $rf = $(this).parent().parent();
-		var last = $rf.data('last');
-		
-		var self = $(this).parent();
-		if(last){
-			if(last[0] === self[0]){
-				return;
-			}
-			last.removeClass('active').find('ul').hide();
-		}
-		self.addClass('active').find('ul').show();
-		
-		$rf.data('last', self);
-	})
-		.find('[href="' + location.pathname + '"]')
-		.addClass('current')
-		.parentsUntil('.outerList').find('>.title')
-		.click();
-
+	$('#ReferenceMenu').find('[href="' + location.pathname + '"]').addClass('current');
 </script> 
 
 </section>

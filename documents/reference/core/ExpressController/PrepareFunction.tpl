@@ -1,6 +1,6 @@
 {include file="../../../include/public-head.tpl"}
 
-{include file="../../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>作用</h2>
 抽象通用的参数处理操作，减少重复劳动
@@ -61,6 +61,27 @@ cb函数的声明为：
 最终参数产生后，可以通过fn函数再次过滤<br/>
 <b>它</b>的参数是之前通过by获得的最终参数（对els产生的无效）<br/>
 返回值作为最终参数
+
+<h3>sync()</h3>
+标记这个准备函数是同步执行的<br/>
+注意：同步执行意味着它和其他准备函数是同步的，其内部仍然可以是异步<br/>
+示例：
+<code class="javascript">	controller.prepare("lastRefresh").sync().from("get", "date", "Time").els(function(){
+		return new Date;
+	});
+	controller.prepare("user").sync().from("get", "userId", "ObjectId").by(CLS.User.getById);
+	
+	controller.prepare("newFeeds").by(function(){
+		var q = new AV.Query(CLS.Feed);
+		q.equalTo("user", CLS.User.empty(this.user));
+		q.greaterThan("createdAt", this.lastRefresh);
+		return q.find();
+	});
+</code>
+上面例子中，<code class="var">lastRefresh</code> 和 <code class="var">user</code> 依次获取，试图获取 <code class="var">user</code> 前，
+<code class="var">lastRefresh</code> 一定已经准备就绪。<br/>
+之后可以再加更多异步准备函数，这些异步准备函数将同时执行，它们都一定可以用 <code class="var">user</code> 和
+<code class="var">lastRefresh</code>，但它们之间不能互相访问对方的数据。
 
 <h2>例：</h2>
 <code class="javascript">handler.prepare("userName")

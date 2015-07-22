@@ -417,18 +417,9 @@ custom
 *******************************************************************************/
 
 #ReferenceMenu {
-	position: fixed;
-	top: 223px;
-	right: 15px;
-	z-index: 999;
-	> h2 {
-		display: none;
-	}
 	.outerList {
 		list-style: none;
 		> li > .title {
-			text-align: right;
-			cursor: pointer;
 			font-weight: bold;
 			&:after {
 				content: '▼';
@@ -437,7 +428,6 @@ custom
 		}
 		
 		> li > .innerList {
-			display: none;
 			overflow: hidden;
 		}
 	}
@@ -454,22 +444,6 @@ custom
 
 #main_content {
 	min-height: 600px;
-}
-
-@media screen and (max-width: 800px) {
-	#ReferenceMenu {
-		position: static;
-		> h2 {
-			display: block;
-		}
-		.outerList > li > .title {
-			text-align: left;
-		}
-		.innerList {
-			display: block !important;
-		}
-	}
-	
 }
 
 code {

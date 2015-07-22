@@ -1,6 +1,6 @@
 {include file="../../include/public-head.tpl"}
 
-{include file="../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>作用</h2>
 作为数据库访问对象的简单封装，使数据库操作可以和CallbackList配合起来。<br/>

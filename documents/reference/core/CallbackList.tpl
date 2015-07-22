@@ -1,6 +1,6 @@
 {include file="../../include/public-head.tpl"}
 
-{include file="../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>目的</h2>
 <code class="ref">CallbackList</code> 是一个 统一异步与同步统一写法、拆分组合代码 的解决方案<br/>

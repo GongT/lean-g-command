@@ -1,6 +1,6 @@
 {include file="../../../include/public-head.tpl"}
 
-{include file="../../../include/reference_menu.tpl"}
+<a href="{$ABSURL}/reference">返回</a>
 
 <h2>目的</h2>
 为 <code class="library">express</code> 的controller提供极丰富的输入输出功能，错误处理机制和类似传统mcv的调用方式。<br/>
