@@ -35,6 +35,36 @@ console.log('LEAN-G: CORE_PATH = %s', CORE_PATH);
 
 var config_exists = fs.existsSync(CONFIG_PATH);
 
+// 额外参数
+process.switcher = [];
+process.switcher.open = function (long, short){
+};
+process.switcher.get = function (long, short){
+	var ret = 0;
+	if(long && this.indexOf('++' + long) !== -1){
+		ret += 1;
+	}
+	if(long && this.indexOf('--' + long) !== -1){
+		ret -= 1;
+	}
+	if(short && this.indexOf('+' + short) !== -1){
+		ret += 1;
+	}
+	if(short && this.indexOf('-' + short) !== -1){
+		ret -= 1;
+	}
+	return ret;
+};
+process.argv = process.argv.filter(function (arg){
+	if(/^-|^\+/.test(arg)){
+		process.switcher.push(arg);
+		return false;
+	} else{
+		return true;
+	}
+});
+console.log('switchers: %s', process.switcher.join(', '));
+
 // 检查alias
 var alias = require('./command_alias');
 if(process.argv.length == 3){
