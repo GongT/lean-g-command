@@ -51,7 +51,8 @@ function create_client(){
 
 function call_cloud_code(){
 	"use strict";
-	var base = 'https://cn.avoscloud.com/1.1/functions/';
+	var debug_mode = process.switcher.get(undefined, 'D');
+	var base = debug_mode? APP_CONFIG.BASE_URL + '1.1/functions/' : 'https://cn.avoscloud.com/1.1/functions/';
 	var request = require('request');
 	console.log('请求云代码 %screate_console 在 线上服务器', base);
 	
@@ -64,7 +65,7 @@ function call_cloud_code(){
 	};
 	
 	var params = {
-		uri    : '/create_console',
+		uri    : '/__leang::create_console',
 		baseUrl: base,
 		method : "POST",
 		headers: headers,

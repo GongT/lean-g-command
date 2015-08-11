@@ -69,6 +69,14 @@ console.log('switchers: %s', process.switcher.join(', '));
 var alias = require('./command_alias');
 if(process.argv.length == 3){
 	alias.load();
+	process.argv = process.argv.filter(function (arg){
+		if(/^-|^\+/.test(arg)){
+			process.switcher.push(arg);
+			return false;
+		} else{
+			return true;
+		}
+	});
 }
 
 var action = assert_process_argument(2, usage, '缺少命令');
