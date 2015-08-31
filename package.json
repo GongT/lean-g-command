@@ -1,6 +1,6 @@
 {
 	"name"           : "lean-g-command",
-	"version"        : "1.0.20",
+	"version"        : "1.0.21",
 	"description"    : "command line tools for lean-g framework",
 	"author"         : "GongT <gongteng524702837@gmail.com>",
 	"scripts"        : {},
