@@ -2,11 +2,6 @@
 
 <a href="{$ABSURL}/reference">返回</a>
 
-<h3>Anything</h3>
-<p>
-	任何json能表示的值
-</p>
-
 <h3>String</h3>
 <p>
 	字符串
@@ -67,13 +62,11 @@
 <h3>Time</h3>
 <p>
 	时间戳，返回Date对象<br/>
-	如果是整整数值，则当作unix时间戳（注意单位是秒），否则直接作为Date的构造参数传给Date对象<br/>
+	如果是整整数值，则当作unix时间戳（注意单位是秒），按照
+	<a href="{$ABSURL}/reference/library/index.html?page=date_time/parse.html">日期分析规则</a>
+	处理字符串并生成Date对象<br/>
 	设计api时，应一律使用时间戳
 </p>
-
-<h3>VariableDataObject</h3>
-接受一个对象作为参数，且不接受数组。返回这个对象。<br/>
-在get请求中，创建一个对象的方法是：<code>?obj[a]=1&obj[b]=2</code>
 
 <h3>DataObject</h3>
 接受一个对象作为参数，且不接受数组。返回一个新的 <code class="ref">InputChecker</code>，它的params是这个对象。<br/>
@@ -82,5 +75,17 @@
 接受经纬度信息，返回 <code class="ref">AV.GeoPoint</code><br/>
 可以输入一个字符串："<code>纬度, 经度</code>"<br/>
 或一个对象 <code class="">{ longitude:纬度, latitude:经度 }</code>
+
+<div style="opacity:0.2">
+	<h3>Anything</h3>
+	
+	<p>
+		任何json能表示的值
+	</p>
+	
+	<h3>VariableDataObject</h3>
+	接受一个对象作为参数，且不接受数组。返回这个对象。<br/>
+	在get请求中，创建一个对象的方法是：<code>?obj[a]=1&obj[b]=2</code>
+</div>
 
 {include file="../../include/public-footer.tpl"}

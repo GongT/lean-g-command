@@ -1,11 +1,11 @@
 #!/bin/env node
 "use strict";
 
-var parser = require('lean-g-template-nsmarty').parseFile;
+var ns = require('lean-g-template-nsmarty');
+var parser = ns.parseFile;
 var fs = require('fs'), path = require('path');
-
-delete global.nsmarty.templatePath;
-global.nsmarty.templatePath = ['./documents/'];
+delete ns.nsmarty.templatePath;
+ns.nsmarty.templatePath = ['./documents/'];
 
 var data = {
 	ABSURL: '/lean-g-command/doc',
@@ -35,6 +35,8 @@ files.forEach(function (f){
 	var resultFile = 'doc/' + templateFile.replace(/\.tpl$/, '.html');
 	// data.baseUri = path.dirname(resultFile);
 	console.error('\x1B[38;5;14m[INFO]\x1B[0mfile render: %s', templateFile);
+	data.templateFile = templateFile;
+	data.dirname = './documents/' + path.dirname(templateFile);
 	parser(templateFile, data, function (err, body){
 		if(err){
 			console.error('\x1B[38;5;9m[WARN]\x1B[0mfile render fail: %s', templateFile, err);

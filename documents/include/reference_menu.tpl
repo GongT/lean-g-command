@@ -88,19 +88,19 @@
 					<a href="{$ABSURL}/reference/core/ConfigLoader.html">ConfigLoader</a>
 				</li>
 				<li>
-					<a href="{$ABSURL}/reference/core/ConfigGenerator.html">ConfigGenerator</a>
+					<a href="{$ABSURL}/reference/core/ConfigGenerator.html" class="not-impl">ConfigGenerator</a>
 				</li>
 				<li>
-					<a href="{$ABSURL}/reference/core/DeploySettings.html">DeploySettings</a>
+					<a href="{$ABSURL}/reference/core/DeploySettings.html" class="not-impl">DeploySettings</a>
 				</li>
 				<li>
-					<a href="{$ABSURL}/reference/core/PackageJson.html">PackageJson</a>
+					<a href="{$ABSURL}/reference/core/PackageJson.html" class="not-impl">PackageJson</a>
 				</li>
 				<li>
-					<a href="{$ABSURL}/reference/core/single_instance.html">single_instance</a>
+					<a href="{$ABSURL}/reference/core/single_instance.html" class="not-impl">single_instance</a>
 				</li>
 				<li>
-					<a href="{$ABSURL}/reference/core/source_code_stream.html">source_code_stream</a>
+					<a href="{$ABSURL}/reference/core/source_code_stream.html" class="not-impl">source_code_stream</a>
 				</li>
 			</ul>
 		</li>
@@ -108,10 +108,13 @@
 			<div class="title">模板引擎</div>
 			<ul class="innerList">
 				<li>
-					<a href="{$ABSURL}/reference/view/index.html">基础语法</a>
+					<a href="{$ABSURL}/reference/nsmarty/template.html">基础语法</a>
 				</li>
 				<li>
-					<a href="{$ABSURL}/reference/view/functions.html">扩展函数列表</a>
+					<a href="{$ABSURL}/reference/nsmarty/functions.html">函数列表</a>
+				</li>
+				<li>
+					<a href="{$ABSURL}/reference/nsmarty/extend.html">编写函数和扩展</a>
 				</li>
 			</ul>
 		</li>
