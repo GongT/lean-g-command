@@ -16,6 +16,9 @@
 		<a href="{$ABSURL}/starter/coding/cloud_code.html">编写一个cloud code</a>
 	</li>
 	<li>
+		<a href="{$ABSURL}/starter/coding/error_code.html">定义错误码</a>
+	</li>
+	<li>
 		<a href="{$ABSURL}/starter/coding/login.html">编写一个登陆验证功能</a>
 	</li>
 	<li>
