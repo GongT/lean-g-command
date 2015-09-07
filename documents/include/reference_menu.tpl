@@ -121,6 +121,9 @@
 		<li>
 			<div class="title">通用函数库</div>
 			<ul class="innerList">
+				<li>
+					<a href="{$ABSURL}/reference/library/index.html">通用函数库</a>
+				</li>
 			</ul>
 		</li>
 	</ul>
