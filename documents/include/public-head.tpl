@@ -23,7 +23,16 @@
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
 	<header class="inner">
-		<a id="homepage_banner" href="{$ABSURL}">Home Page</a>
+		<a id="homepage_banner" href="{$ABSURL}">首页</a>
+		<a id="menu_banner" href="./index.html">目录</a>
+		<script type="text/javascript">
+			if(/index\.html$/.test(location.href) || /\/$/.test(location.href)){
+				$('#menu_banner').attr('href', '..');
+			}
+			if(/\/doc\/$/.test(location.href)){
+				$('#menu_banner').hide();
+			}
+		</script>
 		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
 		
 		<h1 id="project_title">the Leancloud framework G</h1>

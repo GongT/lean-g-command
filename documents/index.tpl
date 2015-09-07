@@ -30,7 +30,11 @@
 <h2>文档</h2>
 
 <p>
-	<a href="{$ABSURL}/starter/index.html">从零开始建立一个应用</a>
+	<a href="{$ABSURL}/starter/zero.html">从零开始建立一个应用</a>
+</p>
+
+<p>
+	<a href="{$ABSURL}/starter/index.html">入门指南</a>
 </p>
 
 <p>

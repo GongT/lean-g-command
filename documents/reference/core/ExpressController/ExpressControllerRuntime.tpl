@@ -13,8 +13,9 @@
 <h3>assign(String name, Any value)</h3>
 在返回中添加 name，值为 value<br/>
 如果 value 是个 <code class="ref">AV.Object</code> 或是它的数组，则会调用
-<code class="inlinejs">avObj.toJSON()</code>。返回这个对象的内容，但这将丢失任何pointer类型的字段内容（只留下pointer的
-<code class="var">objectId</code>）。
+<code class="inlinejs">avObj.toJSON()</code>。返回这个对象的内容<br/>
+如果有Pointer类型的数据，它将被递归的转换为json。<br/>
+如果遇到Date类型的数据，它会被转换成ISOString。（这不影响 assign('x', new Date) 这种用法）<br/>
 
 <h3>assign(Object value)</h3>
 把 value 和当前已有的返回值合并（extend）<br/>

@@ -261,7 +261,7 @@ form {
 }
 
 .muted {
-	color: #727272;
+	color: #CACACA;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -306,10 +306,25 @@ Full-Width Styles
 	top: 0;
 	left: 10px;
 	z-index: 10;
-	padding: 10px 10px 10px 10px;
+	padding: 10px 30px;
 	color: #fff;
 	font-weight: 700;
-	background: #4F4F4F no-repeat 95% 50%;
+	background: #88B400 no-repeat 95% 50%;
+	box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+}
+
+#menu_banner {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 120px;
+	z-index: 10;
+	padding: 10px 30px;
+	color: #fff;
+	font-weight: 700;
+	background: #53b7b9 no-repeat 95% 50%;
 	box-shadow: 0 0 10px rgba(0, 0, 0, .5);
 	border-bottom-left-radius: 2px;
 	border-bottom-right-radius: 2px;
@@ -449,10 +464,10 @@ custom
 code {
 	&.block {
 		display: block;
-		white-space: pre;
+		white-space: pre-wrap;
 	}
-	&.js, &.javascript, &.json {
-		white-space: pre;
+	&.js, &.javascript, &.json, &.html {
+		white-space: pre-wrap;
 		display: inline-block;
 	}
 }
@@ -464,4 +479,16 @@ body {
 	&:not(.unix) .unix {
 		display: none;
 	}
+}
+
+div.image {
+	text-align: center;
+	color: #aaaaaa;
+	> img {
+		margin-bottom: 0;
+	}
+}
+
+div.part {
+	margin-bottom: 10px;
 }

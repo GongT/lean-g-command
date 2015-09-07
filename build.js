@@ -34,6 +34,7 @@ files.forEach(function (f){
 	var templateFile = f.replace(/^\.\//g, '');
 	var resultFile = 'doc/' + templateFile.replace(/\.tpl$/, '.html');
 	// data.baseUri = path.dirname(resultFile);
+	console.error('\x1B[38;5;14m[INFO]\x1B[0mfile render: %s', templateFile);
 	parser(templateFile, data, function (err, body){
 		if(err){
 			console.error('\x1B[38;5;9m[WARN]\x1B[0mfile render fail: %s', templateFile, err);
@@ -44,7 +45,7 @@ files.forEach(function (f){
 				mkdirp(dir);
 			}
 			fs.writeFileSync(resultFile, body, 'utf-8');
-			console.error('\x1B[38;5;10m[WARN]\x1B[0mfile render complete: %s', templateFile);
+			console.error('\x1B[38;5;10m[SUCC]\x1B[0mfile render complete: %s', templateFile);
 			
 			finish();
 		}

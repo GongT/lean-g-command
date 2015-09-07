@@ -23,7 +23,16 @@
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
 	<header class="inner">
-		<a id="homepage_banner" href="/lean-g-command/doc">Home Page</a>
+		<a id="homepage_banner" href="/lean-g-command/doc">首页</a>
+		<a id="menu_banner" href="./index.html">目录</a>
+		<script type="text/javascript">
+			if(/index\.html$/.test(location.href) || /\/$/.test(location.href)){
+				$('#menu_banner').attr('href', '..');
+			}
+			if(/\/doc\/$/.test(location.href)){
+				$('#menu_banner').hide();
+			}
+		</script>
 		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
 		
 		<h1 id="project_title">the Leancloud framework G</h1>
@@ -49,8 +58,9 @@
 <h3>assign(String name, Any value)</h3>
 在返回中添加 name，值为 value<br/>
 如果 value 是个 <code class="ref">AV.Object</code> 或是它的数组，则会调用
-<code class="inlinejs">avObj.toJSON()</code>。返回这个对象的内容，但这将丢失任何pointer类型的字段内容（只留下pointer的
-<code class="var">objectId</code>）。
+<code class="inlinejs">avObj.toJSON()</code>。返回这个对象的内容<br/>
+如果有Pointer类型的数据，它将被递归的转换为json。<br/>
+如果遇到Date类型的数据，它会被转换成ISOString。（这不影响 assign('x', new Date) 这种用法）<br/>
 
 <h3>assign(Object value)</h3>
 把 value 和当前已有的返回值合并（extend）<br/>
