@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/lean-g-command/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+	
+	<script type="text/javascript">
+		var isWindows = navigator.appVersion.indexOf("Win") != -1;
+		$(function (){
+			$('body').addClass(isWindows? 'windows' : 'unix');
+		});
+	</script>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="homepage_banner" href="/lean-g-command/doc">首页</a>
+		<a id="menu_banner" href="./index.html">目录</a>
+		<script type="text/javascript">
+			if(/index\.html$/.test(location.href) || /\/$/.test(location.href)){
+				$('#menu_banner').attr('href', '..');
+			}
+			if(/\/doc\/$/.test(location.href)){
+				$('#menu_banner').hide();
+			}
+		</script>
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<div id="ReferenceMenu">
+	<h2>目录</h2>
+	<ul class="outerList">
+		<li>
+			<div class="title">核心类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/doc/reference/core/FileSystem.html">FileSystem</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/LibraryLoader.html">LibraryLoader</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/ApiError.html">ApiError</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/InputChecker.html">InputChecker</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/doc/reference/core/InputCheckerTypes.html">内置类型</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">应用类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/doc/reference/core/CloudCodeWrapper.html">CloudCodeWrapper</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/doc/reference/core/CloudCodeWrapperRuntime.html">CloudCodeWrapperRuntime</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/DatabaseModel.html">DatabaseModel</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/doc/reference/core/DatabaseModelExtend.html">内置扩展方法</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/ExpressController/index.html">ExpressController</a>
+					<ul class="innerList sub">
+						<li>
+							<a href="/lean-g-command/doc/reference/core/ExpressController/ExpressControllerRuntime.html">ExpressControllerRuntime</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/doc/reference/core/ExpressController/InputHandler.html">InputHandler</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/doc/reference/core/ExpressController/FilesHandler.html">FilesHandler</a>
+						</li>
+						<li>
+							<a href="/lean-g-command/doc/reference/core/ExpressController/PrepareFunction.html">PrepareFunction</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">工具类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/doc/reference/core/Logger.html">Logger</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/ServerCloud.html">ServerCloud</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/InspectCC.html">InspectCC</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/require_missing.html">require_missing</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">辅助类</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/doc/reference/core/CallbackList.html">CallbackList</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/ConfigLoader.html">ConfigLoader</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/ConfigGenerator.html" class="not-impl">ConfigGenerator</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/DeploySettings.html" class="not-impl">DeploySettings</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/PackageJson.html" class="not-impl">PackageJson</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/single_instance.html" class="not-impl">single_instance</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/core/source_code_stream.html" class="not-impl">source_code_stream</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">模板引擎</div>
+			<ul class="innerList">
+				<li>
+					<a href="/lean-g-command/doc/reference/nsmarty/template.html">基础语法</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/nsmarty/functions.html">函数列表</a>
+				</li>
+				<li>
+					<a href="/lean-g-command/doc/reference/nsmarty/extend.html">编写函数和扩展</a>
+				</li>
+			</ul>
+		</li>
+		<li>
+			<div class="title">通用函数库</div>
+			<ul class="innerList">
+			</ul>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+	$('#ReferenceMenu').find('[href="' + location.pathname + '"]').addClass('current');
+</script> 
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>

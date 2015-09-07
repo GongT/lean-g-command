@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/lean-g-command/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+	
+	<script type="text/javascript">
+		var isWindows = navigator.appVersion.indexOf("Win") != -1;
+		$(function (){
+			$('body').addClass(isWindows? 'windows' : 'unix');
+		});
+	</script>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="homepage_banner" href="/lean-g-command/doc">首页</a>
+		<a id="menu_banner" href="./index.html">目录</a>
+		<script type="text/javascript">
+			if(/index\.html$/.test(location.href) || /\/$/.test(location.href)){
+				$('#menu_banner').attr('href', '..');
+			}
+			if(/\/doc\/$/.test(location.href)){
+				$('#menu_banner').hide();
+			}
+		</script>
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<h2>作用</h2>
+引用配置文件信息，全局的CONFIG对象就是这个类型。<br>
+
+它的内容就是生成的global.json中的内容，其中CONMFIG.lean就是settings.json中的内容<br/>
+
+<div class="important">如果没有特殊需要，绝对不要修改它的内容</div>
+
+<h2>API</h2>
+<h3>load_application(String file)</h3>
+从 config/application 中加载一个配置文件，并返回内容<br/>
+这个文件夹中根据约定，只保存其它应用的id和key的信息
+
+<h3>load_extra(String file)</h3>
+从 config/extra 中加载一个配置文件，并返回内容<br/>
+这个文件夹没有任何特殊作用，可以随意放置文件
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>
