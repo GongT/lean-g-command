@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset='utf-8'>
+	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	<meta name="description" content="Lean-g-command : the first leancloud framework">
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="/lean-g-command/stylesheets/stylesheet.css">
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.4.min.js"></script>
+	<title>the Leancloud framework G</title>
+	
+	<script type="text/javascript">
+		var isWindows = navigator.appVersion.indexOf("Win") != -1;
+		$(function (){
+			$('body').addClass(isWindows? 'windows' : 'unix');
+		});
+	</script>
+</head>
+
+<body>
+<!-- HEADER -->
+<div id="header_wrap" class="outer">
+	<header class="inner">
+		<a id="homepage_banner" href="/lean-g-command/doc">首页</a>
+		<script type="text/javascript">
+			if(/index\.html$/.test(location.href) || /\/$/.test(location.href)){
+				$('#menu_banner').attr('href', '..');
+			}
+			if(/\/doc\/$/.test(location.href)){
+				$('#menu_banner').hide();
+			}
+		</script>
+		<a id="menu_banner" href="/lean-g-command/doc/reference/library/index.html">目录</a>
+		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
+		
+		<h1 id="project_title">the Leancloud framework G</h1>
+		
+		<h2 id="project_tagline"></h2>
+	</header>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main_content_wrap" class="outer">
+	<section id="main_content" class="inner">
+
+<script>
+	function menu(){
+		$('#content').hide();
+		$('#show_menu').hide();
+		$('#menu').show();
+	}
+</script>
+
+<script>
+	
+</script>
+
+<ul id="menu" style="display:none;">
+	<li class="disabled">_</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/_/assignPath.html">assignPath.html</li></a><li><a href="/lean-g-command/doc/reference/library/_/deepExtend.html">deepExtend.html</li></a><li><a href="/lean-g-command/doc/reference/library/_/escapeRegExp.html">escapeRegExp.html</li></a></ul></li><li class="disabled">datetime</li><li style="list-style:none"><ul style="margin-bottom: 0"><li class="disabled">delta</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/datetime/delta/days.html">days.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/delta/is_same_day.html">is_same_day.html</li></a></ul></li><li class="disabled">display</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/datetime/display/hm.html">hm.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/display/hms.html">hms.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/display/md.html">md.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/display/ym.html">ym.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/display/ymd.html">ymd.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/display/ymdhm.html">ymdhm.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/display/ymdhms.html">ymdhms.html</li></a></ul></li><li class="disabled">move</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/datetime/move/to_midnight.html">to_midnight.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/move/to_month_end.html">to_month_end.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/move/to_month_start.html">to_month_start.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/move/to_next_midnight.html">to_next_midnight.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/move/to_next_month.html">to_next_month.html</li></a><li><a href="/lean-g-command/doc/reference/library/datetime/move/to_tomorrow.html">to_tomorrow.html</li></a></ul></li><li><a href="/lean-g-command/doc/reference/library/datetime/parse.html">parse.html</li></a></ul></li><li class="disabled">debug</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/debug/errorToString.html">errorToString.html</li></a></ul></li><li class="disabled">fs</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/fs/basename.html">basename.html</li></a></ul></li><li class="disabled">hack</li><li style="list-style:none"><ul style="margin-bottom: 0"><li class="disabled">Function</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/hack/Function/inject.html">inject.html</li></a><li><a href="/lean-g-command/doc/reference/library/hack/Function/registerPrototype.html">registerPrototype.html</li></a></ul></li></ul></li><li class="disabled">hash</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/hash/md5.html">md5.html</li></a><li><a href="/lean-g-command/doc/reference/library/hash/md5_file.html">md5_file.html</li></a></ul></li><li class="disabled">html</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/html/DataTableQuery.html">DataTableQuery.html</li></a><li><a href="/lean-g-command/doc/reference/library/html/default_template.html">default_template.html</li></a><li><a href="/lean-g-command/doc/reference/library/html/uglify.html">uglify.html</li></a></ul></li><li class="disabled">mongo</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/mongo/objectId.html">objectId.html</li></a></ul></li><li class="disabled">net</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/net/getAvServer.html">getAvServer.html</li></a><li><a href="/lean-g-command/doc/reference/library/net/request.html">request.html</li></a></ul></li><li class="disabled">random</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/random/ControlledRoller.html">ControlledRoller.html</li></a></ul></li><li class="disabled">util</li><li style="list-style:none"><ul style="margin-bottom: 0"><li><a href="/lean-g-command/doc/reference/library/util/arrayForEachSync.html">arrayForEachSync.html</li></a><li><a href="/lean-g-command/doc/reference/library/util/findAll.html">findAll.html</li></a><li><a href="/lean-g-command/doc/reference/library/util/findEachChunk.html">findEachChunk.html</li></a><li><a href="/lean-g-command/doc/reference/library/util/pager_apply.html">pager_apply.html</li></a><li><a href="/lean-g-command/doc/reference/library/util/queryForEach.html">queryForEach.html</li></a><li><a href="/lean-g-command/doc/reference/library/util/queryForEachSync.html">queryForEachSync.html</li></a></ul></li>
+</ul>
+
+<div id="show_menu">
+	<a onclick="menu()" href="###">&lt;目录</a>
+</div>
+<div id="content">	<h2>findEachChunk(query, once, cb)</h2>
+	循环query，每一段数据(once个)调用一次cb（参数是个list），然后释放内存
+	<br/>
+	cb如果返回thenable，则下次请求要等到它resolve或reject后
+	<br/>
+	<br/>
+	findEachChunk返回一个Promise，所有数据都请求到，并都调用过cb后resolve，不会reject。
+	<br/>
+	如果一个结果都没有，cb一次也不会调用到
+</div>
+
+</section>
+</div>
+
+<!-- FOOTER  -->
+<div id="footer_wrap" class="outer">
+	<footer class="inner">
+		<p class="copyright">Lean-g-command maintained by
+			<a href="https://github.com/GongT">GongT</a>
+		</p>
+		<p>Published with
+			<a href="https://pages.github.com">GitHub Pages</a>
+		</p>
+	</footer>
+</div>
+
+</body>
+</html>

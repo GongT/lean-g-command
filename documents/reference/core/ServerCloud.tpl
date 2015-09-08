@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -33,4 +33,4 @@ POST 请求远程路径，请求体是 params<br/>
 params 可以是 Buffer，也可以是普通对象，普通对象序列化为 json 传输<br/>
 返回promise
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

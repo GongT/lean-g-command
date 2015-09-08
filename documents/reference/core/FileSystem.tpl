@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -41,4 +41,4 @@
 <h3>read_<code class="var">[PATH]</code>_dir_sync(String path)</h3>
 类似 <code class="ref">fs.readdirSync</code> 但不包含隐藏文件
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

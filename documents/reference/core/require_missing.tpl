@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -19,4 +19,4 @@
 分析错误堆栈，如果是因为缺少模块，则调用前面的函数输出解决方法。否则直接输出。<br/>
 默认printer=console.error，如果想用其他输出函数，记得提前bind this
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

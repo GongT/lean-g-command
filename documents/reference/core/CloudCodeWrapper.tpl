@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -55,4 +55,4 @@ title=云代码的名字（<code class="ref">AV.Cloud.define</code>的第一个�
 返回Promise，用云代码的结果resolve（或错误reject）<br/>
 可以通过它调用当前项目自身的云代码函数而不必产生没必要的http请求
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

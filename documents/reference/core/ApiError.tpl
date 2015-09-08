@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -74,4 +74,4 @@
 	<code class="lit">false</code>
 </p>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

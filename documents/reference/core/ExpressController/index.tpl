@@ -1,4 +1,4 @@
-{include file="../../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -46,4 +46,4 @@ controller.next(do_first_thing).next(do_second_thing);
 将当前控制器注册到 router 的 path 路径中
 实际就是调用 router[controller.METHOD](path, controller.main)，但不要这样做，因为里面还做了很多准备工作
 
-{include file="../../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

@@ -1,4 +1,4 @@
-{include file="../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>如何使用调试</h1>
 
@@ -97,4 +97,4 @@
 	了解详情
 </div>
 
-{include file="../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

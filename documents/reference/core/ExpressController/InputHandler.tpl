@@ -1,4 +1,4 @@
-{include file="../../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -54,4 +54,4 @@ session对象（具体用法参考session驱动的文档）
 &nbsp;&nbsp;&nbsp;&nbsp;方法
 <code class="inlinejs">assign(Object data)</code> 设置 data.cursor 和 data.count 为当前 cursor和count<br/>
 
-{include file="../../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

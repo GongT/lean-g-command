@@ -1,4 +1,4 @@
-{include file="../../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -10,4 +10,4 @@
 <h3>requireAvFile、optionalAvFile(String fileFieldName)</h3>
 同上，返回一个 AV.File 对象
 
-{include file="../../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

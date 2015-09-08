@@ -1,4 +1,4 @@
-{include file="../../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -76,4 +76,4 @@
 <h3>setSecureCookie(name, value, expire, path, domain, secure, httponly)</h3>
 同上，但设置的是签名cookie
 
-{include file="../../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

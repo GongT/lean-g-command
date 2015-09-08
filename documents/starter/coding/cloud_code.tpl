@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>编写一个CloudCodeWrapper</h1>
 
@@ -83,4 +83,4 @@
 	这种情况下使用thrown（或类似的on_error）不仅不能容错，反而容易以藏真实错误。只有非常简单、非常短的函数适合这种错误处理方式。
 </section>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

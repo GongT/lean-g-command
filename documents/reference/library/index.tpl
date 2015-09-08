@@ -1,28 +1,6 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl" index="../index.html"}
 
 <script>
-	{javascript}
-	var _data = '';
-	var fs = require('fs');
-	var p = dirname + '/_files/';
-	deep_foreach(p);
-	$this.data = _data;
-	
-	function deep_foreach(dir){
-		fs.readdirSync(dir).forEach(function (f){
-			if(fs.lstatSync(dir + f).isDirectory()){
-				_data += '<li class="disabled">' + f + '</li>';
-				_data += '<li style="list-style:none">';
-				_data += '<ul style="margin-bottom: 0">';
-				deep_foreach(dir + f + '/');
-				_data += '</ul>';
-				_data += '</li>';
-			} else{
-				_data += '<li><a href="?page=' + dir.replace(p, '') + f + '">' + f + '</li></a>';
-			}
-		});
-	}
-	{/javascript}
 	$(function (){
 		var q = /page=(.*)/.exec(location.search);
 		if(q){
@@ -43,13 +21,11 @@
 	}
 </script>
 
-<ul id="menu" style="display:none;">
-	{$data|replace:'.tpl':'.html'}
-</ul>
+{include file='include/library_menu.tpl' display='block'}
 
 <div id="show_menu" style="display:none;">
 	<a onclick="menu()" href="###">&lt;目录</a>
 </div>
 <div id="content"></div>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

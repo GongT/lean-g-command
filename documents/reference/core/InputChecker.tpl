@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -61,4 +61,4 @@ defaultValue是“默认值”，如果指定的值不存在，则取该值。�
 </code><br/>
 “默认值”参数没有类型要求
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

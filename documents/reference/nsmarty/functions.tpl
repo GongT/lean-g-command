@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>NSmarty - 模板函数</h1>
 
@@ -40,4 +40,4 @@ this will be {capture name='cap1'}
 	<h2>编写扩展</h2>
 </section>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

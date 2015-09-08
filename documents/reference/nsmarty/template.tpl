@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>NSmarty - 基本语法</h1>
 
@@ -124,4 +124,4 @@ var json = {Flandre:'Scarlet'};
 &#123;/literal}&lt;/script>{/literal}</code>
 </section>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

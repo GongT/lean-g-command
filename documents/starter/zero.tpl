@@ -1,4 +1,4 @@
-{include file="../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>手把手教你创建一个基于Lean-G的app</h1>
 
@@ -129,4 +129,4 @@
 	<a href="{$ABSURL}/starter/index.html">返回入门指南</a>
 </section>
 
-{include file="../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

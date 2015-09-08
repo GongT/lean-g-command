@@ -1,4 +1,4 @@
-{include file="../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>如何打开一个终端</h1>
 按下 <code>Win键+R</code> ，输入 <code>cmd</code> 并回车
@@ -13,4 +13,4 @@
 	<img src="{$PUBURL}/images/screenshot/terminal.png" alt="终端"/>
 </div>
 
-{include file="../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

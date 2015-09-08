@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -22,4 +22,4 @@
 因为合并过程通过 <code>this.assign(name, value)</code> 所以也有序列化 AV.Object 的能力<br/>
 如果 value 不是一个对象，或者是个数组，则会抛异常
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

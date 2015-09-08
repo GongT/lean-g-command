@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -18,4 +18,4 @@
 <h3>skip(RegExp skipPattern)</h3>
 当对象属性的名称符合pattern时，跳过它
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

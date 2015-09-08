@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>编写一个ExpressController</h1>
 
@@ -109,4 +109,4 @@
 	实际上，smarty模板只是一个扩展，不会破坏express本身对模板的处理方式，因此你可以像其他express应用一样，使用ejs和jade。（但要记得依赖问题）
 </section>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

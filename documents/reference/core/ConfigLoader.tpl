@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h2>作用</h2>
 引用配置文件信息，全局的CONFIG对象就是这个类型。<br>
@@ -16,4 +16,4 @@
 从 config/extra 中加载一个配置文件，并返回内容<br/>
 这个文件夹没有任何特殊作用，可以随意放置文件
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

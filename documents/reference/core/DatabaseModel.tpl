@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -31,4 +31,4 @@ definePath是符合文件结构的路径。<br/>
 	<li>绑定 static 方法的 this 为 mdl。这使得 cl.next(CLS.XXX.GetById) 成为可能。</li>
 </ol>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

@@ -19,12 +19,10 @@
 </head>
 
 <body>
-
 <!-- HEADER -->
 <div id="header_wrap" class="outer">
 	<header class="inner">
 		<a id="homepage_banner" href="/lean-g-command/doc">首页</a>
-		<a id="menu_banner" href="./index.html">目录</a>
 		<script type="text/javascript">
 			if(/index\.html$/.test(location.href) || /\/$/.test(location.href)){
 				$('#menu_banner').attr('href', '..');
@@ -33,6 +31,7 @@
 				$('#menu_banner').hide();
 			}
 		</script>
+		<a id="menu_banner" href="./index.html">目录</a>
 		<a id="forkme_banner" href="https://github.com/GongT/lean-g-command">View on GitHub</a>
 		
 		<h1 id="project_title">the Leancloud framework G</h1>
@@ -108,7 +107,7 @@
 <p>
 	时间戳，返回Date对象<br/>
 	如果是整整数值，则当作unix时间戳（注意单位是秒），按照
-	<a href="/lean-g-command/doc/reference/library/index.html?page=date_time/parse.html">日期分析规则</a>
+	<a href="/lean-g-command/doc/reference/library/datetime/parse.html">日期分析规则</a>
 	处理字符串并生成Date对象<br/>
 	设计api时，应一律使用时间戳
 </p>

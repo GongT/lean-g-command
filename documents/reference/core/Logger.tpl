@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -146,4 +146,4 @@
 message 必填，它是这个日志的第一部分，也是进行日志分析的重要筛选参数，一定要仔细确定。<br/>
 切忌使用含糊不清、容易混淆的名字（例如上面的“测试”）。
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

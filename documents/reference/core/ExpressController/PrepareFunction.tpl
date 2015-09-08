@@ -1,4 +1,4 @@
-{include file="../../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -98,4 +98,4 @@ handler.main = function(rt){
 };
 </code>
 
-{include file="../../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

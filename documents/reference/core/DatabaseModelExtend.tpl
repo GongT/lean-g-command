@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -50,4 +50,4 @@
 	每次afterSave后的第一次save有效，再次save不会再次调用success或fail
 </p>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

@@ -1,4 +1,4 @@
-{include file="../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <h1>手把手教你创建一个基于Lean-G的app</h1>
 
@@ -32,4 +32,4 @@
 	</li>
 </ul>
 
-{include file="../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

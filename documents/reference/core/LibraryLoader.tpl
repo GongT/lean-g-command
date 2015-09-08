@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -31,4 +31,4 @@ data 是 <code class="ref">FileSystem</code> 类 read_<code class="var">[Type]</
 <h3>extract()</h3>
 立即加载所有在 autoload 中，但尚未载入的模块
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

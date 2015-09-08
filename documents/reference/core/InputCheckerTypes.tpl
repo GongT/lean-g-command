@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -63,7 +63,7 @@
 <p>
 	时间戳，返回Date对象<br/>
 	如果是整整数值，则当作unix时间戳（注意单位是秒），按照
-	<a href="{$ABSURL}/reference/library/index.html?page=date_time/parse.html">日期分析规则</a>
+	<a href="{$ABSURL}/reference/library/datetime/parse.html">日期分析规则</a>
 	处理字符串并生成Date对象<br/>
 	设计api时，应一律使用时间戳
 </p>
@@ -88,4 +88,4 @@
 	在get请求中，创建一个对象的方法是：<code>?obj[a]=1&obj[b]=2</code>
 </div>
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}

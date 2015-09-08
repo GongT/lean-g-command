@@ -1,4 +1,4 @@
-{include file="../../include/public-head.tpl"}
+{include file="include/public-head.tpl"}
 
 <a href="{$ABSURL}/reference">返回</a>
 
@@ -126,4 +126,4 @@ thisArg可选，默认新建空对象 “{literal}{}{/literal}”<br/>
 返回一个包装着 create_instance 的函数cb<br/>
 cb被调用时，它的参数 arguments 作为 argList，它的 this 作为 thisArg，它会返回Promise
 
-{include file="../../include/public-footer.tpl"}
+{include file="include/public-footer.tpl"}
